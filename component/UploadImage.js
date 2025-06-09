@@ -1,7 +1,8 @@
 import React, { useState, useRef ,useEffect} from 'react';
 import { storage, db } from '../firebaseConfig';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytes, getDownloadURL,deleteObject, ref as storageRef  } from 'firebase/storage';
 import { doc, updateDoc, arrayUnion,getDoc } from 'firebase/firestore';
+import Swal from 'sweetalert2';
 
 import 'react-quill/dist/quill.snow.css';
 import dynamic from 'next/dynamic';
@@ -47,6 +48,42 @@ const MultiImageUploadAccordion = ({ eventID, fetchData }) => {
     updatedSections[index].image = file;
     setSections(updatedSections);
   };
+const handleDeleteImage = async (upload) => {
+  const result = await Swal.fire({
+    title: 'Are you sure?',
+    text: 'This image will be permanently deleted.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Yes, delete it!',
+  });
+
+  if (result.isConfirmed) {
+    try {
+      // Delete from Storage
+      const fileRef = storageRef(storage, upload.image.url);
+      await deleteObject(fileRef);
+
+      // Update Firestore
+      const docRef = doc(db, 'MonthlyMeeting', eventID);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const currentUploads = docSnap.data().imageUploads || [];
+        const updatedUploads = currentUploads.filter(
+          (item) => item.image.url !== upload.image.url
+        );
+        await updateDoc(docRef, { imageUploads: updatedUploads });
+        Swal.fire('Deleted!', 'The image has been deleted.', 'success');
+        fetchImages(); // Refresh UI
+      }
+    } catch (error) {
+      console.error('Error deleting image:', error);
+      Swal.fire('Error!', 'There was a problem deleting the image.', 'error');
+    }
+  }
+};
+
 
   const handleUpload = async (index) => {
     const section = sections[index];
@@ -130,10 +167,17 @@ const MultiImageUploadAccordion = ({ eventID, fetchData }) => {
           alt={upload.image.name}
           style={{ width: '100%', height: 'auto', borderRadius: '4px' }}
         />
-        
+        <button
+  style={{ marginTop: '10px', background: 'red', color: 'white', padding: '5px 10px', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+  onClick={() => handleDeleteImage(upload)}
+>
+  Delete
+</button>
+
       </div>
       
     ))}
+    
   </div>
 </div>
 
@@ -174,6 +218,7 @@ const MultiImageUploadAccordion = ({ eventID, fetchData }) => {
                 >
                   <option value="">-- Select Type --</option>
                   <option value="WhatsApp">WhatsApp</option>
+                     <option value="Banner">Banner</option>
                   <option value="Email">Email</option>
                 </select>
                 </div>

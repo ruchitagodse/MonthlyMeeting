@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { db } from '../firebaseConfig'; // Adjust your Firebase config path
-import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { collection, getDocs,setDoc, deleteDoc, doc } from 'firebase/firestore';
 import "../src/app/styles/main.scss";
 import { FaSearch } from "react-icons/fa";
+import Swal from 'sweetalert2';
 
 const UserList = () => {
     const [users, setUsers] = useState([]);
@@ -13,6 +14,57 @@ const UserList = () => {
     const [roleFilter, setRoleFilter] = useState('');
     const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false);
     const [userToDelete, setUserToDelete] = useState(null); // Track which user to delete
+const [newUser, setNewUser] = useState({
+    name: '',
+    phoneNumber: '',
+    role: '',
+    dob: '',
+    email: '',
+    gender: '',
+    ujbCode: ''
+});
+const formatDOB = (dob) => {
+  const [year, month, day] = dob.split("-");
+  return `${day}/${month}/${year}`;
+};
+
+const handleAddUser = async (e) => {
+    e.preventDefault();
+const formattedDOB = formatDOB(newUser.dob); // Convert to dd/mm/yyyy
+
+    const userDoc = {
+        " Name": newUser.name,
+        "Mobile no": newUser.phoneNumber,
+        "Category": newUser.role,
+         "DOB": formattedDOB,
+        "Email": newUser.email,
+        "Gender": newUser.gender,
+        "UJB Code": newUser.ujbCode,
+    };
+
+    try {
+        await setDoc(doc(db, 'userdetails', newUser.phoneNumber), userDoc);
+        setUsers([...users, {
+            id: newUser.phoneNumber,
+            name: newUser.name,
+            phoneNumber: newUser.phoneNumber,
+            role: newUser.role
+        }]);
+        setNewUser({
+            name: '',
+            phoneNumber: '',
+            role: '',
+            dob: '',
+            email: '',
+            gender: '',
+            ujbCode: ''
+        });
+        alert("User added successfully!");
+    } catch (err) {
+        console.error("Error adding user:", err);
+        alert("Failed to add user.");
+    }
+};
 
     // Fetch users from Firestore
     useEffect(() => {
@@ -87,6 +139,112 @@ const UserList = () => {
                 <button className="m-button-5" onClick={() => window.history.back()}>
                     Back
                 </button>
+<div>
+    <h2>Add New User</h2>
+    <form onSubmit={handleAddUser}>
+          <ul>
+          <li className='form-row'>
+            <h4>Name<sup>*</sup></h4>
+            <div className='multipleitem'>
+        <input 
+            type="text" 
+            placeholder="Full Name" 
+            value={newUser.name} 
+            onChange={(e) => setNewUser({...newUser, name: e.target.value})} 
+            required 
+        />
+        </div>
+        </li>
+        
+          <li className='form-row'>
+            <h4>Mobile no<sup>*</sup></h4>
+            <div className='multipleitem'>
+        <input 
+            type="text" 
+            placeholder="Mobile No" 
+            value={newUser.phoneNumber} 
+            onChange={(e) => setNewUser({...newUser, phoneNumber: e.target.value})} 
+            required 
+        />
+        </div>
+        </li>
+          <li className='form-row'>
+            <h4>Category<sup>*</sup></h4>
+            <div className='multipleitem'>
+        {/* Category Dropdown */}
+        <select 
+            value={newUser.role} 
+            onChange={(e) => setNewUser({...newUser, role: e.target.value})}
+            required
+        >
+            <option value="">Select Category</option>
+            <option value="Orbiter">Orbiter</option>
+            <option value="CosmOrbiter">CosmOrbiter</option>
+        </select>
+</div>
+</li>
+<li className='form-row'>
+  <h4>DOB<sup>*</sup></h4>
+  <div className='multipleitem'>
+    <input
+      type="date"
+      value={newUser.dob}
+      onChange={(e) => setNewUser({ ...newUser, dob: e.target.value })}
+      required
+    />
+  </div>
+</li>
+
+          <li className='form-row'>
+            <h4>Email<sup>*</sup></h4>
+            <div className='multipleitem'>
+        <input 
+            type="text" 
+            placeholder="Email" 
+            value={newUser.email} 
+            onChange={(e) => setNewUser({...newUser, email: e.target.value})} 
+        />
+        </div>
+</li>
+ <li className='form-row'>
+            <h4>Category<sup>*</sup></h4>
+            <div className='multipleitem'>
+   
+        {/* Gender Dropdown */}
+        <select 
+            value={newUser.gender} 
+            onChange={(e) => setNewUser({...newUser, gender: e.target.value})}
+            required
+        >
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+        </select>
+</div>
+</li>
+  <li className='form-row'>
+            <h4>UJB Code<sup>*</sup></h4>
+            <div className='multipleitem'>
+        <input 
+            type="text" 
+            placeholder="UJB Code" 
+            value={newUser.ujbCode} 
+            onChange={(e) => setNewUser({...newUser, ujbCode: e.target.value})} 
+        />
+        </div>
+        </li>
+   
+      
+          <li className='form-row'>
+     
+            <div className='multipleitem'>
+        <button type="submit" className="m-button-7" style={{ backgroundColor: '#f16f06', color: 'white',marginBottom: '20px' }}>Add User</button>
+        </div>
+        </li>
+        </ul>
+    </form>
+</div>
+
 
                 {loading && <div className='loader'><span className="loader2"></span></div>}
                 {error && <p style={{ color: 'red' }}>{error}</p>}

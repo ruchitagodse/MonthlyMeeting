@@ -5,9 +5,10 @@ import { useRouter } from 'next/router';
 import "../src/app/styles/main.scss";
 import Layout from './Layout';
 
-const AddUser = (eventId) => {
-    const router = useRouter();
-   
+const AddUser = ({ fetchData, eventId: propEventId, data }) => {
+  const router = useRouter();
+  const eventId = propEventId || router.query.eventId;
+
     const [phone, setPhone] = useState('');
     const [name, setName] = useState('');
     const [interests, setInterests] = useState({
@@ -112,16 +113,22 @@ const AddUser = (eventId) => {
     };
     
     
+   
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
+
         if (!name || !phone || !type) {
             alert('Please fill all fields');
             return;
         }
-    
+
+        if (!eventId) {
+            alert('Event ID not found in URL');
+            return;
+        }
+
         const userRef = doc(db, `MonthlyMeeting/${eventId}/registeredUsers/${phone}`);
-    
+
         try {
             await setDoc(userRef, {
                 name,
@@ -130,10 +137,9 @@ const AddUser = (eventId) => {
                 type,
                 registeredAt: new Date()
             });
-    
-            // Send WhatsApp message
-            await sendWhatsAppMessage(phone,eventId);
-    
+
+            await sendWhatsAppMessage(phone, eventId);
+
             alert('User registered successfully!');
             router.push(`/admin/event/RegisteredUser/${eventId}`);
         } catch (error) {
@@ -141,7 +147,6 @@ const AddUser = (eventId) => {
             alert('Error registering user');
         }
     };
-    
     return (
         <>
             
@@ -152,7 +157,7 @@ const AddUser = (eventId) => {
                 <ul>
                     <li className='form-row'>
                         <h4>Select User:<sup>*</sup></h4>
-                        <div className='multipleitem'>
+                        <div className='autosuggest'>
                             <input
                                 type="text"
                                 placeholder="Search User"

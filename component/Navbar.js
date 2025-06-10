@@ -32,7 +32,7 @@ const Navbar = (props) => {
                           <li>
                             <Link href="/admin/event/cpmembers">
                                 <span className="icons"><FaRegUser /></span>
-                                <span className="linklabel">NT Members</span>
+                                <span className="linklabel">Add Orbiters</span>
                                 <span className="submenuIcon"><MdOutlineKeyboardArrowDown /></span>
                             </Link>
                            
@@ -60,12 +60,12 @@ const Navbar = (props) => {
                             </ul>
                             </li>
                         
-                        <li>
+                        {/* <li>
                             <Link href="/admin/event/upload">
                                 <span className="icons"><RiListSettingsLine /></span>
                                 <span className="linklabel">Upload Excel</span>
                             </Link>
-                        </li>
+                        </li> */}
                     </ul>
                 </nav>
             )}

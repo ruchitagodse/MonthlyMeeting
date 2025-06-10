@@ -27,6 +27,7 @@ const customStyles = {
 
 const RegisteredUsers = ({ eventId }) => {
   const router = useRouter();
+const [markedAttendance, setMarkedAttendance] = useState({});
 
   const [registeredUsers, setRegisteredUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]); 
@@ -209,28 +210,49 @@ const RegisteredUsers = ({ eventId }) => {
     await updateFeedback(currentUserId, feedbackEntry);
     closeAddFeedbackModal();
   };
-  const markAttendance = async (phoneNumber) => {
-    if (!eventId) {
-      console.error("Event ID is missing");
-      return;
-    }
-  
+const markAttendance = async (phoneNumber) => {
+  if (!eventId) {
+    console.error("Event ID is missing");
+    return;
+  }
+
+  try {
+    const userRef = doc(db, "MonthlyMeeting", eventId, "registeredUsers", phoneNumber);
+
+    await updateDoc(userRef, {
+      attendanceStatus: true,
+      timestamp: serverTimestamp()
+    });
+
+    // Update local state to reflect UI change
+    setMarkedAttendance(prev => ({ ...prev, [phoneNumber]: true }));
+
+    alert("Attendance marked successfully!");
+  } catch (error) {
+    console.error("Failed to mark attendance:", error);
+    alert("Error marking attendance.");
+  }
+};
+useEffect(() => {
+  const fetchAttendanceStatuses = async () => {
     try {
-      // Reference to the user's document in the registeredUsers collection
-      const userRef = doc(db, "MonthlyMeeting", eventId, "registeredUsers", phoneNumber);
-    
-      // Update only the attendanceStatus field without affecting other data
-      await updateDoc(userRef, {
-        attendanceStatus: true,  // Mark attendance as true (can be false depending on the action)
-        timestamp: serverTimestamp()  // Add timestamp for when the attendance was marked
+      const usersSnapshot = await getDocs(collection(db, "MonthlyMeeting", eventId, "registeredUsers"));
+      const attendanceMap = {};
+      usersSnapshot.forEach(doc => {
+        const data = doc.data();
+        attendanceMap[doc.id] = data.attendanceStatus || false;
       });
-    
-      alert("Attendance marked successfully!");
+      setMarkedAttendance(attendanceMap);
     } catch (error) {
-      console.error("Failed to mark attendance:", error);
-      alert("Error marking attendance.");
+      console.error("Error fetching attendance statuses:", error);
     }
   };
+
+  if (eventId) {
+    fetchAttendanceStatuses();
+  }
+}, [eventId]);
+
   const handleMeetingDone = async () => {
     const accessToken = "EAAHwbR1fvgsBOwUInBvR1SGmVLSZCpDZAkn9aZCDJYaT0h5cwyiLyIq7BnKmXAgNs0ZCC8C33UzhGWTlwhUarfbcVoBdkc1bhuxZBXvroCHiXNwZCZBVxXlZBdinVoVnTB7IC1OYS4lhNEQprXm5l0XZAICVYISvkfwTEju6kV4Aqzt4lPpN8D3FD7eIWXDhnA4SG6QZDZD"; // Replace with your Meta API token
     const phoneNumberId = "527476310441806";  
@@ -420,9 +442,14 @@ const RegisteredUsers = ({ eventId }) => {
                     </button>
                     </div>
                   </td>
-                  <button className='m-button-7' onClick={() => markAttendance(user.id)}>
-              Mark Present
-            </button>
+               {markedAttendance[user.id] ? (
+  <button style={{margin:'5px'}}>Marked Present</button>
+) : (
+  <button className='m-button-7' onClick={() => markAttendance(user.id)}>
+    Mark Present
+  </button>
+)}
+
                 </tr>
               ))
             ) : (

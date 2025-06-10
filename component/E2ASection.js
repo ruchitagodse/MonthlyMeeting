@@ -66,12 +66,20 @@ const E2ASection = ({ eventID, data = {}, fetchData }) => {
     );
   };
 
-  const handleAddSection = () => {
-    setE2aSections(prev => [
-      ...prev,
-      { e2a: '', e2aSearch: '', e2aDesc: '', e2aDate: '' }
-    ]);
-  };
+const handleAddSection = () => {
+  setE2aSections(prev => [
+    ...prev,
+    { e2a: '', e2aSearch: '', e2aDesc: '', e2aDate: '', status: false }
+  ]);
+};
+
+const handleToggleStatus = (index) => {
+  setE2aSections(prev =>
+    prev.map((section, i) =>
+      i === index ? { ...section, status: !section.status } : section
+    )
+  );
+};
 
   const handleRemoveSection = async (index) => {
     const toRemove = e2aSections[index];
@@ -96,25 +104,26 @@ const E2ASection = ({ eventID, data = {}, fetchData }) => {
     setE2aSections(prev => prev.filter((_, i) => i !== index));
   };
 
-  const handleSaveSections = async () => {
-    try {
-      const docRef = doc(db, 'MonthlyMeeting', eventID);
-  
-      // Remove extra fields like e2aSearch
-      const cleanedE2ASections = e2aSections.map(({ e2a, e2aDate, e2aDesc }) => ({
-        e2a,
-        e2aDate,
-        e2aDesc,
-      }));
-  
-      await updateDoc(docRef, { e2aSections: cleanedE2ASections });
-      console.log('E2A sections saved successfully');
-      fetchData?.();
-    } catch (error) {
-      console.error('Error saving E2A sections:', error);
-    }
-  };
-  
+const handleSaveSections = async () => {
+  try {
+    const docRef = doc(db, 'MonthlyMeeting', eventID);
+
+    // Sanitize fields to remove undefined
+    const cleanedE2ASections = e2aSections.map(section => ({
+      e2a: section.e2a || '',
+      e2aDate: section.e2aDate || '',
+      e2aDesc: section.e2aDesc || '',
+      status: section.status ?? false  // explicitly set false if undefined
+    }));
+
+    await updateDoc(docRef, { e2aSections: cleanedE2ASections });
+    console.log('E2A sections saved successfully');
+    fetchData?.();
+  } catch (error) {
+    console.error('Error saving E2A sections:', error);
+  }
+};
+
 
   return (
     <div className='content-wrapper'>
@@ -166,10 +175,21 @@ const E2ASection = ({ eventID, data = {}, fetchData }) => {
   </svg>
   <span class="tooltiptext">Remove</span>
 </button>
+  <div className="status-button-wrapper">
+      <button
+        className={section.status ? 'done' : 'not-done'}
+        onClick={() => handleToggleStatus(index)}
+        type="button"
+      >
+        {section.status ? 'Done' : 'Not Done'}
+      </button>
+    </div>
             </div>
+            
           ))}
         </div>
       </div>
+
 
       <button className='m-button-7' type='button' onClick={handleAddSection}>
        + Add E2A Host

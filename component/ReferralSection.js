@@ -14,6 +14,15 @@ const ReferralSection = ({ eventID, data = {}, fetchData }) => {
     setReferralSearchFrom(referralSections.map(section => section.referralFrom || ''));
     setReferralSearchTo(referralSections.map(section => section.referralTo || ''));
   }, [referralSections]);
+useEffect(() => {
+  if (data.referralSections) {
+    const updatedSections = data.referralSections.map(section => ({
+      ...section,
+      status: section.status || 'Pending' // default to 'Pending' if missing
+    }));
+    setReferralSections(updatedSections);
+  }
+}, [data.referralSections]);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -140,14 +149,21 @@ const ReferralSection = ({ eventID, data = {}, fetchData }) => {
     setReferralSearchFrom(referralSearchFrom.filter((_, i) => i !== index));
     setReferralSearchTo(referralSearchTo.filter((_, i) => i !== index));
   };
+const handleStatusChange = (index, newStatus) => {
+  const updated = [...referralSections];
+  updated[index].status = newStatus;
+  setReferralSections(updated);
+};
+
 
   const handleSaveReferralSections = async () => {
     try {
-      const cleanedReferralSections = referralSections.map(({ id, referralFrom, referralTo, referralDesc }) => ({
+      const cleanedReferralSections = referralSections.map(({ id, referralFrom, referralTo, referralDesc,status }) => ({
         id,
         referralFrom,
         referralTo,
-        referralDesc
+        referralDesc,
+        status
       }));
   
       const docRef = doc(db, 'MonthlyMeeting', eventID);
@@ -217,6 +233,38 @@ const ReferralSection = ({ eventID, data = {}, fetchData }) => {
               required
             />
           </div>
+            
+           <h4>Status:<sup>*</sup></h4>
+            <div className='autosuggest'>
+        {/* Category Dropdown */}
+        <select
+  value={section.status}
+  onChange={(e) => handleStatusChange(index, e.target.value)}
+  required
+>
+  {[
+    'Pending',
+    'Rejected',
+    'Not Connected',
+    'Called but not Answered',
+    'Discussion in Progress',
+    'Deal Won',
+    'Deal Lost',
+    'On Hold',
+    'Work In Progress',
+    'Work Completed',
+    'Received Part Payment and Transferred to UJustBe',
+    'Received Full and Final Payment',
+    'Agreed % Transferred to UJustBe'
+  ].map(statusOption => (
+    <option key={statusOption} value={statusOption}>{statusOption}</option>
+  ))}
+</select>
+</div>
+
+
+
+
 
       
           <button class="tooltip" onClick={() =>  handleRemoveReferralSection(index)}>

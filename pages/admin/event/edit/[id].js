@@ -17,6 +17,7 @@ import ParticipantSection from '../../../../component/ParticipantsSection';
 import EditForm from '../../../../component/EditForm';
 import RegisteredUsers from '../../../../component/RegisteredUsers';
 import AddUser from '../../../../component/AddUsers';
+import TopicSection from '../../../../component/TopicOfTheDay';
 
 
 const EditAdminEvent = () => {
@@ -33,7 +34,7 @@ const EditAdminEvent = () => {
 
 
   const tabs = [
-    'Event Info', 'Facilitator', 'Referral Possibilities', 'Proposed Interaction', 'Proposed E2A', 'Prospects Identified', 'Knowledge Sharing', 'Upload MoM', 'Add Creatives', 'Requirements','Registered Users','Add Users'
+    'Event Info','Topic of the Day', 'Facilitator', 'Referral Possibilities', 'Proposed Interaction', 'Proposed E2A', 'Prospects Identified', 'Knowledge Sharing', 'Upload MoM', 'Add Creatives', 'Requirements','Registered Users','Add Users'
   ];
 
   const fetchEvent = async (index) => {
@@ -110,72 +111,77 @@ const EditAdminEvent = () => {
         </>}
    </>
 )}
+  {activeTab === 1 && (
+          <>
+            <TopicSection fetchData={fetchEvent} eventID={id} data={eventData} />
+          </>
+        )}
 
        
-        {activeTab === 1 && (
+        {activeTab === 2 && (
           <>
             <FacilitatorSection fetchData={fetchEvent} eventID={id} data={eventData} />
           </>
         )}
 
 
-        {activeTab === 2 && (
+        {activeTab === 3 && (
           <>
            <ReferralSection fetchData={fetchEvent} eventID={id} data={eventData} />
           </>
         )}
 
-        {activeTab === 3 && (
+        {activeTab === 4 && (
           <>
 <ParticipantSection fetchData={fetchEvent} eventID={id} data={eventData} />
           </>
         )}
 
 
-        {activeTab === 4 && (
+        {activeTab === 5 && (
           <>
 <E2ASection fetchData={fetchEvent} eventID={id} data={eventData} />
           </>
         )}
-        {activeTab === 5 && (
+        {activeTab === 6 && (
           <>
 <ProspectSection fetchData={fetchEvent} eventID={id} data={eventData} />
           </>
         )}
 
-{activeTab === 6 && (
+{activeTab === 7 && (
           <>
 <KnowledgeSharingSection fetchData={fetchEvent} eventID={id} data={eventData} />
           </>
         )}
 
 
-        {activeTab === 7 && (
+        {activeTab === 8 && (
           <>
 <DocumentUpload fetchData={fetchEvent} eventID={id} data={eventData} />
           </>
         )}
 
-{activeTab === 8 && (
+{activeTab === 9 && (
           <>
 <ImageUpload fetchData={fetchEvent} eventID={id} data={eventData} />
           </>
         )}
 
-{activeTab === 9 && (
+{activeTab === 10 && (
           <>
 
 <RequirementPage fetchData={fetchEvent} eventID={id} data={eventData} />
           </>
         )}
-{activeTab === 10 && (
+{activeTab === 11 && (
           <>
 
 <RegisteredUsers fetchData={fetchEvent} eventId={id} data={eventData} />
           </>
         )}
 
-{activeTab === 11 && (
+{activeTab === 12 && (
           <>
 
 <AddUser fetchData={fetchEvent} eventId={id} data={eventData} />

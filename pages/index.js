@@ -91,6 +91,11 @@ const fetchUserName = async (phoneNumber) => {
   }
 };
 
+const sortedEvents = [...events].sort((a, b) => {
+  const dateA = a.time?.toDate?.() || new Date(0);
+  const dateB = b.time?.toDate?.() || new Date(0);
+  return dateB - dateA; // latest first
+});
 
   
   
@@ -112,7 +117,7 @@ const fetchUserName = async (phoneNumber) => {
           <h2>Monthly Meetings</h2> 
          </div>
       <div className='container eventList'>
-  {events.map((event, index) => {
+  {sortedEvents.map((event, index) => {
     const eventDate = event.time?.toDate?.();
     const now = new Date();
 
@@ -149,9 +154,17 @@ if (eventDate) {
       ) : (
         <span className="meetingLable3">{timeLeft}</span>
       )}
-      <span className="suggestionTime">
-        {eventDate?.toLocaleString?.() || 'N/A'}
-      </span>
+    <span className="suggestionTime">
+  {eventDate?.toLocaleString?.('en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  }) || 'N/A'}
+</span>
+
     </div>
 
     <div className='meetingDetails'>

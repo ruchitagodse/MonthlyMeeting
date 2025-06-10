@@ -187,7 +187,18 @@ const fetchUserName = async (phoneNumber) => {
             )}
           </>
         );
-
+  case 'Topic of the Day':
+        return (
+          <>
+            <h3>Topic of the Day</h3>
+         <div>
+           <p><strong>Title: </strong>{eventInfo?.titleOfTheDay || 'No Topic'}</p>
+                   <p><strong>Description: </strong>{eventInfo?.description || 'No Description'}</p>
+            
+                 </div>
+             
+          </>
+        );
       case 'facilitators':
         return (
           <>
@@ -200,7 +211,7 @@ const fetchUserName = async (phoneNumber) => {
                 </div>
               ))
             ) : (
-              <p>Yet to be uploaded</p>
+              <p>No Facilitators Identified</p>
             )}
           </>
         );
@@ -218,24 +229,26 @@ const fetchUserName = async (phoneNumber) => {
                 </div>
               ))
             ) : (
-              <p>Yet to be uploaded</p>
+              <p>No Knowledge Sharing Session</p>
             )}
           </>
         );
 
-      case 'New prospects':
+      case 'New energy':
         return (
           <>
             <h3>Prospects Identified</h3>
             {eventInfo.prospectSections?.length > 0 ? (
               eventInfo.prospectSections.map((p, idx) => (
                 <div key={idx}>
-                  <strong>{p.prospect}</strong> ({p.prospectName}):
+                      <p><strong>Orbiter's Name: </strong> {p.prospect}</p>
+                        <p><strong>Prospect's Name: </strong> {p.prospectName}</p>
+                 
                   <p>{p.prospectDescription}</p>
                 </div>
               ))
             ) : (
-              <p>Yet to be uploaded</p>
+              <p>No New Energies</p>
             )}
           </>
         );
@@ -250,10 +263,11 @@ const fetchUserName = async (phoneNumber) => {
                   <p><strong>From: </strong> {r.referralFrom}</p>
                   <p><strong>To: </strong> {r.referralTo}</p>
                   <p><strong>Description:</strong> {r.referralDesc}</p>
+                    <p><strong>Status:</strong> {r.status || 'Not specified'}</p>
                 </div>
               ))
             ) : (
-              <p>Yet to be uploaded</p>
+              <p>No Referrals Identified</p>
             )}
           </>
         );
@@ -266,39 +280,40 @@ const fetchUserName = async (phoneNumber) => {
               eventInfo.requirementSections.map((req, idx) => (
                 <div key={idx}>
                   <p><strong>From:</strong> {req.reqfrom} — {req.reqDescription}</p>
+                    
                 </div>
               ))
             ) : (
-              <p>Yet to be uploaded</p>
+              <p>No Requirements Identified</p>
             )}
           </>
         );
 
       case 'E2A':
-        return (
-          <>
-            <h3>E2A</h3>
-            {eventInfo.e2aSections?.length > 0 ? (
-              eventInfo.e2aSections.map((e2a, idx) => {
-                const formattedDate = new Date(e2a.e2aDate).toLocaleDateString('en-GB');
-                return (
-                  <div key={idx}>
-                    <div>
-                      <p><strong>{e2a.e2a}</strong></p>
-                      <p>{formattedDate}</p>
-                    </div>
+  return (
+    <>
+      <h3>E2A</h3>
+      {eventInfo.e2aSections?.length > 0 ? (
+        eventInfo.e2aSections.map((e2a, idx) => {
+          const formattedDate = new Date(e2a.e2aDate).toLocaleDateString('en-GB');
+          return (
+            <div key={idx} style={{ border: '1px solid #ccc', marginBottom: '1rem', padding: '1rem' }}>
+              <div>
+                <p><strong>{e2a.e2a}</strong> {e2a.status ? '✅ Done' : ''}</p>
+                <p>{formattedDate}</p>
+              </div>
+              <p>{e2a.e2aDesc}</p>
+            </div>
+          );
+        })
+      ) : (
+        <p>No E2A </p>
+      )}
+    </>
+  );
 
-                    <p>{e2a.e2aDesc}</p>
-                  </div>
-                );
-              })
-            ) : (
-              <p>Yet to be uploaded</p>
-            )}
-          </>
-        );
 
-      case 'One2One':
+      case 'One to One Interaction':
         return (
           <>
             <h3>One to One Interactions</h3>
@@ -313,12 +328,12 @@ const fetchUserName = async (phoneNumber) => {
                 );
               })
             ) : (
-              <p>Yet to be uploaded</p>
+              <p>No One to One Interactions</p>
             )}
           </>
         );
 
-      case 'Registration':
+      case 'Registrations':
         return (
           <>
             <h3>Registered Users</h3>
@@ -380,7 +395,7 @@ const fetchUserName = async (phoneNumber) => {
                 }
               </>
             ) : (
-              <p>Yet to be uploaded</p>
+              <p>No Feedback</p>
             )}
           </>
         );
@@ -714,9 +729,19 @@ useEffect(() => {
 
 
                   {/* <p className="organizer">Organized by Malia Steav</p> */}
-                  <p className="event-date">
-                    {eventInfo?.time ? new Date(eventInfo.time.seconds * 1000).toLocaleString() : 'Event'}
-                  </p>
+             <p className="event-date">
+  {eventInfo?.time
+    ? new Date(eventInfo.time.seconds * 1000).toLocaleString('en-GB', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+      })
+    : 'Event'}
+</p>
+
                 </div>
 
 
@@ -746,8 +771,8 @@ useEffect(() => {
                 <div className='eventinnerContent'>
                   <div className="tabs">
                     {[
-                      'agenda', 'MoM', 'facilitators', 'Knowledge Sharing',
-                      'New prospects', 'referrals', 'requirements', 'E2A', 'One2One', 'Registration', 'feedback'
+                      'agenda', 'Registrations','facilitators', 'Knowledge Sharing',
+                      'New energy', 'Topic of the Day','referrals','One to One Interaction', 'requirements','E2A' ,'MoM','feedback'
                     ].map(tab => (
                       <button
                         key={tab}

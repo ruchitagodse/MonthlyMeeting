@@ -3,7 +3,7 @@ import { FiHome } from "react-icons/fi";
 import { TbBulb } from "react-icons/tb";
 import { MdOutlineBusinessCenter } from "react-icons/md";
 import { BiSolidCoinStack } from "react-icons/bi";
-import { GrGroup } from "react-icons/gr";
+import { GrBraille } from "react-icons/gr";
 import { useState, useEffect } from 'react';
 import { doc, getDoc, collection, getDocs, setDoc } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
@@ -128,7 +128,7 @@ function HeaderNav() {
     <span className="icon-label">MM</span>
   </div>
     <div className="icon-wrapper" onClick={() => router.push("/ConclaveMeeting")}>
-    <GrGroup size={26} />
+    <MdOutlineBusinessCenter size={26} />
     <span className="icon-label">Conclave</span>
   </div>
    <div className="icon-wrapper" onClick={() => router.push(`/cp-details/${phoneNumber}`)}>

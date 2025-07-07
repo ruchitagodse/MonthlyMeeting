@@ -763,7 +763,7 @@ useEffect(() => {
                     </div>
 
 
-                    <div className="see-all" onClick={() => setActiveTab("Registrations")}>
+                    <div className="see-all" onClick={() => setActiveTab("Registration")}>
                       See all
                     </div>
                   </div>

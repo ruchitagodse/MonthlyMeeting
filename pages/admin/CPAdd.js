@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { db } from "../../firebaseConfig"; // Ensure Firestore is configured
-import { collection, getDocs, doc,addDoc } from "firebase/firestore";
+import { collection, getDocs, doc,addDoc ,query,where,setDoc,getDoc} from "firebase/firestore";
 import Layout from "../../component/Layout";
 import "../../src/app/styles/main.scss";
 
@@ -22,6 +22,44 @@ export default function AddActivity() {
   const [activityNo, setActivityNo] = useState("");
   const [points, setPoints] = useState("");
   const [activityDescription, setActivityDescription] = useState("");
+const [searchName, setSearchName] = useState("");
+const [searchResults, setSearchResults] = useState([]);
+const [selectedMemberData, setSelectedMemberData] = useState(null);
+
+
+
+const handleSearchChange = async (e) => {
+  const value = e.target.value;
+  setSearchName(value);
+
+  if (value.length >= 2) {
+    const userdetailsSnapshot = await getDocs(collection(db, "userdetails"));
+
+    const allUsers = userdetailsSnapshot.docs
+      .map((doc) => {
+        const data = doc.data();
+        const name = data[" Name"]?.trim();
+        if (!name) return null;
+        return {
+          id: doc.id.trim(),
+          name,
+          phoneNumber: data["Mobile no"]?.trim(),
+          role: data["Category"]?.trim() || "CosmOrbiter"
+        };
+      })
+      .filter(Boolean);
+
+    const results = allUsers.filter(user =>
+      user.name.toLowerCase().includes(value.toLowerCase())
+    );
+
+    setSearchResults(results);
+  } else {
+    setSearchResults([]);
+  }
+};
+
+
 
   useEffect(() => {
     const fetchMembers = async () => {
@@ -32,11 +70,60 @@ export default function AddActivity() {
     fetchMembers();
   }, []);
 
-  const handleMemberChange = (e) => {
-    const member = ntMembers.find(m => m.id === e.target.value);
-    setSelectedMember(member?.id || "");
-    setPhoneNumber(member?.phoneNumber || "");
-  };
+const handleSelectMember = async (member) => {
+  try {
+    const phone = member.id.trim();
+    const userRef = doc(db, "userdetails", phone);
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists()) {
+      alert("User not found in userdetails.");
+      return;
+    }
+
+    const data = userSnap.data();
+    const name = data[" Name"]?.trim();
+    const role = data["Category"]?.trim() || "CosmOrbiter";
+    const phoneNumber = data["Mobile no"]?.trim();
+
+    if (!name || !phoneNumber) {
+      alert("Incomplete user data. Cannot add.");
+      return;
+    }
+
+    const memberRef = doc(db, "Orbiters", phone);
+    const memberSnap = await getDoc(memberRef);
+
+    // ✅ Either create or update the doc
+    await setDoc(memberRef, {
+      id: phone,
+      name,
+      phoneNumber,
+      role
+    }, { merge: true });
+
+    console.log("Orbiters doc created or updated");
+
+    // Update local state
+    setSelectedMember(name);
+    setSelectedMemberData({
+      id: phone,
+      name,
+      phoneNumber,
+      role
+    });
+    setPhoneNumber(phone);
+    setSearchName(name);
+    setSearchResults([]);
+
+  } catch (err) {
+    console.error("Error selecting member:", err);
+    alert("An error occurred while selecting this member.");
+  }
+};
+
+
+
 
   const handleActivityTypeChange = (e) => {
     const selectedType = e.target.value;
@@ -58,15 +145,16 @@ const handleSubmit = async (e) => {
 
   const activitiesRef = collection(db, "Orbiters", phoneNumber, "activities");
 
-  await addDoc(activitiesRef, {
-    month: new Date().toLocaleString("default", { month: "short", year: "numeric" }),
-    activityNo,
-    activityType,
-    points,
-    activityDescription,
-    name: ntMembers.find(m => m.id === selectedMember)?.name || "",
-    phoneNumber
-  });
+await addDoc(activitiesRef, {
+  month: new Date().toLocaleString("default", { month: "short", year: "numeric" }),
+  activityNo,
+  activityType,
+  points,
+  activityDescription,
+  name: selectedMemberData?.name || "",
+  phoneNumber
+});
+
 
   alert("Activity added successfully!");
   setActivityType("");
@@ -82,19 +170,29 @@ const handleSubmit = async (e) => {
         <h2>Add Activity</h2>
         <form onSubmit={handleSubmit}>
           <ul>
-            <li className="form-row">
-              <h4>Select Member<sup>*</sup></h4>
-              <div className="multipleitem">
-                <select onChange={handleMemberChange} value={selectedMember}>
-                  <option value="">Select Member</option>
-                  {ntMembers.map((member) => (
-                    <option key={member.id} value={member.id}>
-                      {member.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </li>
+    <li className="form-row">
+  <h4>Search Member<sup>*</sup></h4>
+  <div className="autosuggest">
+    <input
+      type="text"
+      value={searchName}
+      onChange={handleSearchChange}
+      placeholder="Type member name"
+    />
+    {searchResults.length > 0 && (
+   <ul className="dropdown" >
+  {searchResults.map((user) => (
+    <li key={user.id} onClick={() => handleSelectMember(user)}>
+      {user.name}
+    </li>
+  ))}
+</ul>
+
+    )}
+  </div>
+</li>
+
+
   
             <li className="form-row">
               <h4>Phone Number<sup>*</sup></h4>

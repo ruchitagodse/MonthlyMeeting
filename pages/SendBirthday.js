@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { db } from "../firebaseConfig";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, doc, getDoc } from "firebase/firestore"; // ✅ Correct
+
+import { db } from "../firebaseConfig"; 
 import axios from "axios";
 import "../pages/events/frontend.css"; // Make sure to import your SCSS file
 import Layout from '../component/Layout'
@@ -17,6 +18,7 @@ const BirthdayPage = () => {
 
   const today = getFormattedDate(0);
   const tomorrow = getFormattedDate(1);
+const [sentMessages, setSentMessages] = useState([]);
 
   const fetchBirthdayUsers = async () => {
     const querySnapshot = await getDocs(collection(db, "birthdaycanva"));
@@ -43,6 +45,11 @@ const BirthdayPage = () => {
     console.log("🎉 Final birthday list:", birthdayUsers);
     setUsers(birthdayUsers);
   };
+const sanitizeText = (text) =>
+  text
+    .replace(/\s{5,}/g, " ")     // Collapse 5+ spaces
+    .replace(/[\n\r\t]+/g, " ")  // Remove newlines/tabs
+    .trim();
 
   const sendWhatsAppMessage = async (user) => {
     const templateName = "daily_reminder";
@@ -55,74 +62,149 @@ const BirthdayPage = () => {
     // Log the entire user object to inspect its structure
     console.log("User Object:", user);
 
-    // Check if the phone number is valid and properly formatted
-    if (!phoneNumber || phoneNumber.trim() === "") {
-      alert("Phone number is missing or invalid.");
-      return;
-    }
+     if (!phoneNumber || phoneNumber.trim() === "") {
+    alert("Phone number is missing or invalid.");
+    return;
+  }
 
-    // Ensure phone number is in international format without the "+" sign
-    phoneNumber = phoneNumber.replace(/^\+/, ""); // Remove "+" if exists
+  const originalPhone = phoneNumber;
+  phoneNumber = phoneNumber.replace(/^\+/, "");
 
-    // Check if phone number is numeric and has a valid length (assuming 10 digits minimum for most countries)
-    if (!/^\d{10,15}$/.test(phoneNumber)) {
-      alert("Phone number is not in a valid format.");
-      return;
-    }
+  if (!/^\d{10,15}$/.test(phoneNumber)) {
+    alert("Phone number is not in a valid format.");
+    return;
+  }
 
-    // Ensure name is defined
-    if (!name || name.trim() === "") {
-      alert("Name is missing.");
-      return;
-    }
+  if (!name || name.trim() === "") {
+    alert("Name is missing.");
+    return;
+  }
 
-    try {
-      await axios.post(
-        `https://graph.facebook.com/v21.0/${phoneNumberId}/messages`,
-        {
-          messaging_product: "whatsapp",
-          to: phoneNumber,  // Correctly formatted phone number
-          type: "template",
-          template: {
-            name: templateName,
-            language: { code: "en" },
-            components: [
-              {
-                type: "header",
-                parameters: [
-                  {
-                    type: "image",
-                    image: { link: imageUrl },
-                  },
-                ],
-              },
-              {
-                type: "body",
-                parameters: [
-                  {
-                    type: "text",
-                    text: `Happy Birthday, ${name}!`, // Added default text for the body
-                  },
-                ],
-              },
-            ],
-          },
+  try {
+    // 🎂 Message to birthday user (Orbiter)
+  const cleanMessage = sanitizeText(`Today Be Special, Connect with Love and Grow in Abundance.
+
+UJustBe Universe wishes you a day full of happiness and a year that brings you much success.
+May all life's blessings be yours, on your birthday and always.
+
+Happy Birthday!!!🥳🎂🎊🎊🎂🎉`);
+
+    await axios.post(
+      `https://graph.facebook.com/v21.0/${phoneNumberId}/messages`,
+      {
+        messaging_product: "whatsapp",
+        to: phoneNumber,
+        type: "template",
+        template: {
+          name: templateName,
+          language: { code: "en" },
+          components: [
+            {
+              type: "header",
+              parameters: [
+                {
+                  type: "image",
+                  image: { link: imageUrl },
+                },
+              ],
+            },
+            {
+              type: "body",
+              parameters: [
+                { type: "text", text: name },
+                { type: "text", text: cleanMessage},
+              ],
+            },
+          ],
         },
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+
+    // 🎉 Fetch mentor details
+    const mentorDocRef = doc(db, "userdetail", originalPhone);
+    const mentorSnap = await getDoc(mentorDocRef);
+
+    if (mentorSnap.exists()) {
+  const mentorData = mentorSnap.data();
+  const mentorName = mentorData["Mentor Name"];
+  let mentorPhone = mentorData["Mentor Phone"];
+  const gender = mentorData["Gender"]?.toLowerCase(); // assuming "Male" or "Female"
+  // then proceed to send the WhatsApp message...
+
+      if (mentorPhone && /^\d{10,15}$/.test(mentorPhone)) {
+        mentorPhone = mentorPhone.toString();
+  let pronoun = "them";
+  if (gender === "male") pronoun = "him";
+  else if (gender === "female") pronoun = "her";
+
+  const mentorMessage = `Today is your connect's (${name}) birthday so kindly wish ${pronoun}.`;
+
+
+
+      
+
+        // 🎁 Send message to mentor
+        await axios.post(
+          `https://graph.facebook.com/v21.0/${phoneNumberId}/messages`,
+          {
+            messaging_product: "whatsapp",
+            to: mentorPhone,
+            type: "template",
+           template: {
+  name: "daily_reminder",
+  language: { code: "en" },
+  components: [
+    {
+      type: "header",
+      parameters: [
         {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
+          type: "image",
+          image: { link: imageUrl }, // must be a valid HTTPS image
+        },
+      ],
+    },
+    {
+      type: "body",
+      parameters: [
+        { type: "text", text: mentorName },      // {{1}}
+        { type: "text", text: mentorMessage } // {{2}}
+      ],
+    },
+  ],
+}
+
           },
-        }
-      );
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
-      alert(`WhatsApp message sent to ${name}`);
-    } catch (error) {
-      console.error("Error sending message", error.response?.data || error);
-      alert(`Failed to send message to ${name}`);
+        alert(`WhatsApp message sent to mentor ${mentorName}`);
+      } else {
+        console.log("Invalid or missing mentor phone number.");
+      }
+    } else {
+      console.log("Mentor details not found for user with phone:", originalPhone);
     }
-  };
+setSentMessages((prev) => [...prev, user.id]);
+    alert(`WhatsApp message sent to ${name}`);
+  } catch (error) {
+    console.error("Error sending message", error.response?.data || error);
+    
 
+    alert(`Failed to send message to ${name}`);
+  }
+};
   useEffect(() => {
     fetchBirthdayUsers();
   }, []);
@@ -149,85 +231,108 @@ const BirthdayPage = () => {
   return (
     <Layout>
     <div className="birthday-page">
-      <h2>🎉 Today's and Tomorrow's Birthdays</h2>
+      <h2>Today's and Tomorrow's Birthdays</h2>
 
-      <div className="birthday-section today">
-        <h3>🎂 Today's Birthdays</h3>
-        {todayBirthdays.length === 0 ? (
-          <p>No birthdays today.</p>
-        ) : (
-          todayBirthdays.map((user) => (
-            <div key={user.id} className="birthday-card">
-              <h3>{user.name}</h3>
-              <p>🎂 DOB: {user.dob}</p>
-              <p>📱 Mobile: {user["phone"]}</p>
-              {user.imageUrl && (
-                <img
-                  src={user.imageUrl}
-                  alt={user.Name}
-                  className="birthday-image"
-                />
-              )}
-              <button
-                onClick={() => sendWhatsAppMessage(user)}
-                className="send-message-btn"
-              >
-                Send WhatsApp Message
-              </button>
-            </div>
-          ))
+     <div className="birthday-section today">
+  <h3>
+     Today's Birthdays:{" "}
+    {new Date().toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "2-digit",
+    })},{" "}
+    {new Date().toLocaleDateString("en-GB", { weekday: "long" })}
+  </h3>
+
+  {todayBirthdays.length === 0 ? (
+    <p>No birthdays today.</p>
+  ) : (
+    todayBirthdays.map((user) => (
+<div key={user.id} className="birthday-card">
+  <div className="birthday-info">
+    <h3>{user.name}</h3>
+    <p>
+      DOB:{" "}
+      {new Date(user.dob).toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      })}
+    </p>
+    <p>Mobile: {user["phone"]}</p>
+  <p>MentOrbiter: {user.mentorName}</p>
+
+ {sentMessages.includes(user.id) ? (
+  <button style={{backgroundColor:"#16274f"}}className="send-message-btn">Sent </button>
+) : (
+  <button
+    onClick={() => sendWhatsAppMessage(user)}
+    className="send-message-btn"
+  >
+    Send
+  </button>
+)}
+
+
+  </div>
+
+  {user.imageUrl && (
+    <img
+      src={user.imageUrl}
+      alt={user.name}
+      className="birthday-image top-right"
+    />
+  )}
+</div>
+
+
+    ))
+  )}
+</div>
+
+<div className="birthday-section tomorrow">
+  <h3>
+     Tomorrow's Birthdays:{" "}
+    {new Date(Date.now() + 86400000).toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "2-digit",
+    })},{" "}
+    {new Date(Date.now() + 86400000).toLocaleDateString("en-GB", {
+      weekday: "long",
+    })}
+  </h3>
+
+  {tomorrowBirthdays.length === 0 ? (
+    <p>No birthdays tomorrow.</p>
+  ) : (
+    tomorrowBirthdays.map((user) => (
+      <div key={user.id} className="birthday-card">
+       
+  <div className="birthday-info">
+    <h3>{user.name}</h3>
+    <p>
+      DOB:{" "}
+      {new Date(user.dob).toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      })}
+    </p>
+    <p>Mobile: {user["phone"]}</p>
+  </div>
+        {user.imageUrl && (
+          <img
+            src={user.imageUrl}
+            alt={user.name}
+       className="birthday-image top-right"
+          />
         )}
       </div>
+    ))
+  )}
+</div>
 
-      <div className="birthday-section tomorrow">
-        <h3>🎂 Tomorrow's Birthdays</h3>
-        {tomorrowBirthdays.length === 0 ? (
-          <p>No birthdays tomorrow.</p>
-        ) : (
-          tomorrowBirthdays.map((user) => (
-            <div key={user.id} className="birthday-card">
-              <h3>{user.name}</h3>
-              <p>🎂 DOB: {user.dob}</p>
-              <p>📱 Mobile: {user["phone"]}</p>
-              {user.imageUrl && (
-                <img
-                  src={user.imageUrl}
-                  alt={user.Name}
-                  className="birthday-image"
-                />
-              )}
-              <button
-                onClick={() => sendWhatsAppMessage(user)}
-                className="send-message-btn"
-              >
-                Send WhatsApp Message
-              </button>
-            </div>
-          ))
-        )}
-      </div>
-
-      <div className="birthday-section upcoming">
-        <h3>🎂 Upcoming Birthdays</h3>
-        {upcomingBirthdays.length === 0 ? (
-          <p>No upcoming birthdays.</p>
-        ) : (
-          upcomingBirthdays.map((user) => (
-            <div key={user.id} className="birthday-card">
-              <h3>{user.Name}</h3>
-              <p>🎂 DOB: {user.dob}</p>
-              <p>📱 Mobile: {user["Mobile no"]}</p>
-              {user.imageUrl && (
-                <img
-                  src={user.imageUrl}
-                  alt={user.Name}
-                  className="birthday-image"
-                />
-              )}
-            </div>
-          ))
-        )}
-      </div>
     </div>
     </Layout>
   );

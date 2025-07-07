@@ -347,71 +347,106 @@
       }
     }
   }
-  .birthday-page {
+ .birthday-page {
   padding: 2rem;
+  font-family: 'Forum';
+  background: #77cce81f;
+  min-height: 100vh;
+}
 
-  h2 {
-    text-align: center;
-    margin-bottom: 2rem;
-    font-size: 2rem;
+.birthday-page h2 {
+  text-align: center;
+  color: #16274f;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+.birthday-section {
+  margin-bottom: 3rem;
+  padding: 1.5rem;
+  border-radius: 15px;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.birthday-section h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #16274f;
+  border-left: 4px solid #16274f;
+  padding-left: 10px;
+}
+
+.birthday-card {
+  position: relative;
+  padding: 1rem;
+  padding-right: 100px; /* leave space for the image */
+  border: 1px solid rgb(232, 238, 250);
+  border-radius: 10px;
+  background: #c5e3ed1f;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
+}
+
+.birthday-image.top-right {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #004aad;
+}
+
+
+.birthday-card h3 {
+  flex: 1 1 100%;
+  font-size: 1.2rem;
+  margin: 0.5rem 0;
+  color: #333;
+}
+
+.birthday-card p {
+  flex: 1 1 50%;
+  margin: 0.2rem 0;
+  font-size: 16px;
+  color: #302e2e;
+}
+
+
+.birthday-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.send-message-btn {
+  padding: 8px 16px;
+  background-color: #fe6f06;
+  color: #fff;
+  width: 120px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.send-message-btn:hover {
+  background-color: #b14f0a;
+}
+
+@media (max-width: 600px) {
+  .birthday-card {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
-  .birthday-section {
-    margin-bottom: 2rem;
-    padding: 1rem;
-    border-radius: 8px;
+  .birthday-card p {
+    flex: 1 1 100%;
+  }
 
-    h3 {
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-    }
-
-    &.today {
-      background-color: #f5f5f5;
-      border: 2px solid #25d366;
-    }
-
-    &.tomorrow {
-      background-color: #e0f7fa;
-      border: 2px solid #4caf50;
-    }
-
-    &.upcoming {
-      background-color: #fff3e0;
-      border: 2px solid #ff9800;
-    }
-
-    .birthday-card {
-      border: 1px solid #ccc;
-      padding: 1rem;
-      margin: 1rem 0;
-      border-radius: 8px;
-      background-color: #fff;
-
-      .birthday-image
-    {
-width: 50px;
-height: 50px;
-border-radius: 50%;
-margin-bottom: 1rem;
-}
-
-
-  button {
-    background-color: #25d366;
-    color: white;
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.3s ease;
-
-    &:hover {
-      background-color: #128c7e;
-    }
+  .birthday-image {
+    margin: 0 auto 1rem auto;
   }
 }
-}
-}
-

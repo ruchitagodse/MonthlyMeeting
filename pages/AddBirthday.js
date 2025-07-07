@@ -3,6 +3,7 @@ import { db, storage } from '../firebaseConfig';
 import { collection, getDocs, doc, setDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import "../src/app/styles/main.scss";
+import Layout from '../component/Layout';
 
 const AddBirthday = () => {
   const [userList, setUserList] = useState([]);
@@ -105,6 +106,7 @@ const convertToInputDateFormat = (dobStr) => {
   };
 
   return (
+    <Layout>
     <section className='c-form box'>
       <div>
         <h2>Add New Prospects</h2>
@@ -170,6 +172,7 @@ const convertToInputDateFormat = (dobStr) => {
         </ul>
       </div>
     </section>
+    </Layout>
   );
 };
 

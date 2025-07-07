@@ -1241,3 +1241,224 @@ textarea {
     }
   }
 }
+
+/* Highlighted Text */
+mark {
+  background-color: #ffff00;
+  padding: 0 2px;
+  border-radius: 3px;
+}
+
+.headerRight {
+  display: flex;
+}
+
+.IconContainer {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.IconContainer svg {
+  width: 40%;
+  z-index: 3;
+}
+
+.box-top {
+  transition: all 0.3s;
+}
+.reward-btn {
+  width: 120px;
+  height: 40px;
+  background-color: #101218;
+  display: flex;
+  position: relative;
+  right: 10px;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+  color: #FFF;
+}
+.text {
+  width: 70px;
+  height: 100%;
+  font-size: 13px;
+  color: #6a8ef6;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  font-weight: 600;
+}
+
+.reward-btn:hover .IconContainer .box-top {
+  transform: translateY(-5px);
+}
+
+.reward-btn:hover {
+  background-color: #202531;
+}
+
+.reward-btn:hover .coin {
+  transform: translateY(-5px);
+  transition-delay: 0.2s;
+}
+
+.coin {
+  width: 25%;
+  height: 25%;
+  background-color: #e4d61a;
+  position: absolute;
+  border-radius: 50%;
+  transition: all 0.3s;
+  z-index: 1;
+  border: 2px solid #ffe956;
+  margin-top: 4px;
+}
+.meetingDetails p {
+  margin: 4px 0;
+  font-size: 16px;
+  color: #333;
+  line-height: 1.4;
+}
+.meetingDetails p strong {
+      color: #6798aa;
+    font-weight: 400;
+}
+.eventDetails p strong {
+      color: #6798aa;
+    font-weight: 400;
+}
+.names p {
+  margin: 4px 0;
+  font-size: 16px;
+  color: #120801;
+  font-weight: 400;
+  line-height: 1.4;
+}
+.names p strong {
+      color: #e1e9ec;
+    font-weight: 400;
+}
+
+ .DetailsCard{
+    width: 100%;
+    background-color: #819eb0;
+    padding: 15px;
+    border-radius: 10px;
+  }
+
+  .new-profile-container {
+  background: #fff;
+  padding: 34px;
+  border-radius: 14px;
+  max-width: 400px;
+  margin: auto;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.profile-image-section {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.profile-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.edit-icon {
+    position: absolute;
+    bottom: 0;
+    right: 70px;
+    background: #ededed;
+    color: white;
+    padding: 6px;
+    border-radius: 50%;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.profile-inputs label {
+  display: block;
+  font-size: 14px;
+  margin-top: 12px;
+  margin-bottom: 4px;
+  font-weight: 500;
+  color: #333;
+}
+
+.profile-inputs input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background: #f5f5f5;
+  font-size: 14px;
+  color: #555;
+}
+
+.profile-inputs input:read-only {
+  background: #f5f5f5;
+}
+
+.phone-input {
+  display: flex;
+  align-items: center;
+}
+
+.phone-input .country-code {
+  background: #f5f5f5;
+  padding: 5px;
+  border-radius: 8px 0 0 8px;
+  border: 1px solid #ddd;
+  border-right: none;
+  color: #555;
+}
+
+.phone-input input {
+  border-radius: 0 8px 8px 0;
+  border-left: none;
+  flex: 1;
+}
+
+.date-input {
+  position: relative;
+}
+
+.date-input input {
+  width: 100%;
+}
+
+.calendar-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+}
+.profile-initial-circle {
+ width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: #a2cbda;
+    color: white;
+    font-size: 36px;
+    font-weight: 400;
+    display: flex
+;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+}

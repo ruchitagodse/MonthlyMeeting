@@ -28,7 +28,7 @@ const UploadExcel = () => {
   const uploadDataToFirestore = async () => {
     if (excelData) {
       try {
-        const collectionRef = collection(db, "userdetails"); // Replace with your Firestore collection name
+        const collectionRef = collection(db, "userdetail"); // Replace with your Firestore collection name
         for (let row of excelData) {
           const mobileNumber = String(row["Mobile no"]); // Convert 'Mobile no' column value to string
           if (mobileNumber) {

@@ -1815,7 +1815,26 @@ display: none; /* For IE */
   cursor: pointer;
   font-size: 20px;
 }
+/* Dropdown List */
+.dropdown-list {
+  list-style-type: none;
+  margin-top: 5px;
+  padding: 0;
+  border: 1px solid #ccc;
+  border-top: none;
+  max-height: 200px;
+  overflow-y: auto;
+  background-color: #fff;
+}
 
+.dropdown-item {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background-color: #f0f0f0;
+}
 /*Resize the wrap to see the search bar change!*/
 // .wrap{
 //   width: 30%;

@@ -29,7 +29,7 @@ const EditAdminEvent = () => {
 
 
   const tabs = [
-    'Meeting Details', 'Knowledge Sharing','121' ,'Requirement', 'Prospect Identification' ,'Referral Identification','Upload Agenda','Registered Users','Meetup'];
+    'Meeting Details', 'Knowledge Sharing','121' ,'Requirement', 'Prospect Identification' ,'Referral Identification','Upload Agenda','Registered Users'];
 
 const fetchEvent = async (index) => {
   if (!conclaveId || !meetingId) return;
@@ -156,11 +156,11 @@ const fetchEvent = async (index) => {
 <RegisteredUsers fetchData={fetchEvent} eventID={id} data={eventData} />
           </>
         )}
-          {activeTab === 8 && (
+          {/* {activeTab === 8 && (
           <>
 <Meetup fetchData={fetchEvent} eventID={id} data={eventData} />
           </>
-        )}
+        )} */}
    </>
 )}
     <div className="nav-buttons">

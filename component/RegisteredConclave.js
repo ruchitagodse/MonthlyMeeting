@@ -167,8 +167,8 @@ const RegisteredUsers = () => {
             <th>Name</th>
             <th>Category</th>
             <th>Response</th>
-            <th>Feedback</th>
-            <th>Attendance</th>
+            {/* <th>Feedback</th>
+            <th>Attendance</th> */}
           </tr>
         </thead>
         <tbody>
@@ -179,7 +179,7 @@ const RegisteredUsers = () => {
               <td>{user.name}</td>
               <td>{user.category}</td>
               <td>{user.response}</td>
-              <td>
+              {/* <td>
                 <button onClick={() => openModal(user.feedback, user.name)}>View</button>
                 <button onClick={() => openAddFeedbackModal(user.id, user.name)}>Add</button>
               </td>
@@ -189,7 +189,7 @@ const RegisteredUsers = () => {
                 ) : (
                   <button onClick={() => markAttendance(user.id)}>Mark Present</button>
                 )}
-              </td>
+              </td> */}
             </tr>
           ))}
         </tbody>

@@ -242,7 +242,7 @@ const AddUser = () => {
                 <ul>
       <li className='form-row'>
         <div className='multipleitem'>   
-                <button className='submitbtn' onClick={handleSubmit}>Register & Send</button>
+                <button className='submitbtn' onClick={handleSubmit}>Register</button>
             </div>
             </li>
             </ul>   

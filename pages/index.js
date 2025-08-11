@@ -470,7 +470,7 @@ const handleLogin = async (e) => {
 
         <section className="project-summary">
 
-  <Link href="/NTmeetdetails">
+  <Link href="/ConclaveMeeting">
     <div className="summary-card in-progress">
       <p className="count">{ntMeetCount}</p>
       <p className="label">Total Conclaves</p>

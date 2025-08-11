@@ -1867,6 +1867,88 @@ display: none; /* For IE */
   justify-content: center;
   align-items: center;
 }
+/* Modal Overlay */
+
+
+/* Modal Box */
+.modal-box {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease;
+  position: relative;
+}
+
+/* Headings and Labels */
+.modal-box h3 {
+  margin-bottom: 1rem;
+  color: #333;
+  font-size: 1.4rem;
+  text-align: center;
+}
+
+.modal-box label {
+  display: block;
+  margin: 1rem 0 0.4rem;
+  font-weight: 600;
+  color: #555;
+}
+
+/* Inputs & Selects */
+.modal-box input,
+.modal-box select {
+  width: 100%;
+  padding: 0.6rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+/* Modal Buttons */
+.modal-box button {
+  margin-top: 1.2rem;
+  margin-right: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.modal-box button:first-of-type {
+  background-color: #fe6f06;
+  color: white;
+}
+
+.modal-box button:first-of-type:hover {
+  background-color: #cc5b0b;
+}
+
+.modal-box button:last-of-type {
+  background-color: #ddd;
+  color: #333;
+}
+
+.modal-box button:last-of-type:hover {
+  background-color: #bbb;
+}
+
+/* Optional: Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
 
 .closes-modal {
   position: absolute;
@@ -1973,6 +2055,25 @@ display: none; /* For IE */
   align-items: center;
 }
 
+.complete {
+  color: green;
+  font-weight: bold;
+}
+
+.incomplete {
+  color: red;
+  font-weight: bold;
+}
+
+
+input[type="file"] {
+  padding: 8px;
+  background-color: #f5f5f5;
+  border: 1px solid #efef;
+  border-radius: 6px;
+  font-size: 14px;
+  width: 100%;
+}
 
 .tab-header {
   display: flex;
@@ -2081,6 +2182,16 @@ display: none; /* For IE */
   margin-bottom: 2rem;
   position: relative;
 }
+.distribution-box {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #f3f3f3;
+  border-left: 5px solid #0070f3;
+  border-radius: 8px;
+}
+.distribution-box p {
+  margin: 6px 0;
+}
 
 .step-progress-bar::before {
   content: "";
@@ -2150,4 +2261,198 @@ display: none; /* For IE */
 
 .step-content.active {
   display: block;
+}
+.edit-referral {
+  padding: 20px;
+
+  h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+
+    button {
+      padding: 10px 16px;
+      border: none;
+      background-color: #f0f0f0;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+
+      &.active-tab {
+        background-color: #333;
+        color: white;
+      }
+
+      &:hover {
+        background-color: #ddd;
+      }
+    }
+  }
+
+  .tab-content {
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: #fafafa;
+
+    h3, h4 {
+      margin-top: 0;
+    }
+
+    form,
+    .form-section {
+      label {
+        display: block;
+        margin: 10px 0 5px;
+        font-weight: 500;
+
+        input,
+        select,
+        textarea {
+          display: block;
+          width: 100%;
+          padding: 8px;
+          font-size: 14px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          margin-top: 5px;
+          background-color: #fff;
+
+          &:focus {
+            outline: none;
+            border-color: #999;
+          }
+        }
+
+        textarea {
+          min-height: 60px;
+          resize: vertical;
+        }
+      }
+
+      button {
+        margin-top: 20px;
+        padding: 10px 18px;
+        background-color: #333;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+          background-color: #555;
+        }
+      }
+    }
+
+    .table-class {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+
+      th,
+      td {
+        padding: 10px;
+        border: 1px solid #ccc;
+        text-align: left;
+        font-size: 14px;
+      }
+
+      th {
+        background-color: #f5f5f5;
+        font-weight: 600;
+      }
+
+      tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+    }
+
+    .distribution-box {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #f4f8fb;
+      border: 1px solid #cbd5e0;
+      border-radius: 6px;
+
+      p {
+        margin: 6px 0;
+        font-size: 14px;
+
+        strong {
+          font-weight: 600;
+        }
+      }
+    }
+  }
+}
+/* Form container */
+.form-section {
+  background-color: #f8f9ff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  margin-bottom: 30px;
+}
+
+/* Section headers */
+.form-section h4 {
+  font-size: 20px;
+  margin-bottom: 16px;
+  color: #2c3e50;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 6px;
+}
+
+/* Labels */
+.form-section label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #34495e;
+}
+
+/* Inputs, Textarea, Select */
+.form-section input,
+.form-section select,
+.form-section textarea {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border 0.2s ease;
+}
+
+.form-section input:focus,
+.form-section select:focus,
+.form-section textarea:focus {
+  border-color: #3498db;
+  outline: none;
+}
+
+/* Button */
+.form-section button {
+  background-color: #3498db;
+  color: white;
+  padding: 10px 18px;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.form-section button:hover {
+  background-color: #2980b9;
 }

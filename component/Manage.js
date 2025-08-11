@@ -66,6 +66,11 @@ const ManageEvents = () => {
         }
         return 'Invalid time';
     };
+const sortedEvents = [...events].sort((a, b) => {
+  const dateA = a.time?.toDate?.();
+  const dateB = b.time?.toDate?.();
+  return dateB - dateA; // latest to oldest
+});
 
     return (
         <>
@@ -91,7 +96,7 @@ const ManageEvents = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {events.map((event, index) => (
+                        {sortedEvents.map((event, index) => (
                             <tr key={event.id}>
                                 <td>{index + 1}</td>
                                 <td>{event.Eventname}</td>

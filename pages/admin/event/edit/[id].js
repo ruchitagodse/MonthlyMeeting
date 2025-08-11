@@ -18,7 +18,7 @@ import EditForm from '../../../../component/EditForm';
 import RegisteredUsers from '../../../../component/RegisteredUsers';
 import AddUser from '../../../../component/AddUsers';
 import TopicSection from '../../../../component/TopicOfTheDay';
-
+import Conclave from '../../../../component/Conclave';
 
 const EditAdminEvent = () => {
   const router = useRouter();
@@ -34,7 +34,7 @@ const EditAdminEvent = () => {
 
 
   const tabs = [
-    'Event Info','Topic of the Day', 'Facilitator', 'Referral Possibilities', 'Proposed Interaction', 'Proposed E2A', 'Prospects Identified', 'Knowledge Sharing', 'Upload MoM', 'Add Creatives', 'Requirements','Registered Users','Add Users'
+    'Event Info','Topic of the Day', 'Facilitator', 'Referral Possibilities', 'Proposed Interaction', 'Proposed E2A', 'Prospects Identified', 'Knowledge Sharing', 'Upload MoM', 'Add Creatives', 'Requirements','Registered Users','Add Users','Conclave'
   ];
 
   const fetchEvent = async (index) => {
@@ -185,6 +185,12 @@ const EditAdminEvent = () => {
           <>
 
 <AddUser fetchData={fetchEvent} eventId={id} data={eventData} />
+          </>
+        )}
+        {activeTab === 13 && (
+          <>
+
+<Conclave fetchData={fetchEvent} eventId={id} data={eventData} />
           </>
         )}
         {/* <div className='tab-navigation'>

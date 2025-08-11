@@ -65,6 +65,16 @@ const ManageEvents = () => {
       alert("Failed to delete conclave. Please try again.");
     }
   };
+const formatDate = (dateString) => {
+  if (!dateString) return 'N/A';
+  const date = new Date(dateString);
+  if (isNaN(date)) return 'Invalid Date';
+  return date.toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: '2-digit',
+  });
+};
 
   return (
     <>
@@ -95,14 +105,19 @@ const ManageEvents = () => {
                   <td>{index + 1}</td>
                   <td>{item.conclaveStream || 'N/A'}</td>
                   <td>{getUserNameById(item.leader)}</td>
-                  <td>{item.startDate || 'N/A'}</td>
-                  <td>{item.initiationDate || 'N/A'}</td>
+                 <td>{formatDate(item.startDate)}</td>
+<td>{formatDate(item.initiationDate)}</td>
+
                   <td>{getUserNamesByIds(item.ntMembers || [])}</td>
                   <td>{item.orbiters?.length || 0}</td>
                   <td>
                     <div className='twobtn'>
-                      <button className="btn-edit" onClick={() => handleEdit(item.id)}>✎ Edit</button>
-                      <button className="btn-delete" onClick={() => handleDelete(item.id)}>🗑 Delete</button>
+                      <button  className="m-button-7" 
+    
+            style={{ marginLeft: '10px', backgroundColor: '#f16f06', color: 'white' }} onClick={() => handleEdit(item.id)}>✎ Edit</button>
+                      <button  className="m-button-7" 
+          
+            style={{ marginLeft: '10px', backgroundColor: '#FF0000', color: 'white' }} onClick={() => handleDelete(item.id)}>🗑 Delete</button>
                     </div>
                   </td>
                 </tr>

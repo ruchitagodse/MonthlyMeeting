@@ -126,7 +126,6 @@ const sendWhatsAppMessage = async (userName, conclaveName, eventDate, venue, lin
     console.error('Error sending WhatsApp:', error);
   }
 };
-
 const handleMeetingSubmit = async (e) => {
   e.preventDefault();
   const { meetingName, datetime, agenda, mode, link, venue } = meetingForm;
@@ -165,36 +164,53 @@ const handleMeetingSubmit = async (e) => {
     });
     setShowMeetingForm(false);
 
-    // Fetch Conclave info
-    const conclaveSnap = await getDoc(doc(db, 'Conclaves', id));
-    const conclaveData = conclaveSnap.data();
-    const userIds = [
-      ...conclaveData.orbiters || [],
-      ...conclaveData.ntMembers || [],
-      conclaveData.leader
-    ];
-
-    const readableDate = new Date(datetime).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-
-    for (const uid of userIds) {
-      const userSnap = await getDoc(doc(db, 'userdetails', uid));
-      const user = userSnap.data();
-      if (user && user.Phone) {
-        await sendWhatsAppMessage(
-          user[" Name"],
-          conclaveData.conclaveStream,
-          readableDate,
-          venue,
-          link,
-          user.Phone
-        );
-      }
-    }
+    // WhatsApp messaging is turned off
+    // const conclaveSnap = await getDoc(doc(db, 'Conclaves', id));
+    // const conclaveData = conclaveSnap.data();
+    // const userIds = [
+    //   ...conclaveData.orbiters || [],
+    //   ...conclaveData.ntMembers || [],
+    //   conclaveData.leader
+    // ];
+    //
+    // const readableDate = new Date(datetime).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+    //
+    // for (const uid of userIds) {
+    //   const userSnap = await getDoc(doc(db, 'userdetails', uid));
+    //   const user = userSnap.data();
+    //   if (user && user.Phone) {
+    //     await sendWhatsAppMessage(
+    //       user[" Name"],
+    //       conclaveData.conclaveStream,
+    //       readableDate,
+    //       venue,
+    //       link,
+    //       user.Phone
+    //     );
+    //   }
+    // }
 
   } catch (error) {
     console.error("Error adding meeting:", error);
     alert("Failed to add meeting.");
   }
+};
+const formatDateTime = (seconds) => {
+  const date = new Date(seconds * 1000);
+
+  const options = { day: '2-digit', month: 'short', year: '2-digit' };
+  const datePart = date.toLocaleDateString('en-GB', options);
+
+  let hours = date.getHours();
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  const isPM = hours >= 12;
+
+  hours = hours % 12 || 12; // Convert 0 -> 12
+  const period = isPM ? 'pm' : 'am';
+
+  const timePart = `${hours}:${minutes}${period}`;
+
+  return `${datePart} at ${timePart}`;
 };
 
   return (
@@ -210,7 +226,9 @@ const handleMeetingSubmit = async (e) => {
               <>
                <div style={{ marginTop: "2rem" }}>
                   <button
-                    className="submitbtn"
+                  className="m-button-7" 
+    
+            style={{ marginLeft: '10px', backgroundColor: '#f16f06', color: 'white' }} 
                     onClick={() => setShowMeetingForm(!showMeetingForm)}
                   >
                     {showMeetingForm ? "Cancel" : "➕ Add Meeting"}
@@ -282,7 +300,7 @@ const handleMeetingSubmit = async (e) => {
                             <h4>Meeting Link<sup>*</sup></h4>
                             <div className="multipleitem">
                               <input
-                                type="url"
+                                type="text"
                                 name="link"
                                 value={meetingForm.link}
                                 onChange={handleMeetingChange}
@@ -309,7 +327,7 @@ const handleMeetingSubmit = async (e) => {
 
                         <li className="form-row">
                           <div className="multipleitem">
-                            <button type="submit" className="submitbtn">Add Meeting</button>
+                            <button type="submit" className="submitbtn">Create</button>
                           </div>
                         </li>
                       </ul>
@@ -339,14 +357,17 @@ const handleMeetingSubmit = async (e) => {
         <tr key={meeting.id}>
           <td>{meeting.meetingName}</td>
           <td>{meeting.mode}</td>
-          <td>
-            {meeting.datetime?.seconds
-              ? new Date(meeting.datetime.seconds * 1000).toLocaleString()
-              : 'N/A'}
-          </td>
+       <td>
+  {meeting.datetime?.seconds
+    ? formatDateTime(meeting.datetime.seconds)
+    : 'N/A'}
+</td>
+
           <td>
          <button
-  className="btn-edit"
+ className="m-button-7" 
+    
+            style={{ marginLeft: '10px', backgroundColor: '#f16f06', color: 'white' }} 
   onClick={() =>
     router.push(`/admin/event/addmeeting/${meeting.id}?conclaveId=${id}`)
   }

@@ -256,7 +256,7 @@ const sortedEvents = [...events].sort((a, b) => {
  <div className='container eventList'>
   {events.map((conclave, index) => {
     return (
-      <Link href={`/conclaves/${conclave.id}`} key={index} className="meetingBoxLink">
+      <Link href={`/Conclave/${conclave.id}`} key={index} className="meetingBoxLink">
         <div className='meetingBox'>
      
             {/* <span className="meetingLable3">

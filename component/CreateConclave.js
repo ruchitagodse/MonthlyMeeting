@@ -20,6 +20,7 @@ export default function CreateConclavePage() {
   const [leaderSearch, setLeaderSearch] = useState('');
   const [ntSearch, setNtSearch] = useState('');
   const [orbiterSearch, setOrbiterSearch] = useState('');
+const [focusedInput, setFocusedInput] = useState(null);
 
   const [filteredLeaders, setFilteredLeaders] = useState([]);
   const [filteredNt, setFilteredNt] = useState([]);
@@ -39,6 +40,17 @@ export default function CreateConclavePage() {
     };
     fetchUsers();
   }, []);
+useEffect(() => {
+  const handleClickOutside = (e) => {
+    if (!e.target.closest('.autosuggest')) {
+      setFocusedInput(null);
+    }
+  };
+  document.addEventListener('click', handleClickOutside);
+  return () => {
+    document.removeEventListener('click', handleClickOutside);
+  };
+}, []);
 
   const handleChange = (e) => {
     setForm(prev => ({
@@ -91,7 +103,7 @@ const handleSearch = (query, setQuery, setFiltered, allUsers) => {
         const userDoc = await getDoc(doc(db, 'userdetails', phone));
         const userName = userDoc.exists() ? userDoc.data()[" Name"] : phone;
 
-        await sendWhatsAppMessage(userName, eventName, eventDate, '', phone);
+   //     await sendWhatsAppMessage(userName, eventName, eventDate, '', phone);
       }
     }
   } catch (err) {
@@ -190,133 +202,167 @@ const sendWhatsAppMessage = async (userName, eventName, eventDate, eventLink, ph
                 />
               </div>
             </li>
+    
+    <li className="form-row">
+       <h4>Assign Leader:<sup>*</sup></h4>
+  <div className="autosuggest">
+   <input
+  type="text"
+  placeholder="Search leader"
+  value={leaderSearch}
+  onFocus={() => {
+    setFilteredLeaders(users);
+    setFocusedInput('leader');
+  }}
+  onChange={(e) =>
+    handleSearch(e.target.value, setLeaderSearch, setFilteredLeaders, users)
+  }
+/>
 
-            {/* Assign Leader (Searchable) */}
-            <li>
-              <h4>Assign Leader:<sup>*</sup></h4>
-              <div className='multipleitem'>
-                <input
-                  type="text"
-                  placeholder="Search leader"
-                  value={leaderSearch}
-                  onChange={(e) =>
-                    handleSearch(e.target.value, setLeaderSearch, setFilteredLeaders, users)
-                  }
-                />
-                <div className="dropdown-list">
-                  {filteredLeaders.map(user => (
-                    <div
-                      key={user.id}
-                      className="dropdown-item"
-                      onClick={() => {
-                        setForm(prev => ({ ...prev, leader: user.id }));
-                        setLeaderSearch(user.name);
-                        setFilteredLeaders([]);
-                      }}
-                    >
-                      {user.name}
-                    </div>
-                  ))}
+{focusedInput === 'leader' && filteredLeaders.length > 0 && (
+  <ul className="dropdown">
+    {filteredLeaders.map((user) => (
+      <li
+        key={user.id}
+        onClick={() => {
+          setForm((prev) => ({ ...prev, leader: user.id }));
+          setLeaderSearch(user.name);
+          setFilteredLeaders([]);
+          setFocusedInput(null);
+        }}
+      >
+        {user.name}
+      </li>
+    ))}
+  </ul>
+)}
+
                 </div>
-                {form.leader && (
+                {/* {form.leader && (
                   <p className="selected-single">Selected: {getUserNameById(form.leader)}</p>
-                )}
-              </div>
+                )} */}
             </li>
+          
+              <li className="form-row">
+  <h4>Assign NT Members (multiple):<sup>*</sup></h4>
+  <div className="autosuggest">
+   <input
+  type="text"
+  placeholder="Search NT Members"
+  value={ntSearch}
+  onFocus={() => {
+    setFilteredNt(users);
+    setFocusedInput('ntMembers');
+  }}
+  onChange={(e) =>
+    handleSearch(e.target.value, setNtSearch, setFilteredNt, users)
+  }
+/>
 
-            {/* NT Members (Multi-select + Search) */}
-            <li>
-              <h4>Assign NT Members (multiple):<sup>*</sup></h4>
-              <div className='multipleitem'>
-                <input
-                  type="text"
-                  placeholder="Search NT Members"
-                  value={ntSearch}
-                  onChange={(e) =>
-                    handleSearch(e.target.value, setNtSearch, setFilteredNt, users)
-                  }
-                />
-                <div className="dropdown-list">
-                  {filteredNt.map(user => (
-                    <div
-                      key={user.id}
-                      className="dropdown-item"
-                      onClick={() => handleAddToMulti('ntMembers', user.id)}
-                    >
-                      {user.name}
-                    </div>
-                  ))}
-                </div>
-                <div className="selected-tags">
-                  {form.ntMembers.map(id => (
-                    <span key={id} onClick={() => handleRemoveFromMulti('ntMembers', id)}>
-                      {getUserNameById(id)} ✕
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </li>
+{focusedInput === 'ntMembers' && filteredNt.length > 0 && (
+  <ul className="dropdown">
+    {filteredNt.map((user) => (
+     <li
+  key={user.id}
+  onClick={() => {
+    handleAddToMulti('ntMembers', user.id);
+    setNtSearch(''); // ✅ clear input
+    setFilteredNt([]);
+    setFocusedInput(null);
+  }}
+>
+  {user.name}
+</li>
 
-            {/* Orbiters (Multi-select + Search) */}
-            <li>
-              <h4>Add Orbiters (10+):<sup>*</sup></h4>
-              <div className='multipleitem'>
-                <input
-                  type="text"
-                  placeholder="Search Orbiters"
-                  value={orbiterSearch}
-                  onChange={(e) =>
-                    handleSearch(e.target.value, setOrbiterSearch, setFilteredOrbiters, users)
-                  }
-                />
-                <div className="dropdown-list">
-                  {filteredOrbiters.map(user => (
-                    <div
-                      key={user.id}
-                      className="dropdown-item"
-                      onClick={() => handleAddToMulti('orbiters', user.id)}
-                    >
-                      {user.name}
-                    </div>
-                  ))}
-                </div>
-                <div className="selected-tags">
-                  {form.orbiters.map(id => (
-                    <span key={id} onClick={() => handleRemoveFromMulti('orbiters', id)}>
-                      {getUserNameById(id)} ✕
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </li>
+    ))}
+  </ul>
+)}
 
-            <li>
-              <h4>Leader’s Role & Responsibility:<sup>*</sup></h4>
-              <div className='multipleitem'>
-                <textarea
-                  name="leaderRole"
-                  value={form.leaderRole}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            </li>
 
-            <li>
+    <div className="selected-tags">
+      {form.ntMembers.map(id => (
+        <span key={id} onClick={() => handleRemoveFromMulti('ntMembers', id)}>
+          {getUserNameById(id)} ✕
+        </span>
+      ))}
+    </div>
+  </div>
+</li>
+
+            
+              <li className="form-row">
+  <h4>Add Orbiters (10+):<sup>*</sup></h4>
+  <div className="autosuggest">
+    <input
+  type="text"
+  placeholder="Search Orbiters"
+  value={orbiterSearch}
+  onFocus={() => {
+    setFilteredOrbiters(users);
+    setFocusedInput('orbiters');
+  }}
+  onChange={(e) =>
+    handleSearch(e.target.value, setOrbiterSearch, setFilteredOrbiters, users)
+  }
+/>
+
+{focusedInput === 'orbiters' && filteredOrbiters.length > 0 && (
+  <ul className="dropdown">
+    {filteredOrbiters.map((user) => (
+     <li
+  key={user.id}
+  onClick={() => {
+    handleAddToMulti('orbiters', user.id);
+    setOrbiterSearch(''); // ✅ clear input
+    setFilteredOrbiters([]);
+    setFocusedInput(null);
+  }}
+>
+  {user.name}
+</li>
+
+    ))}
+  </ul>
+)}
+
+
+    <div className="selected-tags">
+      {form.orbiters.map(id => (
+        <span key={id} onClick={() => handleRemoveFromMulti('orbiters', id)}>
+          {getUserNameById(id)} ✕
+        </span>
+      ))}
+    </div>
+  </div>
+</li>
+
+         
+
+     <ul>
+   <li className='form-row'>
+            <h4>Leader’s Role & Responsibility:</h4>
+            <textarea
+              name="leaderRole"
+              value={form.leaderRole}
+              onChange={handleChange}
+              required
+            />
+          </li>
+           <li className='form-row'>
               <h4>NT Members’ Roles & Responsibilities:<sup>*</sup></h4>
-              <div className='multipleitem'>
+ 
                 <textarea
                   name="ntRoles"
                   value={form.ntRoles}
                   onChange={handleChange}
                   required
                 />
-              </div>
+              
             </li>
-
+</ul>   
             <li className='form-row'>
               <div className='multipleitem'>
-                <button className='submitbtn' type="submit">Create Conclave</button>
+                <button className='submitbtn' type="submit">Create</button>
               </div>
             </li>
           </ul>

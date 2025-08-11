@@ -1,5 +1,6 @@
 import React from 'react';
-import { FaRegImage } from "react-icons/fa6";
+import { ImProfile } from "react-icons/im";
+import { FaPeopleArrows } from "react-icons/fa";
 import { MdEventAvailable, MdImage, MdOutlineKeyboardArrowDown } from "react-icons/md";
 import { RiListSettingsLine } from "react-icons/ri";
 import { FaRegUser } from "react-icons/fa";
@@ -7,7 +8,7 @@ import { BsCake2 } from "react-icons/bs";
 import Link from 'next/link';
 import { useRouter } from "next/router";
 import { BsCashCoin } from "react-icons/bs";
-
+import { GrGroup } from "react-icons/gr";
 const Navbar = (props) => {
     const router = useRouter();
     
@@ -42,8 +43,8 @@ const Navbar = (props) => {
                             </ul>
                         </li>
                             <li>
-                            <Link href="/admin/event/addEvent">
-                                <span className="icons"><MdEventAvailable /></span>
+                            <Link href="">
+                                <span className="icons"><GrGroup /></span>
                                 <span className="linklabel">Conclave</span>
                                 <span className="submenuIcon"><MdOutlineKeyboardArrowDown /></span>
                             </Link>
@@ -52,14 +53,17 @@ const Navbar = (props) => {
                                 <li><Link href="/admin/event/manageconclave">Manage Conclave</Link></li>
                             </ul>
                         </li>
-                          {/* <li>
-                            <Link href="/admin/event/cpmembers">
-                                <span className="icons"><FaRegUser /></span>
-                                <span className="linklabel">Add Orbiters</span>
+                       <li>
+                            <Link href="">
+                                <span className="icons"><FaPeopleArrows /></span>
+                                <span className="linklabel">Referrals</span>
                                 <span className="submenuIcon"><MdOutlineKeyboardArrowDown /></span>
                             </Link>
-                           
-                        </li> */}
+                            <ul>
+                                <li><Link href="/admin/AddReferral">Add Referrals</Link></li>
+                                <li><Link href="/admin/ManageReferrals">Manage Referrals</Link></li>
+                            </ul>
+                        </li>
                         <li>
                             <Link href="/admin/event/userlist">
                                 <span className="icons"><FaRegUser /></span>

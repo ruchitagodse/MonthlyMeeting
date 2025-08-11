@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../firebaseConfig";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, getDoc, doc } from "firebase/firestore";
 import Layout from "../component/Layout";
 import "../src/app/styles/main.scss";
 
@@ -11,27 +11,47 @@ const BirthdayPage = () => {
   const [selectedMonth, setSelectedMonth] = useState("");
 
   const fetchAllBirthdayUsers = async () => {
-    const querySnapshot = await getDocs(collection(db, "userdetails"));
+    const querySnapshot = await getDocs(collection(db, "userdetail"));
     const users = [];
 
-    querySnapshot.forEach((doc) => {
-      const data = doc.data();
+    for (const docSnap of querySnapshot.docs) {
+      const data = docSnap.data();
       const dobString = data["DOB"];
+      if (!dobString || !dobString.includes("/")) continue;
 
-      if (dobString) {
-        const [day, month, year] = dobString.split("/").map((val) => val.trim());
-        const sortKey = `${month.padStart(2, "0")}-${day.padStart(2, "0")}`; // MM-DD
+      const [day, month, year] = dobString.split("/").map((val) => val.trim());
+      const phone = (data["Mobile no"] || "").trim();
 
-        users.push({
-          id: doc.id,
-          ...data,
-          dobFormatted: `${day}/${month}`,
-          sortKey,
-          cleanPhone: (data["Mobile no"] || "").trim(),
-          month,
-        });
+      if (!phone) continue;
+
+      let status = "Incomplete";
+      let imageUrl = "";
+
+      try {
+        const birthdayDocRef = doc(db, "birthdaycanva", phone);
+        const birthdayDocSnap = await getDoc(birthdayDocRef);
+        if (birthdayDocSnap.exists()) {
+          const birthdayData = birthdayDocSnap.data();
+          status = "Complete";
+          imageUrl = birthdayData.imageUrl || "";
+        }
+      } catch (err) {
+        console.error("Error fetching birthdaycanva data for", phone, err);
       }
-    });
+
+      const sortKey = `${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+
+      users.push({
+        id: docSnap.id,
+        ...data,
+        dobFormatted: `${day}/${month}`,
+        sortKey,
+        cleanPhone: phone,
+        month,
+        status,
+        imageUrl,
+      });
+    }
 
     users.sort((a, b) => (a.sortKey > b.sortKey ? 1 : -1));
     setAllUsers(users);
@@ -46,13 +66,13 @@ const BirthdayPage = () => {
     let filtered = allUsers;
 
     if (selectedMonth) {
-      filtered = filtered.filter(user => user.month === selectedMonth);
+      filtered = filtered.filter((user) => user.month === selectedMonth);
     }
 
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
-      filtered = filtered.filter(user =>
-        (user[" Name"] || "").toLowerCase().includes(term)
+      filtered = filtered.filter((user) =>
+        (user["Name"] || "").toLowerCase().includes(term)
       );
     }
 
@@ -61,10 +81,10 @@ const BirthdayPage = () => {
 
   return (
     <Layout>
-      <section className='c-userslist box'>
+      <section className="c-userslist box">
         <h2>🎂 Birthday List (Sorted by Month & Day)</h2>
 
-        {/* Filter & Search Controls */}
+        {/* Filters */}
         <div className="filters" style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
           <select value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)}>
             <option value="">All Months</option>
@@ -98,6 +118,8 @@ const BirthdayPage = () => {
                   <th>Gender</th>
                   <th>Category</th>
                   <th>UJB Code</th>
+                  <th>Status</th>
+                  <th>Image</th>
                 </tr>
               </thead>
               <tbody>
@@ -111,6 +133,23 @@ const BirthdayPage = () => {
                     <td>{user["Gender"]}</td>
                     <td>{user["Category"]}</td>
                     <td>{user["UJB Code"]}</td>
+                    <td>{user.status}</td>
+                    <td>
+                      {user.imageUrl ? (
+                        <img
+                          src={user.imageUrl}
+                          alt="Preview"
+                          style={{
+                            width: "50px",
+                            height: "50px",
+                            objectFit: "cover",
+                            borderRadius: "50%",
+                          }}
+                        />
+                      ) : (
+                        "-"
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>

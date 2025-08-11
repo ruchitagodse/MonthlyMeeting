@@ -13,7 +13,7 @@ const db = getFirestore(app);
 
 const Profile = () => {
   const [userName, setUserName] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState(''); 
   const [cpPoints, setCPPoints] = useState(0);
   const [userDetails, setUserDetails] = useState({});
   const [activeTab, setActiveTab] = useState('basic');
@@ -355,5 +355,6 @@ const [showContentOnly, setShowContentOnly] = useState(false);
     </main>
   );
 };
+
 
 export default Profile;

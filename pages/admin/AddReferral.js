@@ -171,134 +171,200 @@ const [lastUpdated, setLastUpdated] = useState(new Date());
   };
 
   return (
-    <Layout>
-      <section className="c-form box">
-        <h2>Admin Profile Setup</h2>
-        <button className="m-button-5" onClick={() => window.history.back()}>
-          Back
-        </button>
-        <ul>
-          {/* Orbiter Search */}
-          <li className="form-row">
-            <h4>Search Orbiter</h4>
-            <input type="text" value={orbiterSearch} onChange={(e) => setOrbiterSearch(e.target.value)} />
-            {orbiterSearch && (
-              <ul>
-                {users
-                  .filter((u) => u[" Name"].toLowerCase().includes(orbiterSearch.toLowerCase()))
-                  .map((user) => (
-                    <li key={user.id} onClick={() => handleOrbiterSelect(user)}>
-                      {user[" Name"]}
-                    </li>
-                  ))}
-              </ul>
-            )}
-          </li>
+  <Layout>
+  <section className="admin-profile-container">
+    {/* Header */}
+    <div className="admin-profile-header">
+      <h2>Add Referral</h2>
+      <button className="btn-back" onClick={() => window.history.back()}>
+        Back
+      </button>
+    </div>
 
-          {/* Cosmo Search */}
-          <li className="form-row">
-            <h4>Search CosmoOrbiter</h4>
-            <input type="text" value={cosmoSearch} onChange={(e) => setCosmoSearch(e.target.value)} />
-            {cosmoSearch && (
-              <ul>
-                {users
-                  .filter((u) => u[" Name"].toLowerCase().includes(cosmoSearch.toLowerCase()))
-                  .map((user) => (
-                    <li key={user.id} onClick={() => handleCosmoSelect(user)}>
-                      {user[" Name"]}
-                    </li>
-                  ))}
-              </ul>
-            )}
-          </li>
+    {/* Form */}
+    <ul className="admin-profile-form">
+      {/* Orbiter Search */}
+      <li className="form-group">
+        <h4>Search Orbiter</h4>
+        <input
+          type="text"
+          value={orbiterSearch}
+          onChange={(e) => setOrbiterSearch(e.target.value)}
+        />
+        {orbiterSearch && (
+          <ul className="search-results">
+            {users
+              .filter((u) =>
+                u[" Name"].toLowerCase().includes(orbiterSearch.toLowerCase())
+              )
+              .map((user) => (
+                <li key={user.id} onClick={() => handleOrbiterSelect(user)}>
+                  {user[" Name"]}
+                </li>
+              ))}
+          </ul>
+        )}
+      </li>
 
-          {/* Services and Products */}
-          {services.length > 0 && (
-            <div>
-              <label>Select Service</label>
-              <select onChange={(e) => setSelectedService(services.find((s) => s.name === e.target.value))}>
-                <option value="">-- Select Service --</option>
-                {services.map((service, idx) => (
-                  <option key={idx} value={service.name}>
-                    {service.name} - {service.description}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
+      {/* Cosmo Search */}
+      <li className="form-group">
+        <h4>Search CosmoOrbiter</h4>
+        <input
+          type="text"
+          value={cosmoSearch}
+          onChange={(e) => setCosmoSearch(e.target.value)}
+        />
+        {cosmoSearch && (
+          <ul className="search-results">
+            {users
+              .filter((u) =>
+                u[" Name"].toLowerCase().includes(cosmoSearch.toLowerCase())
+              )
+              .map((user) => (
+                <li key={user.id} onClick={() => handleCosmoSelect(user)}>
+                  {user[" Name"]}
+                </li>
+              ))}
+          </ul>
+        )}
+      </li>
 
-          {products.length > 0 && (
-            <div>
-              <label>Select Product</label>
-              <select onChange={(e) => setSelectedProduct(products.find((p) => p.name === e.target.value))}>
-                <option value="">-- Select Product --</option>
-                {products.map((product, idx) => (
-                  <option key={idx} value={product.name}>
-                    {product.name} - {product.description}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-<div>
-  <label>Deal Status</label>
-  <select
-    value={dealStatus}
-    onChange={(e) => {
-      setDealStatus(e.target.value);
-      setLastUpdated(new Date());
-    }}
-  >
-    <option value="Pending">Pending</option>
-    <option value="Deal Lost">Deal Lost</option>
-    <option value="Received Part Payment">Received Part Payment</option>
-    <option value="Transferred to UJustBe">Transferred to UJustBe</option>
-    <option value="Work in Progress">Work in Progress</option>
-    <option value="Work Completed">Work Completed</option>
-    <option value="Agreed Percentage Transferred to UJustBe">
-      Agreed Percentage Transferred to UJustBe
-    </option>
-    <option value="On Hold">On Hold</option>
-    <option value="Rejected">Rejected</option>
-    <option value="Not Connected">Not Connected</option>
-    <option value="Called but No Response">Called but No Response</option>
-    <option value="Discussion in Progress">Discussion in Progress</option>
-    <option value="Received Full Payment">Received Full Payment</option>
-  </select>
-</div>
+      {/* Services */}
+      {services.length > 0 && (
+        <li className="form-group">
+          <label>Select Service</label>
+          <select
+            onChange={(e) =>
+              setSelectedService(
+                services.find((s) => s.name === e.target.value)
+              )
+            }
+          >
+            <option value="">-- Select Service --</option>
+            {services.map((service, idx) => (
+              <option key={idx} value={service.name}>
+                {service.name} - {service.description}
+              </option>
+            ))}
+          </select>
+        </li>
+      )}
 
-          <div>
-            <label>Referral Type</label>
-            <select value={refType} onChange={(e) => setRefType(e.target.value)}>
-              <option value="Self">Self</option>
-              <option value="Others">Others</option>
-            </select>
-          </div>
+      {/* Products */}
+      {products.length > 0 && (
+        <li className="form-group">
+          <label>Select Product</label>
+          <select
+            onChange={(e) =>
+              setSelectedProduct(
+                products.find((p) => p.name === e.target.value)
+              )
+            }
+          >
+            <option value="">-- Select Product --</option>
+            {products.map((product, idx) => (
+              <option key={idx} value={product.name}>
+                {product.name} - {product.description}
+              </option>
+            ))}
+          </select>
+        </li>
+      )}
 
-          {refType === "Others" && (
-            <div>
-              <h4>Orbiter Info (Others)</h4>
-              <input type="text" placeholder="Name" value={otherName} onChange={(e) => setOtherName(e.target.value)} />
-              <input type="text" placeholder="Phone" value={otherPhone} onChange={(e) => setOtherPhone(e.target.value)} />
-              <input type="email" placeholder="Email" value={otherEmail} onChange={(e) => setOtherEmail(e.target.value)} />
-            </div>
-          )}
+      {/* Deal Status */}
+      <li className="form-group">
+        <label>Deal Status</label>
+        <select
+          value={dealStatus}
+          onChange={(e) => {
+            setDealStatus(e.target.value);
+            setLastUpdated(new Date());
+          }}
+        >
+          <option value="Pending">Pending</option>
+          <option value="Deal Lost">Deal Lost</option>
+          <option value="Received Part Payment">Received Part Payment</option>
+          <option value="Transferred to UJustBe">
+            Transferred to UJustBe
+          </option>
+          <option value="Work in Progress">Work in Progress</option>
+          <option value="Work Completed">Work Completed</option>
+          <option value="Agreed Percentage Transferred to UJustBe">
+            Agreed Percentage Transferred to UJustBe
+          </option>
+          <option value="On Hold">On Hold</option>
+          <option value="Rejected">Rejected</option>
+          <option value="Not Connected">Not Connected</option>
+          <option value="Called but No Response">
+            Called but No Response
+          </option>
+          <option value="Discussion in Progress">
+            Discussion in Progress
+          </option>
+          <option value="Received Full Payment">
+            Received Full Payment
+          </option>
+        </select>
+      </li>
 
-          <div>
-            <label>Referral Source</label>
-            <select value={referralSource} onChange={(e) => setReferralSource(e.target.value)}>
-              <option value="Meeting">Meeting</option>
-              <option value="Phone">Phone</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-        </ul>
+      {/* Referral Type */}
+      <li className="form-group">
+        <label>Referral Type</label>
+        <select
+          value={refType}
+          onChange={(e) => setRefType(e.target.value)}
+        >
+          <option value="Self">Self</option>
+          <option value="Others">Others</option>
+        </select>
+      </li>
 
-        <button onClick={handleSubmit} style={{ marginTop: "1rem" }}>
-          Submit Referral
-        </button>
-      </section>
-    </Layout>
+      {/* Others Info */}
+      {refType === "Others" && (
+        <li className="form-group">
+          <h4>Orbiter Info (Others)</h4>
+          <input
+            type="text"
+            placeholder="Name"
+            value={otherName}
+            onChange={(e) => setOtherName(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Phone"
+            value={otherPhone}
+            onChange={(e) => setOtherPhone(e.target.value)}
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            value={otherEmail}
+            onChange={(e) => setOtherEmail(e.target.value)}
+          />
+        </li>
+      )}
+
+      {/* Referral Source */}
+      <li className="form-group">
+        <label>Referral Source</label>
+        <select
+          value={referralSource}
+          onChange={(e) => setReferralSource(e.target.value)}
+        >
+          <option value="Meeting">Meeting</option>
+          <option value="Phone">Phone</option>
+          <option value="Other">Other</option>
+        </select>
+      </li>
+    </ul>
+
+    {/* Submit Button */}
+    <button className="btn-submit" onClick={handleSubmit}>
+      Submit Referral
+    </button>
+  </section>
+</Layout>
+
   );
 };
 

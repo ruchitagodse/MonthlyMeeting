@@ -2456,3 +2456,154 @@ input[type="file"] {
 .form-section button:hover {
   background-color: #2980b9;
 }
+.admin-profile-container {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08);
+  max-width: 700px;
+  margin: 2rem auto;
+  font-family: 'Segoe UI', sans-serif;
+
+  .admin-profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h2 {
+      font-size: 1.8rem;
+      color: #0a3d62;
+      margin: 0;
+    }
+
+    .btn-back {
+      background: #0a3d62;
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s ease;
+
+      &:hover {
+        background: #1e5a8a;
+      }
+    }
+  }
+
+  .admin-profile-form {
+    margin-top: 1.5rem;
+    list-style: none;
+    padding: 0;
+
+    .form-group {
+      margin-bottom: 1.5rem;
+
+      h4 {
+        font-size: 1rem;
+        color: #333;
+        margin-bottom: 0.4rem;
+      }
+
+      input {
+        width: 100%;
+        padding: 0.6rem;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 0.95rem;
+        outline: none;
+        transition: border-color 0.2s ease;
+
+        &:focus {
+          border-color: #0a3d62;
+        }
+      }
+
+      .search-results {
+        margin-top: 0.4rem;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        background: #fafafa;
+        max-height: 150px;
+        overflow-y: auto;
+
+        li {
+          padding: 0.5rem;
+          cursor: pointer;
+          transition: background 0.2s ease;
+
+          &:hover {
+            background: #eaf2f8;
+          }
+        }
+      }
+    }
+  }
+
+  label {
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+    display: block;
+    color: #444;
+  }
+
+  select {
+    width: 100%;
+    padding: 0.6rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 0.95rem;
+    background: white;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s ease;
+
+    &:focus {
+      border-color: #0a3d62;
+    }
+  }
+
+  input[type="text"],
+  input[type="email"] {
+    width: 100%;
+    padding: 0.6rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    margin-bottom: 0.8rem;
+    font-size: 0.95rem;
+
+    &:focus {
+      border-color: #0a3d62;
+    }
+  }
+
+  .btn-submit {
+    background: #0a3d62;
+    color: white;
+    border: none;
+    padding: 0.7rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.3s ease;
+
+    &:hover {
+      background: #1e5a8a;
+    }
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .admin-profile-container {
+    padding: 1.2rem;
+    max-width: 95%;
+
+    .admin-profile-header h2 {
+      font-size: 1.5rem;
+    }
+  }
+}

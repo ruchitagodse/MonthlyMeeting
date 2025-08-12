@@ -110,12 +110,16 @@ const handleEdit = (referralId) => {
 
       {/* ✅ Timestamp */}
       <td>{referral.timestamp?.seconds ? new Date(referral.timestamp.seconds * 1000).toLocaleString() : '—'}</td>
-
+     <div className='twobtn'>
+                      <button  className="m-button-7" 
+    
+            style={{ marginLeft: '10px', backgroundColor: '#f16f06', color: 'white' }}onClick={() => handleEdit(referral.id)}>✎ Edit</button>
+                      <button  className="m-button-7" 
+          
+            style={{ marginLeft: '10px', backgroundColor: '#FF0000', color: 'white' }} onClick={() => handleDelete(referral.id)}>🗑 Delete</button>
+                    </div>
       {/* ✅ Actions */}
-      <td>
-        <button onClick={() => handleEdit(referral.id)}>Edit</button>
-        <button onClick={() => handleDelete(referral.id)}>Delete</button>
-      </td>
+      
     </tr>
   ))}
 </tbody>

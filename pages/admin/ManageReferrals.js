@@ -64,10 +64,9 @@ const handleEdit = (referralId) => {
     <th>#</th>
     <th>Orbiter Name</th>
     <th>CosmoOrbiter Name</th>
-    <th>Orbiter Email</th>
-    <th>Cosmo Email</th>
+  
     <th>Referral Type</th>
-    <th>Referral Source</th>
+
     <th>Referral ID</th>
     <th>Service/Product Name</th>
     <th>Service/Product Description</th>
@@ -81,12 +80,11 @@ const handleEdit = (referralId) => {
     <tr key={referral.id}>
       <td>{index + 1}</td>
       <td>{referral.orbiter?.name}</td>
-      <td>{referral.orbiter?.email}</td>
+    
       <td>{referral.cosmoOrbiter?.name}</td>
-      <td>{referral.cosmoOrbiter?.email}</td>
-      <td>{referral.referralType}</td>
-      <td>{referral.referralSource}</td>
 
+      <td>{referral.referralType}</td>
+   
       {/* ✅ Referral ID */}
       <td>{referral.referralId || '—'}</td>
 

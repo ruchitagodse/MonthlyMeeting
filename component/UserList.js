@@ -314,40 +314,54 @@ const formattedDOB = formatDOB(newUser.dob); // Convert to dd/mm/yyyy
                                 <th></th>
                             </tr>
                         </thead>
-                  <tbody>
+               <tbody>
   {filteredUsers.length > 0 ? (
-    filteredUsers.map((user, index) => (
-      <tr key={index}>
-        <td>{index + 1}</td>
-        <td>{user.name || 'No name available'}</td>
-        <td>{user.phoneNumber || 'No phone available'}</td>
-        <td>{user.role || 'User'}</td>
-        <td>
-          {user.idNumber && user.idNumber.trim() !== ''
-            ? <span className="complete">Complete</span>
-            : <span className="incomplete">Incomplete</span>
-          }
-        </td>
-        <td>
-            <div className='twobtn'>
-          <button
-            className='m-button-7'
-            onClick={() => openDeleteModal(user)}
-            style={{ backgroundColor: '#f14506ff', color: 'white', marginRight: '5px' }}
-          >
-            Delete
-          </button>
-          <button
-            className='m-button-7'
-            onClick={() => window.location.href = `/admin/profile?user=${user.phoneNumber}`}
-            style={{ backgroundColor: '#f16f06', color: 'white' }}
-          >
-            Edit
-          </button>
-          </div>
-        </td>
-      </tr>
-    ))
+    filteredUsers
+      .sort((a, b) => {
+        const aComplete = a.idNumber && a.idNumber.trim() !== "";
+        const bComplete = b.idNumber && b.idNumber.trim() !== "";
+
+        // Completed users first
+        if (aComplete && !bComplete) return -1;
+        if (!aComplete && bComplete) return 1;
+
+        // If both are complete or both are incomplete, sort alphabetically by name
+        const nameA = (a.name || "").toLowerCase();
+        const nameB = (b.name || "").toLowerCase();
+        return nameA.localeCompare(nameB);
+      })
+      .map((user, index) => (
+        <tr key={index}>
+          <td>{index + 1}</td>
+          <td>{user.name || "No name available"}</td>
+          <td>{user.phoneNumber || "No phone available"}</td>
+          <td>{user.role || "User"}</td>
+          <td>
+            {user.idNumber && user.idNumber.trim() !== ""
+              ? <span className="complete">Complete</span>
+              : <span className="incomplete">Incomplete</span>
+            }
+          </td>
+          <td>
+            <div className="twobtn">
+              <button
+                className="m-button-7"
+                onClick={() => openDeleteModal(user)}
+                style={{ backgroundColor: "#f14506ff", color: "white", marginRight: "5px" }}
+              >
+                Delete
+              </button>
+              <button
+                className="m-button-7"
+                onClick={() => window.location.href = `/admin/profile?user=${user.phoneNumber}`}
+                style={{ backgroundColor: "#f16f06", color: "white" }}
+              >
+                Edit
+              </button>
+            </div>
+          </td>
+        </tr>
+      ))
   ) : (
     <tr>
       <td colSpan="6">No users found.</td>

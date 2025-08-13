@@ -67,11 +67,11 @@ const Navbar = (props) => {
                         <li>
                             <Link href="/admin/event/userlist">
                                 <span className="icons"><FaRegUser /></span>
-                                <span className="linklabel">Users</span>
+                                <span className="linklabel">Orbiters</span>
                                 <span className="submenuIcon"><MdOutlineKeyboardArrowDown /></span>
                             </Link>
                             <ul>
-                                <li><Link href="/admin/event/userlist">Users Listing</Link></li>
+                                <li><Link href="/admin/event/userlist">Orbiters Profiling</Link></li>
                             </ul>
                         </li>
                        

@@ -10,6 +10,8 @@ import {
   where
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import Swal from 'sweetalert2';
+
 import { db, storage } from '../firebaseConfig';
 import { useSearchParams } from 'next/navigation'; 
 
@@ -115,19 +117,34 @@ const handleChange = (e) => {
       }));
     }
   };
+const uploadProfilePhoto = async () => {
+  if (!profilePic || !docId) return '';
+  const fileRef = ref(storage, `profilePhotos/${docId}/${profilePic.name}`);
+  await uploadBytes(fileRef, profilePic);
+  Swal.fire({
+    icon: 'success',
+    title: 'Profile Photo Uploaded!',
+    text: 'Your profile photo has been successfully uploaded.',
+    timer: 2000,
+    showConfirmButton: false
+  });
+  return await getDownloadURL(fileRef);
+};
 
-  const uploadProfilePhoto = async () => {
-    if (!profilePic || !docId) return '';
-    const fileRef = ref(storage, `profilePhotos/${docId}/${profilePic.name}`);
-    await uploadBytes(fileRef, profilePic);
-    return await getDownloadURL(fileRef);
-  };
+const uploadImage = async (file, path) => {
+  const fileRef = ref(storage, path);
+  await uploadBytes(fileRef, file);
+  Swal.fire({
+    icon: 'success',
+    title: 'Image Uploaded!',
+    text: 'Your image has been successfully uploaded.',
+    timer: 2000,
+    showConfirmButton: false
+  });
+  return await getDownloadURL(fileRef);
+};
 
-  const uploadImage = async (file, path) => {
-    const fileRef = ref(storage, path);
-    await uploadBytes(fileRef, file);
-    return await getDownloadURL(fileRef);
-  };
+
 const handleDynamicChange = (type, index, field, value) => {
   const updater = type === 'service' ? [...services] : [...products];
   if (field === 'image') {
@@ -160,6 +177,14 @@ const handleDynamicChange = (type, index, field, value) => {
       const logoRef = ref(storage, `businessLogos/${docId}/${businessLogo.name}`);
       await uploadBytes(logoRef, businessLogo);
       businessLogoURL = await getDownloadURL(logoRef);
+      Swal.fire({
+  icon: 'success',
+  title: 'Business Logo Uploaded!',
+  text: 'Your business logo has been successfully uploaded.',
+  timer: 2000,
+  showConfirmButton: false
+});
+
     }
 
     const filteredServices = services.filter(s => s.name.trim() && s.description.trim());
@@ -214,39 +239,50 @@ return {
 };
 
 
-  const dropdowns = {
-    Gender: ['Male', 'Female', 'Transgender', 'Prefer not to say'],
-    'ID Type': ['Aadhaar', 'PAN', 'Passport', 'Driving License'],
-    'Interest Area': ['Business', 'Education', 'Wellness', 'Technology', 'Art', 'Environment', 'Other'],
-    'Current Health Condition': ['Excellent', 'Good', 'Average', 'Needs Attention'],
-    'Marital Status': ['Single', 'Married', 'Widowed', 'Divorced'],
-    'Educational Background': ['SSC', 'HSC', 'Graduate', 'Post-Graduate', 'PhD', 'Other'],
-    'Profile Status': ['Pending', 'In process', 'Submitted', 'Verified', 'Inactive'],
-    'Business Details (Nature & Type)': ['Product', 'Service', 'Both; Proprietorship', 'LLP', 'Pvt Ltd'],
-  };
+const dropdowns = {
+  Gender: ['Male', 'Female', 'Transgender', 'Prefer not to say'],
+  'ID Type': ['Aadhaar', 'PAN', 'Passport', 'Driving License'],
+  'Interest Area': ['Business', 'Education', 'Wellness', 'Technology', 'Art', 'Environment', 'Other'],
+  'Current Health Condition': ['Excellent', 'Good', 'Average', 'Needs Attention'],
+  'Marital Status': ['Single', 'Married', 'Widowed', 'Divorced'],
+  'Educational Background': ['SSC', 'HSC', 'Graduate', 'Post-Graduate', 'PhD', 'Other'],
+  'Profile Status': ['Pending', 'In process', 'Submitted', 'Verified', 'Inactive'],
+  'Business Details (Nature & Type)': ['Product', 'Service', 'Both; Proprietorship', 'LLP', 'Pvt Ltd'],
+
+  // ✅ New dropdowns
+  'City': ['Mumbai', 'Pune', 'Delhi', 'Bengaluru', 'Hyderabad', 'Chennai', 'Kolkata', 'Ahmedabad', 'Other'],
+  'State': ['Maharashtra', 'Karnataka', 'Delhi', 'Telangana', 'Tamil Nadu', 'West Bengal', 'Gujarat', 'Other']
+};
+
 
   const skillsOptions = ['Leadership', 'Communication', 'Management', 'Design', 'Coding', 'Marketing'];
   const contributionOptions = ['Referrals', 'Volunteering', 'RHW Activities', 'Content Creation', 'Mentorship'];
 
-  const orbiterFields = [
-    'ID Type', 'ID Number', 'Address (City, State)', 'Upload Photo',
-    'Hobbies', 'Interest Area', 'Skills', 'Exclusive Knowledge',
-    'Aspirations', 'Health Parameters', 'Current Health Condition',
-    'Family History Summary', 'Marital Status', 'Professional History',
-    'Current Profession', 'Educational Background', 'Languages Known',
-    'Contribution Area in UJustBe', 'Immediate Desire', 'Mastery',
-    'Special Social Contribution', 'Profile Status',
-  ];
+const orbiterFields = [
+  'ID Type', 'ID Number', 'Upload Photo',
+  'City', 'State', 'Location', // ✅ Added here
+  'Hobbies', 'Interest Area', 'Skills', 'Exclusive Knowledge',
+  'Aspirations', 'Health Parameters', 'Current Health Condition',
+  'Family History Summary', 'Marital Status', 'Professional History',
+  'Current Profession', 'Educational Background', 'Languages Known',
+  'Contribution Area in UJustBe', 'Immediate Desire', 'Mastery',
+  'Special Social Contribution', 'Profile Status',
+];
 
-  const cosmorbiterFields = [
-    ...orbiterFields,
-    'Business Name', 'Business Details (Nature & Type)', 'Business History',
-    'Noteworthy Achievements', 'Clientele Base', 'Business Social Media Pages',
-    'Website', 'Locality', 'Area of Services', 'USP', 'Business Logo',
-    'Tag Line',
-  ];
+const cosmorbiterFields = [
+  ...orbiterFields,
+  'Business Name', 'Business Details (Nature & Type)', 'Business History',
+  'Noteworthy Achievements', 'Clientele Base', 'Business Social Media Pages',
+  'Website', 'Locality', 'Area of Services', 'USP', 'Business Logo',
+  'Tag Line',
+];
+
 const fieldGroups = {
-  'Personal Info': ['ID Type', 'ID Number', 'Upload Photo', 'Address (City, State)', 'Marital Status', 'Languages Known'],
+  'Personal Info': [
+    'ID Type', 'ID Number', 'Upload Photo',
+    'City', 'State', 'Location', // ✅ Added here
+    'Address (City, State)', 'Marital Status', 'Languages Known'
+  ],
   'Health': ['Health Parameters', 'Current Health Condition', 'Family History Summary'],
   'Education': ['Educational Background', 'Professional History', 'Current Profession'],
   'Business Info': [
@@ -260,6 +296,7 @@ const fieldGroups = {
     'Special Social Contribution', 'Profile Status'
   ],
 };
+
 
   const getFields = () => {
     if (!formData?.Category) return [];
@@ -342,7 +379,7 @@ const fieldGroups = {
 
   return (
  <section className="c-form box">
-  <h2>Admin Profile Setup</h2>
+  <h2>Orbiter's Profile Setup</h2>
   <button className="m-button-5" onClick={() => window.history.back()}>Back</button>
 
   <ul>

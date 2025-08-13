@@ -227,7 +227,7 @@ const handleLogin = async (e) => {
 
 
   try {
-    const docRef = doc(db, "Orbiters", phoneNumber);
+    const docRef = doc(db, "userdetails", phoneNumber);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
@@ -238,7 +238,7 @@ const handleLogin = async (e) => {
       fetchUserName(phoneNumber);
       setLoading(false);
     } else {
-      setError('You are not a NT Member.');
+      setError('You are not a Orbiter.');
     }
   } catch (err) {
     console.error('❌ Error checking phone number:', err);

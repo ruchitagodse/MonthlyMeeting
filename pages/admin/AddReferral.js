@@ -207,27 +207,34 @@ const [lastUpdated, setLastUpdated] = useState(new Date());
       </li>
 
       {/* Cosmo Search */}
-      <li className="form-group">
-        <h4>Search CosmoOrbiter</h4>
-        <input
-          type="text"
-          value={cosmoSearch}
-          onChange={(e) => setCosmoSearch(e.target.value)}
-        />
-        {cosmoSearch && (
-          <ul className="search-results">
-            {users
-              .filter((u) =>
-                u[" Name"].toLowerCase().includes(cosmoSearch.toLowerCase())
-              )
-              .map((user) => (
-                <li key={user.id} onClick={() => handleCosmoSelect(user)}>
-                  {user[" Name"]}
-                </li>
-              ))}
-          </ul>
-        )}
-      </li>
+     {/* Cosmo Search */}
+<li className="form-group">
+  <h4>Search CosmoOrbiter</h4>
+  <input
+    type="text"
+    value={cosmoSearch}
+    onChange={(e) => setCosmoSearch(e.target.value)}
+  />
+  {cosmoSearch && (
+    <ul className="search-results">
+      {users
+        .filter(
+          (u) =>
+            u.Category === "CosmOrbiter" &&
+            (
+              (Array.isArray(u.products) && u.products.length > 0) ||
+              (Array.isArray(u.services) && u.services.length > 0)
+            ) &&
+            u[" Name"].toLowerCase().includes(cosmoSearch.toLowerCase())
+        )
+        .map((user) => (
+          <li key={user.id} onClick={() => handleCosmoSelect(user)}>
+            {user[" Name"]}
+          </li>
+        ))}
+    </ul>
+  )}
+</li>
 
       {/* Services */}
       {services.length > 0 && (
@@ -345,17 +352,29 @@ const [lastUpdated, setLastUpdated] = useState(new Date());
       )}
 
       {/* Referral Source */}
-      <li className="form-group">
-        <label>Referral Source</label>
-        <select
-          value={referralSource}
-          onChange={(e) => setReferralSource(e.target.value)}
-        >
-          <option value="Meeting">Meeting</option>
-          <option value="Phone">Phone</option>
-          <option value="Other">Other</option>
-        </select>
-      </li>
+  {/* Referral Source */}
+<li className="form-group">
+  <label>Referral Source</label>
+  <select
+    value={referralSource}
+    onChange={(e) => setReferralSource(e.target.value)}
+  >
+    <option value="Meeting">Meeting</option>
+    <option value="Phone">Phone</option>
+    <option value="Other">Other</option>
+  </select>
+
+  {referralSource === "Other" && (
+    <input
+      type="text"
+      placeholder="Enter Referral Source"
+      value={referralSource === "Other" ? otherName : ""}
+      onChange={(e) => setReferralSource(e.target.value)}
+      style={{ marginTop: "8px" }}
+    />
+  )}
+</li>
+
     </ul>
 
     {/* Submit Button */}

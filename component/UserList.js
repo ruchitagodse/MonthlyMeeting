@@ -4,6 +4,7 @@ import { collection, getDocs,setDoc, deleteDoc, doc } from 'firebase/firestore';
 import "../src/app/styles/main.scss";
 import { FaSearch } from "react-icons/fa";
 import Swal from 'sweetalert2';
+import ExportButton from '../pages/admin/Export';
 
 const UserList = () => {
     const [users, setUsers] = useState([]);
@@ -141,9 +142,8 @@ const formattedDOB = formatDOB(newUser.dob); // Convert to dd/mm/yyyy
         <>
             <section className='c-form box'>
                 <h2>User Master Table List</h2>
-                <button className="m-button-5" onClick={() => window.history.back()}>
-                    Back
-                </button>
+            
+                <ExportButton/>
 <div>
     <h2>Add New User</h2>
     <form onSubmit={handleAddUser}>

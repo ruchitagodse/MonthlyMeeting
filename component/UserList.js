@@ -82,6 +82,7 @@ const formattedDOB = formatDOB(newUser.dob); // Convert to dd/mm/yyyy
           name: data[" Name"] || '',
           role: data["Category"] || '',
           idNumber: data["ID Number"] || '',
+           status: data["Profile Status"] || '',
         };
       });
 
@@ -336,12 +337,15 @@ const formattedDOB = formatDOB(newUser.dob); // Convert to dd/mm/yyyy
           <td>{user.name || "No name available"}</td>
           <td>{user.phoneNumber || "No phone available"}</td>
           <td>{user.role || "User"}</td>
-          <td>
-            {user.idNumber && user.idNumber.trim() !== ""
-              ? <span className="complete">Complete</span>
-              : <span className="incomplete">Incomplete</span>
-            }
-          </td>
+        <td>
+  {user.status && user.status.trim() !== ""
+    ? <span className={`status ${user.status.toLowerCase().replace(" ", "-")}`}>
+        {user.status}
+      </span>
+    : <span className="incomplete">Incomplete</span>
+  }
+</td>
+
           <td>
             <div className="twobtn">
               <button

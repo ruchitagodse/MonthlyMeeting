@@ -27,7 +27,7 @@ const [lastUpdated, setLastUpdated] = useState(new Date());
   const [selectedService, setSelectedService] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [referralType, setReferralType] = useState("Service");
-  const [referralSource, setReferralSource] = useState("Meeting");
+  const [referralSource, setReferralSource] = useState("MonthlyMeeting");
 
   const [refType, setRefType] = useState("Self");
   const [otherName, setOtherName] = useState("");
@@ -193,15 +193,17 @@ const [lastUpdated, setLastUpdated] = useState(new Date());
         />
         {orbiterSearch && (
           <ul className="search-results">
-            {users
-              .filter((u) =>
-                u[" Name"].toLowerCase().includes(orbiterSearch.toLowerCase())
-              )
-              .map((user) => (
-                <li key={user.id} onClick={() => handleOrbiterSelect(user)}>
-                  {user[" Name"]}
-                </li>
-              ))}
+           {users
+  .filter((u) => {
+    const name = u[" Name"] || ""; // fallback to empty string
+    return name.toLowerCase().includes(orbiterSearch.toLowerCase());
+  })
+  .map((user) => (
+    <li key={user.id} onClick={() => handleOrbiterSelect(user)}>
+      {user[" Name"]}
+    </li>
+  ))}
+
           </ul>
         )}
       </li>
@@ -217,21 +219,22 @@ const [lastUpdated, setLastUpdated] = useState(new Date());
   />
   {cosmoSearch && (
     <ul className="search-results">
-      {users
-        .filter(
-          (u) =>
-            u.Category === "CosmOrbiter" &&
-            (
-              (Array.isArray(u.products) && u.products.length > 0) ||
-              (Array.isArray(u.services) && u.services.length > 0)
-            ) &&
-            u[" Name"].toLowerCase().includes(cosmoSearch.toLowerCase())
-        )
-        .map((user) => (
-          <li key={user.id} onClick={() => handleCosmoSelect(user)}>
-            {user[" Name"]}
-          </li>
-        ))}
+     {users
+  .filter((u) => {
+    const name = u[" Name"] || "";
+    return (
+      u.Category === "CosmOrbiter" &&
+      ((Array.isArray(u.products) && u.products.length > 0) ||
+        (Array.isArray(u.services) && u.services.length > 0)) &&
+      name.toLowerCase().includes(cosmoSearch.toLowerCase())
+    );
+  })
+  .map((user) => (
+    <li key={user.id} onClick={() => handleCosmoSelect(user)}>
+      {user[" Name"]}
+    </li>
+  ))}
+
     </ul>
   )}
 </li>
@@ -250,7 +253,7 @@ const [lastUpdated, setLastUpdated] = useState(new Date());
             <option value="">-- Select Service --</option>
             {services.map((service, idx) => (
               <option key={idx} value={service.name}>
-                {service.name} - {service.description}
+                {service.name} 
               </option>
             ))}
           </select>
@@ -290,6 +293,7 @@ const [lastUpdated, setLastUpdated] = useState(new Date());
         >
           <option value="Pending">Pending</option>
           <option value="Deal Lost">Deal Lost</option>
+            <option value="Deal Won">Deal Won</option>
           <option value="Received Part Payment">Received Part Payment</option>
           <option value="Transferred to UJustBe">
             Transferred to UJustBe
@@ -359,7 +363,9 @@ const [lastUpdated, setLastUpdated] = useState(new Date());
     value={referralSource}
     onChange={(e) => setReferralSource(e.target.value)}
   >
-    <option value="Meeting">Meeting</option>
+    <option value="MonthlyMeeting">Monthly Meeting</option>
+    <option value="ConclaveMeeting">Conclave Meeting</option>
+       <option value="OTCMeeting">OTC Meeting</option>
     <option value="Phone">Phone</option>
     <option value="Other">Other</option>
   </select>

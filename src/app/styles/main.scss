@@ -704,7 +704,17 @@ $italianfont:'Italianno', ;
     margin-left: 300px;
   }
 }
-
+.maincontainers {
+  width: calc(100% - 70px);
+  padding: 25px;
+  margin-left: 70px;
+  // margin-top: 70px;
+  box-sizing: border-box;
+  &.expand {
+    width: calc(100% - 300px);
+    margin-left: 300px;
+  }
+}
 .c-form {
 
   ul {

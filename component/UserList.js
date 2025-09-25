@@ -318,33 +318,50 @@ const formattedDOB = formatDOB(newUser.dob); // Convert to dd/mm/yyyy
                <tbody>
   {filteredUsers.length > 0 ? (
     filteredUsers
-      .sort((a, b) => {
-        const aComplete = a.idNumber && a.idNumber.trim() !== "";
-        const bComplete = b.idNumber && b.idNumber.trim() !== "";
+    .sort((a, b) => {
+  const statusOrder = [
+    "verified",
+    "submitted",
+    "in process",
+    "pending",
+    "inactive",
+    "incomplete"
+  ];
 
-        // Completed users first
-        if (aComplete && !bComplete) return -1;
-        if (!aComplete && bComplete) return 1;
+  // Normalize statuses (lowercase, fallback to "incomplete")
+  const aStatus = a.status ? a.status.toLowerCase().trim() : "incomplete";
+  const bStatus = b.status ? b.status.toLowerCase().trim() : "incomplete";
 
-        // If both are complete or both are incomplete, sort alphabetically by name
-        const nameA = (a.name || "").toLowerCase();
-        const nameB = (b.name || "").toLowerCase();
-        return nameA.localeCompare(nameB);
-      })
+  const aIndex = statusOrder.indexOf(aStatus);
+  const bIndex = statusOrder.indexOf(bStatus);
+
+  // Sort based on status priority
+  if (aIndex !== bIndex) {
+    return aIndex - bIndex;
+  }
+
+  // If status is same → sort alphabetically by name
+  const nameA = (a.name || "").toLowerCase();
+  const nameB = (b.name || "").toLowerCase();
+  return nameA.localeCompare(nameB);
+})
+
       .map((user, index) => (
         <tr key={index}>
           <td>{index + 1}</td>
           <td>{user.name || "No name available"}</td>
           <td>{user.phoneNumber || "No phone available"}</td>
           <td>{user.role || "User"}</td>
-        <td>
-  {user.status && user.status.trim() !== ""
-    ? <span className={`status ${user.status.toLowerCase().replace(" ", "-")}`}>
-        {user.status}
-      </span>
-    : <span className="incomplete">Incomplete</span>
-  }
+      <td>
+  {user.status && user.status.trim() !== "" ? (
+    <span className={`status ${user.status.toLowerCase().replace(" ", "-")}`}>
+      {user.status}
+    </span>
+  ) : (
+    <span className="status incomplete">Incomplete</span>
+  )}
 </td>
+
 
           <td>
             <div className="twobtn">

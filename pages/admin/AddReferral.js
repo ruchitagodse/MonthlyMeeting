@@ -22,6 +22,8 @@ const Profiling = () => {
   const [services, setServices] = useState([]);
   const [dealStatus, setDealStatus] = useState("Pending");
 const [lastUpdated, setLastUpdated] = useState(new Date());
+// Add separate state for "Other Referral Source"
+const [otherReferralSource, setOtherReferralSource] = useState("");
 
   const [products, setProducts] = useState([]);
   const [selectedService, setSelectedService] = useState(null);
@@ -137,7 +139,7 @@ const [lastUpdated, setLastUpdated] = useState(new Date());
   service: selectedService,
   product: selectedProduct,
   referralType: refType,
-  referralSource,
+   referralSource: referralSource === "Other" ? otherReferralSource : referralSource, // ✅ fixed
   orbitersInfo:
     refType === "Others"
       ? {
@@ -152,22 +154,42 @@ const [lastUpdated, setLastUpdated] = useState(new Date());
 };
 
 
-    try {
-      await addDoc(collection(db, "Referral"), data);
-      alert("Referral submitted successfully!");
+   try {
+  await addDoc(collection(db, "Referral"), data);
+  alert("Referral submitted successfully!");
 
-      const serviceOrProduct = selectedService?.name || selectedProduct?.name || "";
+  // ✅ Reset form fields
+  setSelectedOrbiter(null);
+  setSelectedCosmo(null);
+  setOrbiterSearch("");
+  setCosmoSearch("");
+  setServices([]);
+  setProducts([]);
+  setSelectedService(null);
+  setSelectedProduct(null);
+  setRefType("Self");
+  setOtherName("");
+  setOtherPhone("");
+  setOtherEmail("");
+  setReferralSource("MonthlyMeeting");
+  setOtherReferralSource("");   // ✅ reset Other input
+  setDealStatus("Pending");
+//  const serviceOrProduct = selectedService?.name || selectedProduct?.name || "";
 
-      await Promise.all([
-        sendWhatsAppTemplate(selectedOrbiter["Mobile no"], selectedOrbiter[" Name"], `Thanks for passing the referral.`),
-        sendWhatsAppTemplate(selectedCosmo["Mobile no"], selectedCosmo[" Name"], `${selectedOrbiter[" Name"]} has referred you for ${serviceOrProduct}.`),
-        sendWhatsAppTemplate(selectedOrbiter["Mentor Phone"], selectedOrbiter["Mentor Name"], `Your connect ${selectedOrbiter[" Name"]} passed a referral.`),
-        sendWhatsAppTemplate(selectedCosmo["Mentor Phone"], selectedCosmo["Mentor Name"], `Your connect ${selectedCosmo[" Name"]} received a referral.`),
-      ]);
-    } catch (err) {
-      console.error("Error submitting referral:", err);
-      alert("Submission failed.");
-    }
+//       await Promise.all([
+//         sendWhatsAppTemplate(selectedOrbiter["Mobile no"], selectedOrbiter[" Name"], `Thanks for passing the referral.`),
+//         sendWhatsAppTemplate(selectedCosmo["Mobile no"], selectedCosmo[" Name"], `${selectedOrbiter[" Name"]} has referred you for ${serviceOrProduct}.`),
+//         sendWhatsAppTemplate(selectedOrbiter["Mentor Phone"], selectedOrbiter["Mentor Name"], `Your connect ${selectedOrbiter[" Name"]} passed a referral.`),
+//         sendWhatsAppTemplate(selectedCosmo["Mentor Phone"], selectedCosmo["Mentor Name"], `Your connect ${selectedCosmo[" Name"]} received a referral.`),
+//       ]);
+  // Send WhatsApp messages...
+} catch (err) {
+  console.error("Error submitting referral:", err);
+  alert("Submission failed.");
+}
+
+
+  
   };
 
   return (
@@ -356,7 +378,6 @@ const [lastUpdated, setLastUpdated] = useState(new Date());
       )}
 
       {/* Referral Source */}
-  {/* Referral Source */}
 <li className="form-group">
   <label>Referral Source</label>
   <select
@@ -365,7 +386,7 @@ const [lastUpdated, setLastUpdated] = useState(new Date());
   >
     <option value="MonthlyMeeting">Monthly Meeting</option>
     <option value="ConclaveMeeting">Conclave Meeting</option>
-       <option value="OTCMeeting">OTC Meeting</option>
+    <option value="OTCMeeting">OTC Meeting</option>
     <option value="Phone">Phone</option>
     <option value="Other">Other</option>
   </select>
@@ -374,12 +395,13 @@ const [lastUpdated, setLastUpdated] = useState(new Date());
     <input
       type="text"
       placeholder="Enter Referral Source"
-      value={referralSource === "Other" ? otherName : ""}
-      onChange={(e) => setReferralSource(e.target.value)}
+      value={otherReferralSource}
+      onChange={(e) => setOtherReferralSource(e.target.value)}
       style={{ marginTop: "8px" }}
     />
   )}
 </li>
+
 
     </ul>
 

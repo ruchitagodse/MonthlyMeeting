@@ -26,24 +26,40 @@ const [activeTab, setActiveTab] = useState('Personal Info');
 useEffect(() => {
   const fetchUserByPhone = async () => {
     try {
-      if (!userPhone) {
-        console.warn('No phone number found in query param');
-        return;
-      }
+      if (!userPhone) return;
 
-      console.log('Fetching user with phone:', userPhone);
       const q = query(collection(db, 'userdetail'), where('Mobile no', '==', userPhone));
       const snapshot = await getDocs(q);
-      console.log('Snapshot:', snapshot.docs.map(d => d.data()));
 
       if (!snapshot.empty) {
         const userDoc = snapshot.docs[0];
         const userData = userDoc.data();
-        console.log('User data found:', userData);
+
         setFormData(userData);
         setDocId(userDoc.id);
-      } else {
-        console.warn('User not found');
+
+        // Load services and products from DB
+        if (userData.services && userData.services.length > 0) {
+          setServices(
+            userData.services.map(s => ({
+              name: s.name || '',
+              description: s.description || '',
+              image: null, // images will be uploaded anew if needed
+              percentage: s.percentage || ''
+            }))
+          );
+        }
+
+        if (userData.products && userData.products.length > 0) {
+          setProducts(
+            userData.products.map(p => ({
+              name: p.name || '',
+              description: p.description || '',
+              image: null, // images will be uploaded anew if needed
+              percentage: p.percentage || ''
+            }))
+          );
+        }
       }
     } catch (err) {
       console.error('Error fetching user:', err);
@@ -280,7 +296,7 @@ const cosmorbiterFields = [
 const fieldGroups = {
   'Personal Info': [
     'ID Type', 'ID Number', 'Upload Photo',
-    'City', 'State', 'Location', // ✅ Added here
+    'City', 'State', 'Location', 
     'Address (City, State)', 'Marital Status', 'Languages Known'
   ],
   'Health': ['Health Parameters', 'Current Health Condition', 'Family History Summary'],

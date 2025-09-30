@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { getFirestore, doc, getDoc, collection, getDocs, addDoc } from "firebase/firestore";
+import { CiImageOn } from "react-icons/ci";
 import { app } from "../../firebaseConfig";
 import HeaderNav from "../../component/HeaderNav";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Radio, RadioGroup, FormControlLabel } from "@mui/material";
 import "../../src/app/styles/user.scss";
+import { MdArrowBack } from "react-icons/md";
 
 const db = getFirestore(app);
 
@@ -12,16 +14,16 @@ const ReferralDetails = () => {
   const router = useRouter();
   const { id } = router.query;
   const [refType, setRefType] = useState("Self");
-    const [otherName, setOtherName] = useState("");
-    const [otherPhone, setOtherPhone] = useState("");
-    const [otherEmail, setOtherEmail] = useState("");
+  const [otherName, setOtherName] = useState("");
+  const [otherPhone, setOtherPhone] = useState("");
+  const [otherEmail, setOtherEmail] = useState("");
   const [selectedOption, setSelectedOption] = useState(""); // For selected service/product
-const [isDialogOpen, setIsDialogOpen] = useState(false); // For opening/closing the dropdown modal
-const [leadDescription, setLeadDescription] = useState(""); // Short description
-const [selectedFor, setSelectedFor] = useState("self"); // For Self / Someone Else
+  const [isDialogOpen, setIsDialogOpen] = useState(false); // For opening/closing the dropdown modal
+  const [leadDescription, setLeadDescription] = useState(""); // Short description
+  const [selectedFor, setSelectedFor] = useState("self"); // For Self / Someone Else
 
-const [dropdownOpen, setDropdownOpen] = useState(false); // dropdown toggle
-const [modalOpen, setModalOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false); // dropdown toggle
+  const [modalOpen, setModalOpen] = useState(false);
 
 
   const [userDetails, setUserDetails] = useState(null);
@@ -104,98 +106,98 @@ const [modalOpen, setModalOpen] = useState(false);
     return `${refPrefix}${String(lastNum + 1).padStart(8, "0")}`;
   };
 
-const handlePassReferral = async () => {
-  if (!orbiterDetails && selectedFor === "self") {
-    alert("Orbiter details not found.");
-    return;
-  }
+  const handlePassReferral = async () => {
+    if (!orbiterDetails && selectedFor === "self") {
+      alert("Orbiter details not found.");
+      return;
+    }
 
-  if (!userDetails) {
-    alert("CosmoOrbiter details not found.");
-    return;
-  }
+    if (!userDetails) {
+      alert("CosmoOrbiter details not found.");
+      return;
+    }
 
-  if (!selectedOption) {
-    alert("Please select a service or product to refer.");
-    return;
-  }
+    if (!selectedOption) {
+      alert("Please select a service or product to refer.");
+      return;
+    }
 
-  if (!leadDescription || leadDescription.trim() === "") {
-    alert("Please enter a short description of the lead.");
-    return;
-  }
+    if (!leadDescription || leadDescription.trim() === "") {
+      alert("Please enter a short description of the lead.");
+      return;
+    }
 
-  const referralId = await generateReferralId();
+    const referralId = await generateReferralId();
 
-  // Determine if selected option is service or product
-  const selectedService = services.find((s) => s.name === selectedOption) || null;
-  const selectedProduct = products.find((p) => p.name === selectedOption) || null;
+    // Determine if selected option is service or product
+    const selectedService = services.find((s) => s.name === selectedOption) || null;
+    const selectedProduct = products.find((p) => p.name === selectedOption) || null;
 
-  const data = {
-    referralId,
-    referralSource: "R", // or any default source you use
-    referralType: selectedFor === "self" ? "Self" : "Others",
-    leadDescription,
-    dealStatus: "Work in Progress",
-    lastUpdated: new Date(),
-    timestamp: new Date(),
-    cosmoOrbiter: {
-      name: userDetails.name,
-      email: userDetails.email,
-      phone: userDetails.phone,
-      mentorName: userDetails.mentorName || null,
-      mentorPhone: userDetails.mentorPhone || null,
-    },
-    orbiter:
-      selectedFor === "self"
-        ? orbiterDetails
-        : { name: otherName, phone: otherPhone, email: otherEmail },
-    product: selectedProduct
-      ? {
+    const data = {
+      referralId,
+      referralSource: "R", // or any default source you use
+      referralType: selectedFor === "self" ? "Self" : "Others",
+      leadDescription,
+      dealStatus: "Pending",
+      lastUpdated: new Date(),
+      timestamp: new Date(),
+      cosmoOrbiter: {
+        name: userDetails.name,
+        email: userDetails.email,
+        phone: userDetails.phone,
+        mentorName: userDetails.mentorName || null,
+        mentorPhone: userDetails.mentorPhone || null,
+      },
+      orbiter:
+        selectedFor === "self"
+          ? orbiterDetails
+          : { name: otherName, phone: otherPhone, email: otherEmail },
+      product: selectedProduct
+        ? {
           name: selectedProduct.name,
           description: selectedProduct.description,
           imageURL: selectedProduct.imageURL || "",
           percentage: selectedProduct.percentage || "0",
         }
-      : null,
-    service: selectedService
-      ? {
+        : null,
+      service: selectedService
+        ? {
           name: selectedService.name,
           description: selectedService.description,
           imageURL: selectedService.imageURL || "",
           percentage: selectedService.percentage || "0",
         }
-      : null,
-    dealLogs: [],
-    followups: [],
-    statusLogs: [],
+        : null,
+      dealLogs: [],
+      followups: [],
+      statusLogs: [],
+    };
+
+    try {
+      await addDoc(collection(db, "Referral"), data);
+      alert("Referral passed successfully!");
+
+      // Reset modal fields
+      setSelectedOption(null);
+      setDropdownOpen(false);
+      setLeadDescription("");
+      setOtherName("");
+      setOtherPhone("");
+      setOtherEmail("");
+      setSelectedFor("self");
+      setModalOpen(false);
+    } catch (err) {
+      console.error("Error passing referral:", err);
+      alert("Failed to pass referral.");
+    }
   };
-
-  try {
-    await addDoc(collection(db, "Referral"), data);
-    alert("Referral passed successfully!");
-
-    // Reset modal fields
-    setSelectedOption(null);
-    setDropdownOpen(false);
-    setLeadDescription("");
-    setOtherName("");
-    setOtherPhone("");
-    setOtherEmail("");
-    setSelectedFor("self");
-    setModalOpen(false);
-  } catch (err) {
-    console.error("Error passing referral:", err);
-    alert("Failed to pass referral.");
-  }
-};
-
+  const imgSrc = userDetails.logo || userDetails.profilePic;
 
   const getInitials = (name) => name?.split(' ').map(n => n[0]).join('').toUpperCase();
 
-  if (!orbiterDetails || !userDetails) return   <div className='loader'>
-            <span className="loader2"></span>
-          </div>;
+  if (!orbiterDetails || !userDetails) return <div className='loader'>
+    <span className="loader2"></span>
+  </div>;
 
   return (
     <main className="pageContainer">
@@ -225,249 +227,267 @@ const handlePassReferral = async () => {
             />
           </div>
 
-          
-          
 
-        {/* Round Business Logo */}
-    <div className="profile-header">
-  <img
-    src={
-      userDetails.profilePic ||
-      userDetails.logo ||
-      "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBw4ODg4NDg4ODhAPEA0NDw0NDRAQDg0NFhIXFhURExUYHCggGBolHRMTITEhJSkrLi4uFx8zODMsNygtLisBCgoKDg0NEA4PDy0ZFRkrKystKzctNy0rKysrKystKysrKysrKysrNysrKysrKysrKysrKysrKysrKysrKysrK//AABEIAOEA4QMBIgACEQEDEQH/xAAbAAEAAgMBAQAAAAAAAAAAAAAAAQQCBQYDB//EADMQAQEAAQEFAwoGAwEAAAAAAAABAgMEBREhMRJBURUiM1JhcYGSocEycoKxstETI5Hh/8QAFgEBAQEAAAAAAAAAAAAAAAAAAAEC/8QAFhEBAQEAAAAAAAAAAAAAAAAAAAER/9oADAMBAAIRAxEAPwD6KgG2QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAZdqgMQAAAAAAAAAAAARxFSI4pAAEAAAAAAAAAAAAAAAAAAAAAAJzvBsdk3VllzzvCeE62PfdOwzGf5cudvSXujaM2qq6W79LHpjxvjbViaeM7p/xkIrzy2fC9cZz9iptG69PL8M7F9nHg2CDRzW07Hnp8e1OM7rOjwdVqYTKXG9LOFc9t2zXSy4dZeeN9jUqKwlCoAAAAAAAAAAAAAAAAAALm69nmpnznGY86p1vNy6fDT7XDrUqthIkGVQJQACQQrbds81MLy5znL4VaRQcn38BZ3jpzHVyk7+as3qAAgAAAAAAAAAAAAAAABXS7FjJp4d3KVzVdPsvo8Py4/slV7CIllQAAABFSig0u+5wzxvjLx+jWtpv3rp+7L7NYsRADSAAAAAAAAAAAAAAAAFdHu7U7WlhfZw/wCcnONtuTXnnad6/inuSq24hLKgAAACKljnlJLb3A0e+tXjqTH1Z+6g9Nr1O3nll422ce6PLFqIkBUAAAAAAAAAAAAAAAAGejqXDKZTrKwCjqNn1pnjMpZ/Verm9g2z/Flz49m9Z93Q6WpMpLLxlYaZgAAANTvfa+V0p7OP7rO8NtmnjZOeV4ycO6+NaDLK223nbeNWREWANIAAAAAAAAAAAAAAAAAAAkGNe2zbVnp/hvwvOPNCK2uz749fH4xZm9tH1rP05f00PEiYN5lvfT58OOXws/dR1d66uXThjPdzUacVwZZ5XK2222sQVAAAAAAAAAAAAAAAAAABlp4ZZXhjLfgvbDu25+dnxmPKzxrc6WhjhJMcZOCarT6G6c7zyvZ9i5jujTnW5X4z7RsBNXFLyXo+rfmp5L0fVvzVdEFLyXo+rfmqPJej6t+arwCj5K0fVvzU8laPq35qvAKPkrR9W/NWOW6NK9LnPdlPvGwAanPc3q6l/Viqa27dXHu7U8cbx+nV0Iujk8pZeFll8LyqHUa+z4ak4ZYy+3vnurSbdsGWl5087Dx7571lTFIBUAAAAAAAAAAS2u7t3cfPz+EeG6dn7eXavTH61vZGbVJEgigAAAAAAAAAAACLOPKpAaHeew/4728Z5l6z1b/Sg6vUwmUuNnGWcLPY5ra9C6edwvd0vjO5qVK8QFQAAAAAAZYY22SdbZIxX9zaPa1O13YTj8b0+5VbjZNnmlhMZ77fG99ewMKAAAAAAAAAAAAAAAANdvrQ7WHbnXDr+Wtiw1sO1jlj4yz6A5UINsgAAAAADd7jx8zK+OX0k/8AWkb/AHNP9M9tyv14fZKsXgGVAAAAAAAAAAAAAAAAAAcrrY8M854ZZT6sHttfpNT8+f8AKvFtAAQAAAAdDun0OH6/5VzzoN0ehx9+X8qlWLoDKgAAAAAAAAAAAAAAAAAOZ26f7dT82TwWd4zhranvl+kVm4gAIAAAAOg3R6HH35fyoJVi6AyoAAAAAAAAAAAAAAACKQAc9vT02f6f4xUBuIACAAP/2Q=="
-    }
-    alt={userDetails.name || "User Logo"}
-    className="profile-round-image"
-  />
-</div>
 
-<div className="event-container">
-  <div className="event-content businessDetail">
-    <div className="profile-info-card">
 
-      {/* Category */}
-      {userDetails.Category1 && <p className="profile-category">{userDetails.Category1 || "N/A"}</p>}
-      {userDetails.Category2 && <p className="profile-category">{userDetails.Category2 || "N/A"}</p>}
-
-      {/* Business Name */}
-      <h2 className="profile-business-name">{userDetails.businessName}</h2>
-
-      
-
-      {/* Owner */}
-      <p className="profile-business-owner">
-        Owner: <strong>{userDetails.name || "N/A"}</strong>
-      </p>
-
-      {/* Location */}
-      <p className="profile-business-location">
-        📍 {userDetails.Locality || "N/A"}
-      </p>
-    </div>
-
-    {/* Tabs */}
-    <div className="custom-tabs">
-      <button
-        className={`custom-tab ${activeTab === "about" ? "active" : ""}`}
-        onClick={() => setActiveTab("about")}
-      >
-        About
-      </button>
-      <button
-        className={`custom-tab ${activeTab === "services" ? "active" : ""}`}
-        onClick={() => setActiveTab("services")}
-      >
-        Services
-      </button>
-      <button
-        className={`custom-tab ${activeTab === "products" ? "active" : ""}`}
-        onClick={() => setActiveTab("products")}
-      >
-        Products
-      </button>
-    </div>
-
-    <div className='eventinnerContent'>
-      {/* About Section */}
-      {activeTab === "about" && (
-        <div className="tabs about-section">
-         <p style={{ padding: "10px", color: "black" }}>
-  {userDetails.tagline || "Tagline not available"}
-</p>
-
-        </div>
-      )}
-
-  {/* Services */}
-{activeTab === "services" && (
-  <div className="tabs">
-    {services.length > 0 ? (
-      <div className="offering-container">
-        {services.map((srv, i) => (
-          <div key={i} className="offering-card">
+          {/* Round Business Logo */}
+          <div className="profile-header">
             <img
-              src={srv.imageURL || "data:image/png;base64,..."}
-              alt={srv.name}
-              className="offering-image"
+              src={
+                userDetails.profilePic ||
+                userDetails.logo ||
+                "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBw4ODg4NDg4ODhAPEA0NDw0NDRAQDg0NFhIXFhURExUYHCggGBolHRMTITEhJSkrLi4uFx8zODMsNygtLisBCgoKDg0NEA4PDy0ZFRkrKystKzctNy0rKysrKystKysrKysrKysrNysrKysrKysrKysrKysrKysrKysrKysrK//AABEIAOEA4QMBIgACEQEDEQH/xAAbAAEAAgMBAQAAAAAAAAAAAAAAAQQCBQYDB//EADMQAQEAAQEFAwoGAwEAAAAAAAABAgMEBREhMRJBURUiM1JhcYGSocEycoKxstETI5Hh/8QAFgEBAQEAAAAAAAAAAAAAAAAAAAEC/8QAFhEBAQEAAAAAAAAAAAAAAAAAAAER/9oADAMBAAIRAxEAPwD6KgG2QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAZdqgMQAAAAAAAAAAAARxFSI4pAAEAAAAAAAAAAAAAAAAAAAAAAJzvBsdk3VllzzvCeE62PfdOwzGf5cudvSXujaM2qq6W79LHpjxvjbViaeM7p/xkIrzy2fC9cZz9iptG69PL8M7F9nHg2CDRzW07Hnp8e1OM7rOjwdVqYTKXG9LOFc9t2zXSy4dZeeN9jUqKwlCoAAAAAAAAAAAAAAAAAALm69nmpnznGY86p1vNy6fDT7XDrUqthIkGVQJQACQQrbds81MLy5znL4VaRQcn38BZ3jpzHVyk7+as3qAAgAAAAAAAAAAAAAAABXS7FjJp4d3KVzVdPsvo8Py4/slV7CIllQAAABFSig0u+5wzxvjLx+jWtpv3rp+7L7NYsRADSAAAAAAAAAAAAAAAAFdHu7U7WlhfZw/wCcnONtuTXnnad6/inuSq24hLKgAAACKljnlJLb3A0e+tXjqTH1Z+6g9Nr1O3nll422ce6PLFqIkBUAAAAAAAAAAAAAAAAGejqXDKZTrKwCjqNn1pnjMpZ/Verm9g2z/Flz49m9Z93Q6WpMpLLxlYaZgAAANTvfa+V0p7OP7rO8NtmnjZOeV4ycO6+NaDLK223nbeNWREWANIAAAAAAAAAAAAAAAAAAAkGNe2zbVnp/hvwvOPNCK2uz749fH4xZm9tH1rP05f00PEiYN5lvfT58OOXws/dR1d66uXThjPdzUacVwZZ5XK2222sQVAAAAAAAAAAAAAAAAAABlp4ZZXhjLfgvbDu25+dnxmPKzxrc6WhjhJMcZOCarT6G6c7zyvZ9i5jujTnW5X4z7RsBNXFLyXo+rfmp5L0fVvzVdEFLyXo+rfmqPJej6t+arwCj5K0fVvzU8laPq35qvAKPkrR9W/NWOW6NK9LnPdlPvGwAanPc3q6l/Viqa27dXHu7U8cbx+nV0Iujk8pZeFll8LyqHUa+z4ak4ZYy+3vnurSbdsGWl5087Dx7571lTFIBUAAAAAAAAAAS2u7t3cfPz+EeG6dn7eXavTH61vZGbVJEgigAAAAAAAAAAACLOPKpAaHeew/4728Z5l6z1b/Sg6vUwmUuNnGWcLPY5ra9C6edwvd0vjO5qVK8QFQAAAAAAZYY22SdbZIxX9zaPa1O13YTj8b0+5VbjZNnmlhMZ77fG99ewMKAAAAAAAAAAAAAAAANdvrQ7WHbnXDr+Wtiw1sO1jlj4yz6A5UINsgAAAAADd7jx8zK+OX0k/8AWkb/AHNP9M9tyv14fZKsXgGVAAAAAAAAAAAAAAAAAAcrrY8M854ZZT6sHttfpNT8+f8AKvFtAAQAAAAdDun0OH6/5VzzoN0ehx9+X8qlWLoDKgAAAAAAAAAAAAAAAAAOZ26f7dT82TwWd4zhranvl+kVm4gAIAAAAOg3R6HH35fyoJVi6AyoAAAAAAAAAAAAAAACKQAc9vT02f6f4xUBuIACAAP/2Q=="
+              }
+              alt={userDetails.name || "User Logo"}
+              className="profile-round-image"
             />
-            <h4>{srv.name}</h4>
-            <p>{srv.description}</p>
-            {srv.percentage && <p>Agreed Percentage: {srv.percentage}%</p>}
           </div>
-        ))}
-      </div>
-    ) : (
-      <p>No services available</p>
-    )}
-  </div>
-)}
 
-{/* Products */}
-{activeTab === "products" && (
-  <div className="tabs">
-    {products.length > 0 ? (
-      products.map((prd, i) => (
-        <div key={i} className="offering-card">
-          <img
-            src={prd.imageURL || "data:image/png;base64,..."}
-            alt={prd.name}
-            className="offering-image"
-          />
-          <h4>{prd.name}</h4>
-          <p>{prd.description}</p>
-          {prd.percentage && <p>Agreed Percentage: {prd.percentage}%</p>}
-        </div>
-      ))
-    ) : (
-      <p>No products available</p>
-    )}
-  </div>
-)}
+          <div className="event-container">
+            <div className="event-content businessDetail">
+              <div className="profile-info-card">
 
-    </div>
+                {/* Category */}
+                {userDetails.Category1 && <p className="profile-category">{userDetails.Category1 || "N/A"}</p>}
+                {userDetails.Category2 && <p className="profile-category">{userDetails.Category2 || "N/A"}</p>}
 
-    {/* Floating Pass Referral Button */}
-    <button
-      className="floating-referral-btn"
-      onClick={() => setModalOpen(true)}
-    >
-      Pass Referral
-    </button>
-  </div>
-  </div>
+                {/* Business Name */}
+                <h2 className="profile-business-name">{userDetails.businessName}</h2>
 
-            
 
-            <HeaderNav />
-       
+
+                {/* Owner */}
+                <p className="profile-business-owner">
+                  Owner: <strong>{userDetails.name || "N/A"}</strong>
+                </p>
+
+                {/* Location */}
+                <p className="profile-business-location">
+                  📍 {userDetails.Locality || "N/A"}
+                </p>
+              </div>
+
+              {/* Tabs */}
+              <div className="custom-tabs">
+                <button
+                  className={`custom-tab ${activeTab === "about" ? "active" : ""}`}
+                  onClick={() => setActiveTab("about")}
+                >
+                  About
+                </button>
+                <button
+                  className={`custom-tab ${activeTab === "services" ? "active" : ""}`}
+                  onClick={() => setActiveTab("services")}
+                >
+                  Services
+                </button>
+                <button
+                  className={`custom-tab ${activeTab === "products" ? "active" : ""}`}
+                  onClick={() => setActiveTab("products")}
+                >
+                  Products
+                </button>
+              </div>
+
+              <div className='eventinnerContent'>
+                {/* About Section */}
+                {activeTab === "about" && (
+                  <div className="tabs about-section">
+                    <p style={{ padding: "10px", color: "black" }}>
+                      {userDetails.tagline || "Tagline not available"}
+                    </p>
+
+                  </div>
+                )}
+
+                {/* Services */}
+                {activeTab === "services" && (
+                  <div className="tabs">
+                    {services.length > 0 ? (
+                      <div className="offering-container">
+                        {services.map((srv, i) => (
+                          <div key={i} className="offering-card">
+                            <img
+                              src={srv.imageURL || "data:image/png;base64,..."}
+                              alt={srv.name}
+                              className="offering-image"
+                            />
+                            <h4>{srv.name}</h4>
+                            <p>{srv.description}</p>
+                            {srv.percentage && <p>Agreed Percentage: {srv.percentage}%</p>}
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p>No services available</p>
+                    )}
+                  </div>
+                )}
+
+                {/* Products */}
+                {activeTab === "products" && (
+                  <div className="tabs">
+                    {products.length > 0 ? (
+                      products.map((prd, i) => (
+                        <div key={i} className="offering-card">
+                          <img
+                            src={prd.imageURL || "data:image/png;base64,..."}
+                            alt={prd.name}
+                            className="offering-image"
+                          />
+                          <h4>{prd.name}</h4>
+                          <p>{prd.description}</p>
+                          {prd.percentage && <p>Agreed Percentage: {prd.percentage}%</p>}
+                        </div>
+                      ))
+                    ) : (
+                      <p>No products available</p>
+                    )}
+                  </div>
+                )}
+
+              </div>
+
+              {/* Floating Pass Referral Button */}
+              <button
+                className="floating-referral-btn"
+                onClick={() => setModalOpen(true)}
+              >
+                Pass Referral
+              </button>
+            </div>
+          </div>
+
+
+
+          <HeaderNav />
+
         </div>
       </section>
 
       {/* Referral Modal */}
-{/* Referral Modal */}
-{modalOpen && (
-  <div className="ref-modal-overlay">
-    <div className="ref-modal-content">
-      {/* Header */}
-      <div className="header">
-        <button className="back-btn" onClick={() => setModalOpen(false)}>←</button>
-        <h3>Refer now</h3>
-      </div>
+      {/* Referral Modal */}
+      {modalOpen && (
+        <div className="ref-modal-overlay">
+          <div></div>
+          <div className="ref-modal-content">
+            {/* Header */}
+            <div className="modelheader">
+              <button className="back-btn" onClick={() => setModalOpen(false)}>
+                <MdArrowBack />
+              </button>
+              <h3>Refer now</h3>
+            </div>
 
-      {/* Profile Section */}
-      <div className="profile-section">
-        <img
-          src={userDetails.logo || userDetails.profilePic || "data:image/placeholder"}
-          alt={userDetails.businessName || "Company Logo"}
-          className="profile-img"
-        />
-        <h4 className="profile-name">{userDetails.businessName || "Company Name"}</h4>
+            <div className="modelContent">
+              {/* Profile Section */}
+              <div className="profile-section">
 
-        {/* Service/Product Dropdown */}
-        <button className="dropdown-btn" onClick={() => setDropdownOpen(!dropdownOpen)}>
-          {selectedOption || "Product or Service referred*"}
-        </button>
-        {dropdownOpen && (
-          <div className="dropdown-menu">
-            {services.concat(products).map((item, i) => (
-              <div
-                key={i}
-                className="dropdown-item"
-                onClick={() => { setSelectedOption(item.name); setDropdownOpen(false); }}
-              >
-                {item.name}
+
+                <div className="businessLogo">
+                  {imgSrc ? (
+                    <Image
+                      src={imgSrc}
+                      alt={userDetails.businessName || "Company Logo"}
+                      width={100}   // adjust size as needed
+                      height={100}  // adjust size as needed
+                      className="profile-img"
+                    />
+                  ) : (
+                    <CiImageOn />
+                  )}
+                </div>
+                <h4 className="profile-name">{userDetails.businessName || "Company Name"}</h4>
+
+                <div className="dropdownMain">
+                  {/* Service/Product Dropdown */}
+                  <button className="dropdown-btn" onClick={() => setDropdownOpen(!dropdownOpen)}>
+                    {selectedOption || "Product or Service referred*"}
+                  </button>
+                  {dropdownOpen && (
+                    <div className="dropdown-menu">
+                      {services.concat(products).map((item, i) => (
+                        <div
+                          key={i}
+                          className="dropdown-item"
+                          onClick={() => { setSelectedOption(item.name); setDropdownOpen(false); }}
+                        >
+                          {item.name}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Short Description */}
+                <textarea
+                  className="description-input"
+                  placeholder="Short description of the lead*"
+                  value={leadDescription}
+                  onChange={(e) => setLeadDescription(e.target.value)}
+                />
+
+                {/* Others Info */}
+                {selectedFor === "someone" && (
+                  <div className="ref-section">
+                    <h4 className="ref-subtitle">Orbiter Info (Others)</h4>
+                    <input
+                      type="text"
+                      placeholder="Name"
+                      value={otherName}
+                      onChange={(e) => setOtherName(e.target.value)}
+                      className="ref-input"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Phone"
+                      value={otherPhone}
+                      onChange={(e) => setOtherPhone(e.target.value)}
+                      className="ref-input"
+                    />
+                    <input
+                      type="email"
+                      placeholder="Email"
+                      value={otherEmail}
+                      onChange={(e) => setOtherEmail(e.target.value)}
+                      className="ref-input"
+                    />
+                  </div>
+                )}
               </div>
-            ))}
-          </div>
-        )}
+              {/* Referral Type Selection */}
+              <div className="form-container">
+                <div className="selection-container">
+                  <div className="selection-icon">
+                    {/* <img src="/imgs/icons/referralsGiven@2x.png" alt="Selection Icon" /> */}
+                  </div>
+                  <div className="buttons">
+                    <button
+                      className={`border-btn ${selectedFor === "self" ? "active" : ""}`}
+                      onClick={() => setSelectedFor("self")}
+                    >
+                      For Self
+                    </button>
+                    <button
+                      className={`border-btn ${selectedFor === "someone" ? "active" : ""}`}
+                      onClick={() => setSelectedFor("someone")}
+                    >
+                      For Someone Else
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="modelheader">
+              <button className="submit-btn" onClick={handlePassReferral}>
+                Send Referral
+              </button>
+            </div>
+            {/* Submit Button */}
 
-        {/* Short Description */}
-        <textarea
-          className="description-input"
-          placeholder="Short description of the lead*"
-          value={leadDescription}
-          onChange={(e) => setLeadDescription(e.target.value)}
-        />
-
-        {/* Others Info */}
-        {selectedFor === "someone" && (
-          <div className="ref-section">
-            <h4 className="ref-subtitle">Orbiter Info (Others)</h4>
-            <input
-              type="text"
-              placeholder="Name"
-              value={otherName}
-              onChange={(e) => setOtherName(e.target.value)}
-              className="ref-input"
-            />
-            <input
-              type="text"
-              placeholder="Phone"
-              value={otherPhone}
-              onChange={(e) => setOtherPhone(e.target.value)}
-              className="ref-input"
-            />
-            <input
-              type="email"
-              placeholder="Email"
-              value={otherEmail}
-              onChange={(e) => setOtherEmail(e.target.value)}
-              className="ref-input"
-            />
-          </div>
-        )}
-      </div>
-
-      {/* Referral Type Selection */}
-      <div className="form-container">
-        <div className="selection-container">
-          <div className="selection-icon">
-            <img src="/imgs/icons/referralsGiven@2x.png" alt="Selection Icon" />
-          </div>
-          <div className="buttons">
-            <button
-              className={`border-btn ${selectedFor === "self" ? "active" : ""}`}
-              onClick={() => setSelectedFor("self")}
-            >
-              For Self
-            </button>
-            <button
-              className={`border-btn ${selectedFor === "someone" ? "active" : ""}`}
-              onClick={() => setSelectedFor("someone")}
-            >
-              For Someone Else
-            </button>
           </div>
         </div>
-      </div>
-
-      {/* Submit Button */}
-      <button className="submit-btn" onClick={handlePassReferral}>
-        Send Referral
-      </button>
-    </div>
-  </div>
-)}
+      )}
 
 
 

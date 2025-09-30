@@ -1887,18 +1887,19 @@ font-size: 16px;
     bottom: 78px;
     left: 50%;
     transform: translateX(-50%);
-    background: #0a3c6e;
+    background: $mcolor;
     color: #fff;
-    font-size: 1rem;
-    font-weight: 400;
+    font-size: 16px;
+    font-weight: 500;
     width: 62%;
     padding: 14px 40px;
     border: none;
     border-radius: 30px;
     cursor: pointer;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s 
-ease;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     z-index: 1000;
 }
 .profile-info-card {

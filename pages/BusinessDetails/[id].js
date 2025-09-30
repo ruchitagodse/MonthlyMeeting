@@ -7,7 +7,8 @@ import HeaderNav from "../../component/HeaderNav";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Radio, RadioGroup, FormControlLabel } from "@mui/material";
 import "../../src/app/styles/user.scss";
 import { MdArrowBack } from "react-icons/md";
-import { IoPlanetOutline } from "react-icons/io5";
+import { FaMapMarkerAlt } from "react-icons/fa";
+import { FaUser } from "react-icons/fa";
 
 const db = getFirestore(app);
 
@@ -192,7 +193,7 @@ const ReferralDetails = () => {
       alert("Failed to pass referral.");
     }
   };
-  
+
 
   const getInitials = (name) => name?.split(' ').map(n => n[0]).join('').toUpperCase();
 
@@ -232,16 +233,19 @@ const ReferralDetails = () => {
 
 
           {/* Round Business Logo */}
-          <div className="profile-header">
-            <img
-              src={
-                userDetails.profilePic ||
-                userDetails.logo ||
-                "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBw4ODg4NDg4ODhAPEA0NDw0NDRAQDg0NFhIXFhURExUYHCggGBolHRMTITEhJSkrLi4uFx8zODMsNygtLisBCgoKDg0NEA4PDy0ZFRkrKystKzctNy0rKysrKystKysrKysrKysrNysrKysrKysrKysrKysrKysrKysrKysrK//AABEIAOEA4QMBIgACEQEDEQH/xAAbAAEAAgMBAQAAAAAAAAAAAAAAAQQCBQYDB//EADMQAQEAAQEFAwoGAwEAAAAAAAABAgMEBREhMRJBURUiM1JhcYGSocEycoKxstETI5Hh/8QAFgEBAQEAAAAAAAAAAAAAAAAAAAEC/8QAFhEBAQEAAAAAAAAAAAAAAAAAAAER/9oADAMBAAIRAxEAPwD6KgG2QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAZdqgMQAAAAAAAAAAAARxFSI4pAAEAAAAAAAAAAAAAAAAAAAAAAJzvBsdk3VllzzvCeE62PfdOwzGf5cudvSXujaM2qq6W79LHpjxvjbViaeM7p/xkIrzy2fC9cZz9iptG69PL8M7F9nHg2CDRzW07Hnp8e1OM7rOjwdVqYTKXG9LOFc9t2zXSy4dZeeN9jUqKwlCoAAAAAAAAAAAAAAAAAALm69nmpnznGY86p1vNy6fDT7XDrUqthIkGVQJQACQQrbds81MLy5znL4VaRQcn38BZ3jpzHVyk7+as3qAAgAAAAAAAAAAAAAAABXS7FjJp4d3KVzVdPsvo8Py4/slV7CIllQAAABFSig0u+5wzxvjLx+jWtpv3rp+7L7NYsRADSAAAAAAAAAAAAAAAAFdHu7U7WlhfZw/wCcnONtuTXnnad6/inuSq24hLKgAAACKljnlJLb3A0e+tXjqTH1Z+6g9Nr1O3nll422ce6PLFqIkBUAAAAAAAAAAAAAAAAGejqXDKZTrKwCjqNn1pnjMpZ/Verm9g2z/Flz49m9Z93Q6WpMpLLxlYaZgAAANTvfa+V0p7OP7rO8NtmnjZOeV4ycO6+NaDLK223nbeNWREWANIAAAAAAAAAAAAAAAAAAAkGNe2zbVnp/hvwvOPNCK2uz749fH4xZm9tH1rP05f00PEiYN5lvfT58OOXws/dR1d66uXThjPdzUacVwZZ5XK2222sQVAAAAAAAAAAAAAAAAAABlp4ZZXhjLfgvbDu25+dnxmPKzxrc6WhjhJMcZOCarT6G6c7zyvZ9i5jujTnW5X4z7RsBNXFLyXo+rfmp5L0fVvzVdEFLyXo+rfmqPJej6t+arwCj5K0fVvzU8laPq35qvAKPkrR9W/NWOW6NK9LnPdlPvGwAanPc3q6l/Viqa27dXHu7U8cbx+nV0Iujk8pZeFll8LyqHUa+z4ak4ZYy+3vnurSbdsGWl5087Dx7571lTFIBUAAAAAAAAAAS2u7t3cfPz+EeG6dn7eXavTH61vZGbVJEgigAAAAAAAAAAACLOPKpAaHeew/4728Z5l6z1b/Sg6vUwmUuNnGWcLPY5ra9C6edwvd0vjO5qVK8QFQAAAAAAZYY22SdbZIxX9zaPa1O13YTj8b0+5VbjZNnmlhMZ77fG99ewMKAAAAAAAAAAAAAAAANdvrQ7WHbnXDr+Wtiw1sO1jlj4yz6A5UINsgAAAAADd7jx8zK+OX0k/8AWkb/AHNP9M9tyv14fZKsXgGVAAAAAAAAAAAAAAAAAAcrrY8M854ZZT6sHttfpNT8+f8AKvFtAAQAAAAdDun0OH6/5VzzoN0ehx9+X8qlWLoDKgAAAAAAAAAAAAAAAAAOZ26f7dT82TwWd4zhranvl+kVm4gAIAAAAOg3R6HH35fyoJVi6AyoAAAAAAAAAAAAAAACKQAc9vT02f6f4xUBuIACAAP/2Q=="
-              }
-              alt={userDetails.name || "User Logo"}
-              className="profile-round-image"
-            />
+          <div className="profile-header businessProfile">
+
+            <div className="profile-round-image ">
+              {userDetails.profilePic || userDetails.logo ? (
+                <img
+                  src={imageSrc}
+                  alt={userDetails.name || "User Logo"}
+                />
+              ) : (
+                <FaUser  />
+              )}
+            </div>
+
           </div>
 
           <div className="event-container">
@@ -264,7 +268,7 @@ const ReferralDetails = () => {
 
                 {/* Location */}
                 <p className="profile-business-location">
-                  📍 {userDetails.Locality || "N/A"}
+                  <FaMapMarkerAlt /> {userDetails.Locality || "N/A"}
                 </p>
               </div>
 
@@ -369,129 +373,129 @@ const ReferralDetails = () => {
       {/* Referral Modal */}
       {/* Referral Modal */}
       {
-      modalOpen && (
-        // const imgSrc = userDetails.logo || userDetails.profilePic;
-        <div className="ref-modal-overlay">
-          <div></div>
-          <div className="ref-modal-content">
-            {/* Header */}
-            <div className="modelheader">
-              <button className="back-btn" onClick={() => setModalOpen(false)}>
-                <MdArrowBack />
-              </button>
-              <h3>Refer now</h3>
-            </div>
+        modalOpen && (
+          // const imgSrc = userDetails.logo || userDetails.profilePic;
+          <div className="ref-modal-overlay">
+            <div></div>
+            <div className="ref-modal-content">
+              {/* Header */}
+              <div className="modelheader">
+                <button className="back-btn" onClick={() => setModalOpen(false)}>
+                  <MdArrowBack />
+                </button>
+                <h3>Refer now</h3>
+              </div>
 
-            <div className="modelContent">
-              {/* Profile Section */}
-              <div className="profile-section">
+              <div className="modelContent">
+                {/* Profile Section */}
+                <div className="profile-section">
 
 
-                <div className="businessLogo">
-                  
-                  {userDetails.logo || userDetails.profilePic ? (
-                    <Image
-                      src={userDetails.logo || userDetails.profilePic}
-                      alt={userDetails.businessName || "Company Logo"}
-                      width={100}   // adjust size as needed
-                      height={100}  // adjust size as needed
-                      className="profile-img"
-                    />
-                  ) : (
-                    <CiImageOn />
-                  )}
-                </div>
-                <h4 className="profile-name">{userDetails.businessName || "Company Name"}</h4>
+                  <div className="businessLogo">
 
-                <div className="dropdownMain">
-                  {/* Service/Product Dropdown */}
-                  <button className="dropdown-btn" onClick={() => setDropdownOpen(!dropdownOpen)}>
-                    {selectedOption || "Product or Service referred*"}
-                  </button>
-                  {dropdownOpen && (
-                    <div className="dropdown-menu">
-                      {services.concat(products).map((item, i) => (
-                        <div
-                          key={i}
-                          className="dropdown-item"
-                          onClick={() => { setSelectedOption(item.name); setDropdownOpen(false); }}
-                        >
-                          {item.name}
-                        </div>
-                      ))}
+                    {userDetails.logo || userDetails.profilePic ? (
+                      <Image
+                        src={userDetails.logo || userDetails.profilePic}
+                        alt={userDetails.businessName || "Company Logo"}
+                        width={100}   // adjust size as needed
+                        height={100}  // adjust size as needed
+                        className="profile-img"
+                      />
+                    ) : (
+                      <CiImageOn />
+                    )}
+                  </div>
+                  <h4 className="profile-name">{userDetails.businessName || "Company Name"}</h4>
+
+                  <div className="dropdownMain">
+                    {/* Service/Product Dropdown */}
+                    <button className="dropdown-btn" onClick={() => setDropdownOpen(!dropdownOpen)}>
+                      {selectedOption || "Product or Service referred*"}
+                    </button>
+                    {dropdownOpen && (
+                      <div className="dropdown-menu">
+                        {services.concat(products).map((item, i) => (
+                          <div
+                            key={i}
+                            className="dropdown-item"
+                            onClick={() => { setSelectedOption(item.name); setDropdownOpen(false); }}
+                          >
+                            {item.name}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Short Description */}
+                  <textarea
+                    className="description-input"
+                    placeholder="Short description of the lead*"
+                    value={leadDescription}
+                    onChange={(e) => setLeadDescription(e.target.value)}
+                  />
+
+                  {/* Others Info */}
+                  {selectedFor === "someone" && (
+                    <div className="ref-section">
+                      <h4 className="ref-subtitle">Orbiter Info (Others)</h4>
+                      <input
+                        type="text"
+                        placeholder="Name"
+                        value={otherName}
+                        onChange={(e) => setOtherName(e.target.value)}
+                        className="ref-input"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Phone"
+                        value={otherPhone}
+                        onChange={(e) => setOtherPhone(e.target.value)}
+                        className="ref-input"
+                      />
+                      <input
+                        type="email"
+                        placeholder="Email"
+                        value={otherEmail}
+                        onChange={(e) => setOtherEmail(e.target.value)}
+                        className="ref-input"
+                      />
                     </div>
                   )}
                 </div>
-
-                {/* Short Description */}
-                <textarea
-                  className="description-input"
-                  placeholder="Short description of the lead*"
-                  value={leadDescription}
-                  onChange={(e) => setLeadDescription(e.target.value)}
-                />
-
-                {/* Others Info */}
-                {selectedFor === "someone" && (
-                  <div className="ref-section">
-                    <h4 className="ref-subtitle">Orbiter Info (Others)</h4>
-                    <input
-                      type="text"
-                      placeholder="Name"
-                      value={otherName}
-                      onChange={(e) => setOtherName(e.target.value)}
-                      className="ref-input"
-                    />
-                    <input
-                      type="text"
-                      placeholder="Phone"
-                      value={otherPhone}
-                      onChange={(e) => setOtherPhone(e.target.value)}
-                      className="ref-input"
-                    />
-                    <input
-                      type="email"
-                      placeholder="Email"
-                      value={otherEmail}
-                      onChange={(e) => setOtherEmail(e.target.value)}
-                      className="ref-input"
-                    />
-                  </div>
-                )}
-              </div>
-              {/* Referral Type Selection */}
-              <div className="form-container">
-                <div className="selection-container">
-                  <div className="selection-icon">
-                    {/* <img src="/imgs/icons/referralsGiven@2x.png" alt="Selection Icon" /> */}
-                  </div>
-                  <div className="buttons">
-                    <button
-                      className={`border-btn ${selectedFor === "self" ? "active" : ""}`}
-                      onClick={() => setSelectedFor("self")}
-                    >
-                      For Self
-                    </button>
-                    <button
-                      className={`border-btn ${selectedFor === "someone" ? "active" : ""}`}
-                      onClick={() => setSelectedFor("someone")}
-                    >
-                      For Someone Else
-                    </button>
+                {/* Referral Type Selection */}
+                <div className="form-container">
+                  <div className="selection-container">
+                    <div className="selection-icon">
+                      {/* <img src="/imgs/icons/referralsGiven@2x.png" alt="Selection Icon" /> */}
+                    </div>
+                    <div className="buttons">
+                      <button
+                        className={`border-btn ${selectedFor === "self" ? "active" : ""}`}
+                        onClick={() => setSelectedFor("self")}
+                      >
+                        For Self
+                      </button>
+                      <button
+                        className={`border-btn ${selectedFor === "someone" ? "active" : ""}`}
+                        onClick={() => setSelectedFor("someone")}
+                      >
+                        For Someone Else
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="modelheader">
-              <button className="submit-btn" onClick={handlePassReferral}>
-                Send Referral
-              </button>
-            </div>
-            {/* Submit Button */}
+              <div className="modelheader">
+                <button className="submit-btn" onClick={handlePassReferral}>
+                  Send Referral
+                </button>
+              </div>
+              {/* Submit Button */}
 
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
 
 

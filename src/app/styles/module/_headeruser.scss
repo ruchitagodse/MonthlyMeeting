@@ -76,6 +76,9 @@ body {
   font-size: 12px;
   cursor: pointer;
   color: #16274f;
+  &.active{
+    color: $mcolor;
+  }
 }
 
 .icon-label {

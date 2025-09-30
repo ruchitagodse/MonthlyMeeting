@@ -40,6 +40,12 @@
         background: url('/space.jpeg') no-repeat;
         border: 1px solid $bordercolor;
         color: $pclr;
+        overflow: hidden;
+
+        img {
+            width: 100%;
+            object-fit: cover;
+        }
     }
 }
 
@@ -309,6 +315,10 @@
     }
 }
 
+.businessDetailsPage{
+    padding-bottom: 140px;
+}
+
 .cosmoCard-logo {
     width: 50px;
     height: 50px;
@@ -499,24 +509,187 @@
         color: $pclr;
         width: 100px;
         height: 100px;
+        overflow: hidden;
+
+        img {
+            width: 100%;
+        }
     }
 }
 
 .businessDetail {
+    padding: 0px;
+    row-gap: 0px;
+    padding-top: 50px !important;
+    padding-bottom: 30px !important;
+    position: relative;
+    top: 0px;
+
+    .businessCode {
+        position: absolute;
+        padding: 10px 15px;
+        width: 100%;
+        top: 0px;
+        left: 0px;
+        display: flex;
+        justify-content: space-between;
+        font-style: italic;
+
+        p {
+            color: $bodytextcolor;
+            font-size: 12px;
+        }
+    }
+
+    .custom-tabs {
+        display: flex;
+        justify-content: center;
+        border-bottom: 1px solid $bordercolor;
+        // border-top: 1px solid $bordercolor;
+        margin: 20px 0;
+        gap: 30px;
+    }
+
+    .eventinnerContent {
+        width: 100%;
+        background-color: #f2f2f2;
+        padding: 15px;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+    }
+
+    .tabs {
+        display: flex;
+        flex-direction: column;
+        margin-left: 0px;
+        margin-right: 0px;
+        overflow-x: auto;
+        white-space: wrap;
+        scrollbar-width: thin;
+        text-align: justify;
+        row-gap: 10px;
+        -webkit-overflow-scrolling: touch;
+        padding: 5px;
+        color: $bodytextcolor;
+
+        p {
+            color: $bodytextcolor;
+            line-height: 18px;
+        }
+    }
+
+    h4 {
+        font-family: $forum;
+        font-size: 20px;
+        color: $blueclr;
+    }
+
+    .productImage {
+
+        font-size: 60px;
+        border-radius: 10px;
+        overflow: hidden;
+        list-style: 0px;
+        img{
+            width: 100%;
+        }
+
+        // padding: 50px;
+        .nothumbnail {
+            background-color: $bordercolor;
+            justify-content: center;
+            display: flex;
+            border-radius: 10px;
+            padding: 50px 0px;
+            font-size: 60px;
+            color: $bodytextcolor;
+        }
+    }
+
     .profile-info-card {
         margin: 0px;
+        margin-bottom: 15px;
+        padding:0 15px ;
 
         h2 {
             font-family: $forum;
             font-size: 24px;
+            color: $blueclr;
+            margin-bottom: 0px;
         }
-        p{
+        .profile-business-owner{
+            margin: 0px;
+        }
+
+        p {
             color: $blueclr;
             font-size: 14px;
         }
+
+        .categoryList {
+            display: flex;
+            column-gap: 10px;
+            align-items: center;
+            width: 100%;
+            justify-content: center;
+            margin-top: 10px;
+
+            li {
+                padding: 6px 15px;
+                background: #f2f2f2;
+                font-size: 10px;
+                text-transform: uppercase;
+                border-radius: 20px;
+                color: $bodytextcolor;
+            }
+        }
     }
 
+    .slick-dots {
+        // background-color: #FFF;
+        background-color: #FFF;
+        width: auto;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 20px;
+        bottom: -30px;
+        padding: 0 15px;
 
+        li {
+            width: 10px;
+            height: 10px;
+            margin: 0 5px;
+            padding: 0;
+            cursor: pointer;
+            background: #CCC;
+            border-radius: 50%;
+            &.slick-active{
+                background-color: $blueclr;
+            }
+
+            button {
+                width: 10px;
+                height: 10px;
+                margin-top: 4px;
+                padding: 0px;
+
+                &::before {
+                    width: 15px;
+                    height: 15px;
+                    display: none;
+                }
+            }
+        }
+    }
+
+    .slick-slide {
+        padding: 0px;
+
+        p {
+            color: $bodytextcolor;
+            line-height: 20px;
+        }
+    }
 
     .custom-tabs {
         margin: 0px 0;

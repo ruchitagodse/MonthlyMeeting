@@ -14,54 +14,54 @@ const CPDetails = () => {
   const [filteredActivities, setFilteredActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState("All");
-const [totalPoints, setTotalPoints] = useState(0);
+  const [totalPoints, setTotalPoints] = useState(0);
 
   useEffect(() => {
-  if (!phoneNumber) return;
+    if (!phoneNumber) return;
 
-  const fetchUserDetails = async () => {
-    try {
-      const userRef = doc(db, "userdetails", phoneNumber);
-      const userSnap = await getDoc(userRef);
-      if (userSnap.exists()) {
-        setUserName(userSnap.data()[" Name"] || "User");
-      } else {
-        console.log("User not found");
+    const fetchUserDetails = async () => {
+      try {
+        const userRef = doc(db, "userdetails", phoneNumber);
+        const userSnap = await getDoc(userRef);
+        if (userSnap.exists()) {
+          setUserName(userSnap.data()[" Name"] || "User");
+        } else {
+          console.log("User not found");
+        }
+      } catch (error) {
+        console.error("Error fetching user details:", error);
       }
-    } catch (error) {
-      console.error("Error fetching user details:", error);
-    }
-  };
+    };
 
-  const fetchCPDetails = async () => {
-    try {
-      const activitiesRef = collection(db, "Orbiters", phoneNumber, "activities");
-      const activitiesSnapshot = await getDocs(activitiesRef);
+    const fetchCPDetails = async () => {
+      try {
+        const activitiesRef = collection(db, "Orbiters", phoneNumber, "activities");
+        const activitiesSnapshot = await getDocs(activitiesRef);
 
-      let totalPoints = 0;
-      const activitiesList = activitiesSnapshot.docs.map((doc) => {
-        const data = doc.data();
-        const points = parseInt(data.points) || 0;
-        totalPoints += points;
-        return {
-          id: doc.id,
-          ...data,
-        };
-      });
+        let totalPoints = 0;
+        const activitiesList = activitiesSnapshot.docs.map((doc) => {
+          const data = doc.data();
+          const points = parseInt(data.points) || 0;
+          totalPoints += points;
+          return {
+            id: doc.id,
+            ...data,
+          };
+        });
 
-      setActivities(activitiesList);
-      setFilteredActivities(activitiesList);
-      setTotalPoints(totalPoints);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching activities:", error);
-    }
-  };
+        setActivities(activitiesList);
+        setFilteredActivities(activitiesList);
+        setTotalPoints(totalPoints);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching activities:", error);
+      }
+    };
 
-  // ✅ Call both async functions
-  fetchUserDetails();
-  fetchCPDetails();
-}, [phoneNumber]);
+    // ✅ Call both async functions
+    fetchUserDetails();
+    fetchCPDetails();
+  }, [phoneNumber]);
 
 
   const activityTypes = ["All", ...new Set(activities.map(activity => activity.activityType))];
@@ -76,31 +76,31 @@ const [totalPoints, setTotalPoints] = useState(0);
   };
 
   if (loading) {
-    return  <div className='loader'><span className="loader2"></span></div>;
+    return <div className='loader'><span className="loader2"></span></div>;
   }
   const handleLogout = () => {
-  Swal.fire({
-    title: 'Are you sure?',
-    text: 'You will be logged out.',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonText: 'Yes, Logout',
-    cancelButtonText: 'Cancel',
-  }).then((result) => {
-    if (result.isConfirmed) {
-      localStorage.removeItem('ntnumber');
-      window.location.reload(); // or navigate to login
-    }
-  });
-};
- const getInitials = (name) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You will be logged out.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Logout',
+      cancelButtonText: 'Cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        localStorage.removeItem('ntnumber');
+        window.location.reload(); // or navigate to login
+      }
+    });
+  };
+  const getInitials = (name) => {
     return name
       .split(" ") // Split the name into words
       .map(word => word[0]) // Get the first letter of each word
       .join(""); // Join them together
   };
-  
-  
+
+
   return (
     <>
       <main className="pageContainer">
@@ -109,20 +109,20 @@ const [totalPoints, setTotalPoints] = useState(0);
             <div className="innerLogo" onClick={() => router.push("/")}>
               <img src="/ujustlogo.png" alt="Logo" className="logo" />
             </div>
-             <div>
-         <div className="userName" onClick={handleLogout} style={{ cursor: 'pointer' }}>
-  <span>{getInitials(userName)}</span>
-</div>
-          </div>
+            <div>
+              <div className="userName" onClick={handleLogout} style={{ cursor: 'pointer' }}>
+                <span>{getInitials(userName)}</span>
+              </div>
+            </div>
           </section>
         </header>
 
         <section className="dashBoardMain">
-          <div className="container pageHeading">
-           
-  <h1>{userName}'s CP List</h1>
-  <h2 style={{ fontWeight: 500, marginTop: '10px' }}>Total CP Points: {totalPoints}</h2>
-</div>
+          <div className="container sectionHeadings">
+
+            {/* <h1>{userName}'s CP List</h1> */}
+            <h2>{userName}: {totalPoints}</h2>
+          </div>
 
 
           <div className="container filterTab">
@@ -159,7 +159,7 @@ const [totalPoints, setTotalPoints] = useState(0);
             </div>
           )}
 
-    <HeaderNav/>
+          <HeaderNav />
         </section>
       </main>
     </>

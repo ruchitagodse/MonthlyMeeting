@@ -1,31 +1,31 @@
 .ReferralDetailMain {
-    width: 100%;
+  width: 100%;
+  display: flex;
+  column-gap: 20px;
+
+  .ReferralInfo {
     display: flex;
     column-gap: 20px;
+    width: 80%;
 
-    .ReferralInfo {
-        display: flex;
-        column-gap: 20px;
-        width: 100%;
+    >div {
+      width: 25%;
+      border-radius: 10px;
+      background-color: #FFF;
 
-        >div {
-            width: 25%;
-            border-radius: 10px;
-            background-color: #FFF;
-
-            &.ReferralStatusTimeline {
-                width: 20%;
-            }
-        }
+      &.ReferralStatusTimeline {
+        width: 20%;
+      }
     }
+  }
 
-    .followupContainer {
-      background: #fff;
-  border-radius: 15px;
-  padding: 15px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  margin-bottom: 20px;
-    }
+  .followupContainer {
+    background: #fff;
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
 }
 
 /* Orbiter / Cosmo Profile Card */
@@ -34,7 +34,7 @@
   margin: 0 auto;
   background: #fff;
   border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   overflow: hidden;
   font-family: 'Arial', sans-serif;
 }
@@ -123,13 +123,15 @@
   height: 120px;
   object-fit: cover;
   border-radius: 50%;
-  border: 2px solid #16274f; /* dark blue border */
+  border: 2px solid #16274f;
+  /* dark blue border */
 }
 
 .profileCon h2 {
   margin: 0 0 10px 0;
   font-size: 1.3rem;
-  color: #16274f; /* dark blue */
+  color: #16274f;
+  /* dark blue */
 }
 
 .profileCon ul {
@@ -153,14 +155,15 @@
   background: #fff;
   border-radius: 12px;
   padding: 15px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
 }
 
 .serviceCard h2 {
   margin-top: 0;
   font-size: 18px;
-  color: #16274f; /* orange accent */
+  color: #16274f;
+  /* orange accent */
 }
 
 .serviceImg {
@@ -172,30 +175,63 @@
 }
 
 .serviceImg img {
-  width: 100%;
-  object-fit: cover;
+      width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
-/* Follow-ups */
+.followupContainer {
+  position: fixed;
+  /* stay fixed on screen */
+  top: 0;
+  right: 0;
+  /* attach to right side */
+  height: 100vh;
+  /* full page height */
+  width: 350px;
+  /* adjust width */
+  background: #fff;
+  border-left: 1px solid #ddd;
+  border-radius: 0;
+  /* flush with screen */
+  padding: 20px;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  /* scroll when content is too much */
+  z-index: 999;
+  /* stay above other content */
+}
+
+.followupContainer h2 {
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  color: #16274f;
+}
+
+/* Add button fixed at top inside container */
+.addFollowupBtn {
+  margin-bottom: 15px;
+  padding: 10px 15px;
+  background: #fe6f06;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+}
+
+/* Each follow-up card */
 .followupCard {
   background: #fff;
-  border-radius: 12px;
-  padding: 12px 15px;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 12px;
   margin-bottom: 12px;
-  box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
-.followupCard h3 {
-  margin: 0 0 8px 0;
-  color: #16274f; /* dark blue */
-  font-size: 1rem;
-}
-
-.followupCard p {
-  margin: 3px 0;
-  font-size: 0.9rem;
-  color: #555;
-}
 
 /* Payment Card inside sheet */
 .paymentCard {
@@ -203,12 +239,13 @@
   padding: 12px;
   border-radius: 10px;
   margin-bottom: 10px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .paymentCard h4 {
   margin: 0 0 8px 0;
-  color: #fe6f06; /* orange accent */
+  color: #fe6f06;
+  /* orange accent */
 }
 
 .paymentCard p {
@@ -221,10 +258,12 @@
 section h2 {
   font-size: 1.25rem;
   margin-bottom: 10px;
-  color: #16274f; /* dark blue */
+  color: #16274f;
+  /* dark blue */
 }
 
-section h3, section h4 {
+section h3,
+section h4 {
   color: #333;
   margin-bottom: 8px;
 }
@@ -232,10 +271,10 @@ section h3, section h4 {
 /* Payment Sheet */
 .PaymentSheet {
   position: fixed;
-  bottom: -100%; 
+  bottom: -100%;
   left: 0;
   width: 100%;
-  height: 75%; 
+  height: 75%;
   background: #f9f9f9;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
@@ -253,22 +292,23 @@ section h3, section h4 {
 .PaymentContainer {
   position: fixed;
   bottom: 0;
-  left: 0;
-  width: 100%;
+  right: 0;
+  width: 96%;
   background: #fff;
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
-  box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-  padding: 15px;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  padding-top: 15px;
   text-align: center;
-  z-index: 1000;
+  z-index: 1000
 }
 
 .viewMoreBtn {
   margin-top: 10px;
   padding: 10px 20px;
   border: none;
-  background: #16274f; /* dark blue */
+  background: #16274f;
+  /* dark blue */
   color: white;
   border-radius: 8px;
   cursor: pointer;
@@ -277,7 +317,8 @@ section h3, section h4 {
 .addPaymentBtn {
   margin-top: 15px;
   width: 100%;
-  background: #16274f; /* dark blue */
+  background: #16274f;
+  /* dark blue */
   color: white;
   border: none;
   padding: 12px;
@@ -322,13 +363,15 @@ section h3, section h4 {
 }
 
 .formButtons button:first-child {
-  background: #fe6f06; /* orange accent */
+  background: #fe6f06;
+  /* orange accent */
   color: white;
 }
 
 .formButtons .cancelBtn {
   background: #ccc;
 }
+
 .calcDealBtn {
   margin-top: 12px;
   padding: 10px 16px;
@@ -345,7 +388,7 @@ section h3, section h4 {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -358,7 +401,7 @@ section h3, section h4 {
   border-radius: 12px;
   width: 400px;
   max-width: 90%;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 .modalContent input {
@@ -391,6 +434,7 @@ section h3, section h4 {
 .modalActions .cancelBtn {
   background: #ccc;
 }
+
 .dealLogsCards {
   margin-top: 15px;
 }
@@ -406,7 +450,7 @@ section h3, section h4 {
   border: 1px solid #ddd;
   border-radius: 12px;
   padding: 15px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
   transition: transform 0.2s ease;
 }
 
@@ -418,6 +462,7 @@ section h3, section h4 {
   margin: 6px 0;
   font-size: 0.95rem;
 }
+
 .addFollowupBtn {
   margin: 10px 0;
   padding: 10px 15px;
@@ -438,7 +483,7 @@ section h3, section h4 {
   border-radius: 12px;
   padding: 15px;
   margin-top: 10px;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.08);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
 }
 
 .form-section {
@@ -447,10 +492,11 @@ section h3, section h4 {
   padding: 15px;
   margin: 10px 0;
 }
+
 .ReferralStatusCard {
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   padding: 20px;
   max-width: 400px;
   font-family: Arial, sans-serif;
@@ -460,6 +506,7 @@ section h3, section h4 {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
 }
 
 .statusBadge {
@@ -499,9 +546,6 @@ section h3, section h4 {
   cursor: pointer;
 }
 
-.statusHistory {
-  margin-top: 20px;
-}
 
 .statusHistory h4 {
   margin-bottom: 12px;
@@ -509,29 +553,17 @@ section h3, section h4 {
   color: #333;
 }
 
-.statusHistory ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
 
-.statusHistory li {
-  display: flex;
-  align-items: flex-start;
-  margin-bottom: 15px;
-  position: relative;
-  padding-left: 20px;
-}
 
-.timelineDot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #16274f;
-  position: absolute;
-  left: 0;
-  top: 4px;
-}
+// .timelineDot {
+//   width: 10px;
+//   height: 10px;
+//   border-radius: 50%;
+//   background: #16274f;
+//   position: absolute;
+//   left: 0;
+//   top: 4px;
+// }
 
 .timelineContent {
   display: flex;
@@ -547,32 +579,45 @@ section h3, section h4 {
   font-size: 12px;
   color: #666;
 }
+
 .card {
- 
+
   width: 100%;
-  height: auto;          /* ✅ auto expand */
-  max-height: none;      /* ✅ remove limits */
-  overflow: visible;  
-   max-width: 400px;
+  height: auto;
+  /* ✅ auto expand */
+  max-height: none;
+  /* ✅ remove limits */
+  overflow: visible;
+  max-width: 400px;
   margin: 0 auto;
   background: #fff;
   border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   overflow: hidden;
-  font-family: 'Arial', sans-serif;
+  // font-family: 'Arial', sans-serif;
 }
+
+.card h2 {
+  color: #16274f;
+  font-size: 18px;
+}
+
 .profileHeaderOneLine {
   display: flex;
   align-items: center;
-  gap: 18px; /* spacing between items */
+  gap: 18px;
+  /* spacing between items */
   padding: 10px 20px;
+  width: 80%;
   background: #fff;
   margin-bottom: 20px;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   font-size: 14px;
-  flex-wrap: nowrap; /* ✅ force single line */
-  overflow-x: auto; /* ✅ allow scrolling if content is too long */
+  flex-wrap: nowrap;
+  /* ✅ force single line */
+  overflow-x: auto;
+  /* ✅ allow scrolling if content is too long */
 }
 
 .profilePhoto {
@@ -585,7 +630,8 @@ section h3, section h4 {
 .actions {
   display: flex;
   gap: 8px;
-  margin-left: auto; /* push actions to right */
+  margin-left: auto;
+  /* push actions to right */
 }
 
 .actions button {
@@ -603,4 +649,205 @@ section h3, section h4 {
   border-radius: 20px;
   padding: 5px 12px;
   font-size: 13px;
+}
+
+
+.statusHistory  {
+  ul {
+    display: flex;
+    flex-direction: column;
+    row-gap: 20px;
+    position: relative;
+    // flex-direction: column-reverse;
+    &::after{
+      content: "";
+      width: 1px;
+      border-right: 2px dotted black;
+      position: absolute;
+      left: 5px;
+      height: 100%;
+    }
+    li {
+      position: relative;
+      padding-left: 20px;
+      position: relative;
+      z-index: 1;
+      &::before {
+        content: "";
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: #007bff;
+        position: absolute;
+        left: 0px;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 1;
+      }
+    }
+  }
+}
+.dealPopupCard {
+  position: absolute;
+  
+  right: 0;
+  background: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  width: 300px;  /* small card size */
+  max-height: 250px;
+  overflow-y: auto;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.dealPopupCard p {
+  margin: 4px 0;
+  font-size: 14px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+/* Modal background */
+.ref-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Modal box */
+.ref-modal-content {
+  background: #fff;
+  padding: 25px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 420px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Title */
+.ref-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #004aad;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Section styling */
+.ref-section {
+  margin-bottom: 18px;
+}
+
+/* Label */
+.ref-label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+/* Inputs */
+.ref-input,
+.ref-select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 14px;
+  outline: none;
+}
+
+.ref-input:focus,
+.ref-select:focus {
+  border-color: #004aad;
+  box-shadow: 0 0 0 2px rgba(0,74,173,0.2);
+}
+
+/* Referral type buttons */
+.ref-type-options {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.ref-type-btn {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid #004aad;
+  border-radius: 25px;
+  background: #fff;
+  color: #004aad;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ref-type-btn.ref-active {
+  background: #004aad;
+  color: #fff;
+}
+
+.ref-type-btn:hover {
+  background: #f0f4ff;
+}
+
+/* Action buttons */
+.ref-action-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  gap: 12px;
+}
+
+.ref-btn-primary {
+  flex: 1;
+  background: #004aad;
+  color: #fff;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.ref-btn-primary:hover {
+  background: #003580;
+}
+
+.ref-btn-secondary {
+  flex: 1;
+  background: #fff;
+  color: #004aad;
+  padding: 10px 16px;
+  border: 1px solid #004aad;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ref-btn-secondary:hover {
+  background: #f0f4ff;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
 }

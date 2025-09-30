@@ -1,0 +1,362 @@
+/* Modal Overlay */
+.ref-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Modal Box */
+.ref-modal-content {
+    width: 90%;
+    max-width: 400px;
+    background: white;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease-in-out;
+    text-align: center;
+}
+
+/* Header */
+.ref-modal-content .header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 10px 0;
+}
+
+.ref-modal-content .back-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* Profile Section */
+.ref-modal-content .profile-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    background: white;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.ref-modal-content .profile-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.ref-modal-content .profile-name {
+    font-weight: bold;
+    color: #003366;
+}
+
+/* Form Container */
+.ref-modal-content .form-container {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Dropdown and Description */
+.ref-modal-content .dropdown-btn,
+.ref-modal-content .description-input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.ref-modal-content .description-input {
+    resize: vertical;
+}
+
+/* Selection Container */
+.ref-modal-content .selection-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.ref-modal-content .selection-icon img {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 10px;
+}
+
+/* Border Buttons */
+.ref-modal-content .buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 15px;
+}
+
+.ref-modal-content .border-btn {
+    width: 300px;
+    padding: 10px 0;
+    border-radius: 24px;
+    border: 1px solid #003366;
+    background-color: #fff;
+    color: #003366;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.ref-modal-content .border-btn.active,
+.ref-modal-content .border-btn:hover {
+    background-color: #003366;
+    color: #fff;
+}
+
+/* Submit Button */
+.ref-modal-content .submit-btn {
+    width: 100%;
+    padding: 12px;
+    background: #003366;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+/* Dropdown arrow */
+.ref-modal-content .dropdown-btn:after {
+    content: "▼";
+    float: right;
+}
+
+.loader {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    // padding-left: 400px;
+    height: 100vh;
+    background: url('/space.jpeg') no-repeat center center fixed;
+    padding-top: 200px;
+}
+
+.loader2 {
+    width: 48px;
+    height: 48px;
+    border: 5px solid #f0f4fd;
+    border-bottom-color: #fe6f06;
+    border-radius: 50%;
+    align-items: center;
+    display: inline-block;
+
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+}
+
+.file-input-hidden {
+    display: none;
+}
+
+.upload-label {
+    cursor: pointer;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    display: inline-block;
+}
+
+.businessLogo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.logoImg {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    border-radius: 50%;
+    border: 1px solid #ddd;
+}
+
+.refer-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: #003366;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.refer-btn:hover {
+    background-color: #0055aa;
+}
+
+.cosmoCard {
+    background: #fff;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.cosmoCard-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.cosmoCard-logo {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.cosmoCard-info {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    row-gap: 5px;
+}
+
+.cosmoCard-category {
+    font-size: 12px;
+    font-weight: 400;
+    color: #b88a44;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0;
+}
+
+.cosmoCard-owner {
+    margin: 2px 0;
+    font-size: 14px;
+    line-height: 20px;
+    text-transform: capitalize;
+    // font-weight: bold;
+    color: #003366;
+}
+
+.cosmoCard-location {
+    font-size: 13px;
+    display: flex;
+    color: #555;
+    column-gap: 10px;
+    vertical-align: top;
+    align-items: flex-start;
+    > div{
+        margin-top: 4px;
+    }
+
+    p {
+        color: #555;
+        line-height: 16px;
+    }
+}
+
+.cosmoCard-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+}
+
+.cosmoCard-stats {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: #333;
+}
+
+.cosmoCard-referBtn {
+    background: #003366;
+    color: white;
+    font-weight: bold;
+    padding: 6px 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.cosmoCard-referBtn:hover {
+    background: #0055aa;
+}
+/* From Uiverse.io by joe-watson-sbf */ 
+.search {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: center;
+}
+
+.search__input {
+  font-family: inherit;
+  font-size: inherit;
+  background-color: #f4f2f2;
+  border: none;
+  color: #646464;
+  padding: 0.7rem 1rem;
+  border-radius: 30px;
+  width: 12em;
+  transition: all ease-in-out .5s;
+  margin-right: -2rem;
+}
+
+.search__input:hover, .search__input:focus {
+  box-shadow: 0 0 1em #00000013;
+}
+
+.search__input:focus {
+  outline: none;
+  background-color: #f0eeee;
+}
+
+.search__input::-webkit-input-placeholder {
+  font-weight: 100;
+  color: #ccc;
+}
+
+.search__input:focus + .search__button {
+  background-color: #f0eeee;
+}
+
+.search__button {
+  border: none;
+  background-color: #f4f2f2;
+  margin-top: .1em;
+}
+
+.search__button:hover {
+  cursor: pointer;
+}
+
+.search__icon {
+  height: 1.3em;
+  width: 1.3em;
+  fill: #b4b4b4;
+}

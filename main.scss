@@ -1475,3 +1475,9 @@ $italianfont:'Italianno', ;
 .m-button-7:active {
   transform: scale(0.98); /* Slight button press effect */
 }
+.status.in-process { color: orange; font-weight: 600; }
+.status.pending { color: #f39c12; font-weight: 600; }
+.status.submitted { color: blue; font-weight: 600; }
+.status.inactive { color: gray; font-weight: 600; }
+.status.verified { color: green; font-weight: 600; }
+.incomplete { color: red; font-weight: 600; }

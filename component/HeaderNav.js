@@ -138,7 +138,7 @@ function HeaderNav() {
   </div>
      <div className="icon-wrapper" onClick={() => router.push("/ReferralDetails")}>
     <MdBusinessCenter size={26} />
-    <span className="icon-label">Referrals</span>
+    <span className="icon-label">Business</span>
   </div>
   <div className="icon-wrapper" onClick={() => router.push("/ProfilePage")}>
     <HiUser size={26} />

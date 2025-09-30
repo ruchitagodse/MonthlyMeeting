@@ -304,41 +304,37 @@ const [otherReferralSource, setOtherReferralSource] = useState("");
       )}
 
       {/* Deal Status */}
-      <li className="form-group">
-        <label>Deal Status</label>
-        <select
-          value={dealStatus}
-          onChange={(e) => {
-            setDealStatus(e.target.value);
-            setLastUpdated(new Date());
-          }}
-        >
-          <option value="Pending">Pending</option>
-          <option value="Deal Lost">Deal Lost</option>
-            <option value="Deal Won">Deal Won</option>
-          <option value="Received Part Payment">Received Part Payment</option>
-          <option value="Transferred to UJustBe">
-            Transferred to UJustBe
-          </option>
-          <option value="Work in Progress">Work in Progress</option>
-          <option value="Work Completed">Work Completed</option>
-          <option value="Agreed Percentage Transferred to UJustBe">
-            Agreed Percentage Transferred to UJustBe
-          </option>
-          <option value="On Hold">On Hold</option>
-          <option value="Rejected">Rejected</option>
-          <option value="Not Connected">Not Connected</option>
-          <option value="Called but No Response">
-            Called but No Response
-          </option>
-          <option value="Discussion in Progress">
-            Discussion in Progress
-          </option>
-          <option value="Received Full Payment">
-            Received Full Payment
-          </option>
-        </select>
-      </li>
+    <li className="form-group">
+  <label>Deal Status</label>
+  <select
+    value={dealStatus}
+    onChange={(e) => {
+      setDealStatus(e.target.value);
+      setLastUpdated(new Date());
+    }}
+  >
+    <option value="Pending">Pending</option>
+    <option value="Rejected">Reject</option>
+    <option value="Not Connected">Not Connected</option>
+    <option value="Called but Not Answered">Called but Not Answered</option>
+    <option value="Discussion in Progress">Discussion in Progress</option>
+    <option value="Hold">Hold</option>
+    <option value="Deal Won">Deal Won</option>
+    <option value="Deal Lost">Deal Lost</option>
+    <option value="Work in Progress">Work in Progress</option>
+    <option value="Work Completed">Work Completed</option>
+    <option value="Received Part Payment and Transferred to UJustBe">
+      Received Part Payment and Transferred to UJustBe
+    </option>
+    <option value="Received Full and Final Payment">
+      Received Full and Final Payment
+    </option>
+    <option value="Agreed % Transferred to UJustBe">
+      Agreed % Transferred to UJustBe
+    </option>
+  </select>
+</li>
+
 
       {/* Referral Type */}
       <li className="form-group">

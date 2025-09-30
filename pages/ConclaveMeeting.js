@@ -155,7 +155,21 @@ const sortedEvents = [...events].sort((a, b) => {
   const dateB = b.time?.toDate?.() || new Date(0);
   return dateB - dateA; // latest first
 });
-
+const handleLogout = () => {
+  Swal.fire({
+    title: 'Are you sure?',
+    text: 'You will be logged out.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, Logout',
+    cancelButtonText: 'Cancel',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      localStorage.removeItem('mmOrbiter');
+      window.location.href = "/"; // redirect to home
+    }
+  });
+};
   
   
   return (

@@ -214,8 +214,8 @@ const handleLogout = () => {
     cancelButtonText: 'Cancel',
   }).then((result) => {
     if (result.isConfirmed) {
-      localStorage.removeItem('ntnumber');
-      window.location.reload(); // or navigate to login
+      localStorage.removeItem('mmOrbiter');
+      window.location.href = "/"; // redirect to home
     }
   });
 };
@@ -456,7 +456,10 @@ const fetchUserName = async (phoneNumber) => {
                 </div>
                 <div class="text">CP: {cpPoints}</div>  
               </button>
-              <div className='userName'> <span>{getInitials(userName)}</span> </div>
+           <div className="userName" onClick={handleLogout} title="Logout">
+  <span>{getInitials(userName)}</span>
+</div>
+
             </div>
 
 

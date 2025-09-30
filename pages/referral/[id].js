@@ -160,14 +160,17 @@ if (data.cosmoOrbiter?.phone) {
       });
 
       setPayments(updatedPayments);
-      setNewPayment({
-        paymentFrom: "CosmoOrbiter",
-        paymentTo: "Orbiter",
-        ujbShareType: "UJustBe",
-        paymentDate: "",
-        description: "",
-        amountReceived: "",
-      });
+    setNewPayment({
+  paymentFrom: "CosmoOrbiter",
+  paymentTo: "UJustBe",
+  ujbShareType: "UJustBe",
+  modeOfPayment: "",
+  transactionRef: "",
+  comment: "",
+  paymentDate: "",
+  amountReceived: "",
+});
+
 
       alert("Payment added successfully.");
     } catch (err) {
@@ -361,7 +364,7 @@ const { orbiter: referralOrbiter, cosmoOrbiter: referralCosmoOrbiter, service, p
                 className={activeProfileTab === "Cosmo" ? "active" : ""}
                 onClick={() => setActiveProfileTab("Cosmo")}
               >
-                Cosmo
+                CosmOrbiter
               </button>
             </div>
 
@@ -386,8 +389,8 @@ const { orbiter: referralOrbiter, cosmoOrbiter: referralCosmoOrbiter, service, p
                   <div className="detailsGrid">
                     <p><strong>Email:</strong> {orbiter?.email || "No Email"}</p>
                     <p><strong>Phone:</strong> {orbiter?.phone || "No Phone"}</p>
-                    <p><strong>Mentor:</strong> {orbiter?.mentorName || "No Mentor"}</p>
-                    <p><strong>Mentor Phone:</strong> {orbiter?.mentorPhone || "No Mentor Phone"}</p>
+                    <p><strong>MentOrbiter:</strong> {orbiter?.mentorName || "No Mentor"}</p>
+                    <p><strong>MentOrbiter Phone:</strong> {orbiter?.mentorPhone || "No Mentor Phone"}</p>
                     <p><strong>UJB Code:</strong> {orbiter?.ujbCode || "No UJB Code"}</p>
                   </div>
                 </div>
@@ -415,8 +418,8 @@ const { orbiter: referralOrbiter, cosmoOrbiter: referralCosmoOrbiter, service, p
                   <div className="detailsGrid">
                     <p><strong>Email:</strong> {cosmoOrbiter?.email || "No Email"}</p>
                     <p><strong>Phone:</strong> {cosmoOrbiter?.phone || "No Phone"}</p>
-                    <p><strong>Mentor:</strong> {cosmoOrbiter?.mentorName || "No Mentor"}</p>
-                    <p><strong>Mentor Phone:</strong> {cosmoOrbiter?.mentorPhone || "No Mentor Phone"}</p>
+                    <p><strong>MentOrbiter:</strong> {cosmoOrbiter?.mentorName || "No Mentor"}</p>
+                    <p><strong>MentOrbiter Phone:</strong> {cosmoOrbiter?.mentorPhone || "No Mentor Phone"}</p>
                   </div>
                 </div>
               </div>
@@ -479,8 +482,8 @@ const { orbiter: referralOrbiter, cosmoOrbiter: referralCosmoOrbiter, service, p
                       <h4>Distribution Breakdown</h4>
                       <p><strong>Total Agreed Amount:</strong> ₹{d.agreedAmount.toFixed(2)}</p>
                       <p><strong>Orbiter:</strong> ₹{d.orbiterShare.toFixed(2)}</p>
-                      <p><strong>Orbiter's Mentor:</strong> ₹{d.orbiterMentorShare.toFixed(2)}</p>
-                      <p><strong>Cosmo Mentor:</strong> ₹{d.cosmoMentorShare.toFixed(2)}</p>
+                      <p><strong>Orbiter's MentOrbiter:</strong> ₹{d.orbiterMentorShare.toFixed(2)}</p>
+                      <p><strong>Cosmo MentOrbiter:</strong> ₹{d.cosmoMentorShare.toFixed(2)}</p>
                       <p><strong>UJustBe:</strong> ₹{d.ujustbeShare.toFixed(2)}</p>
                     </div>
                   );
@@ -505,8 +508,8 @@ const { orbiter: referralOrbiter, cosmoOrbiter: referralCosmoOrbiter, service, p
               <p><strong>Percentage:</strong> {log.percentage}%</p>
               <p><strong>Agreed Amount:</strong> ₹{log.agreedAmount.toFixed(2)}</p>
               <p><strong>Orbiter:</strong> ₹{log.orbiterShare.toFixed(2)}</p>
-              <p><strong>Mentor:</strong> ₹{log.orbiterMentorShare.toFixed(2)}</p>
-              <p><strong>Cosmo Mentor:</strong> ₹{log.cosmoMentorShare.toFixed(2)}</p>
+              <p><strong>MentOrbiter:</strong> ₹{log.orbiterMentorShare.toFixed(2)}</p>
+              <p><strong>Cosmo MentOrbiter:</strong> ₹{log.cosmoMentorShare.toFixed(2)}</p>
               <p><strong>UJustBe:</strong> ₹{log.ujustbeShare.toFixed(2)}</p>
             </div>
           ))}
@@ -632,7 +635,7 @@ const { orbiter: referralOrbiter, cosmoOrbiter: referralCosmoOrbiter, service, p
             className="viewMoreBtn"
             onClick={() => setShowPaymentSheet(true)}  // <-- Use correct state here
           >
-            View More
+       Payment Details
           </button>
         </div>
 
@@ -673,89 +676,110 @@ const { orbiter: referralOrbiter, cosmoOrbiter: referralCosmoOrbiter, service, p
           )}
 
           {/* ADD PAYMENT FORM */}
-          {showAddPaymentForm && (
-            <div className="addPaymentForm">
-              <label>
-                Payment From:
-                <select
-                  name="paymentFrom"
-                  value={newPayment.paymentFrom}
-                  onChange={handlePaymentChange}
-                >
-                  <option value="CosmoOrbiter">{cosmoOrbiter?.name || "CosmoOrbiter"}</option>
-                  <option value="Orbiter">{orbiter?.name || "Orbiter"}</option>
-                </select>
-              </label>
+      {showAddPaymentForm && (
+  <div className="addPaymentForm">
+    <label>
+      Payment From:
+      <select
+        name="paymentFrom"
+        value={newPayment.paymentFrom}
+        onChange={handlePaymentChange}
+      >
+        <option value="CosmoOrbiter">
+          {cosmoOrbiter?.name || "CosmoOrbiter"}
+        </option>
+        <option value="UJustBe">UJustBe</option>
+      </select>
+    </label>
 
-              <label>
-                Payment To:
-                <select
-                  name="paymentTo"
-                  value={newPayment.paymentTo}
-                  onChange={handlePaymentChange}
-                >
-                  <option value="Orbiter">{orbiter?.name || "Orbiter"}</option>
-                  <option value="OrbiterMentor">{orbiter?.mentorName || "Orbiter Mentor"}</option>
-                  <option value="CosmoMentor">{cosmoOrbiter?.mentorName || "Cosmo Mentor"}</option>
-                  <option value="UJustBe">UJustBe</option>
-                </select>
-              </label>
+    <label>
+      Payment To:
+      <select
+        name="paymentTo"
+        value={newPayment.paymentTo}
+        onChange={handlePaymentChange}
+      >
+        <option value="Orbiter">{orbiter?.name || "Orbiter"}</option>
+        <option value="OrbiterMentor">{orbiter?.mentorName || "Orbiter Mentor"}</option>
+        <option value="CosmoMentor">{cosmoOrbiter?.mentorName || "Cosmo Mentor"}</option>
+        <option value="UJustBe">UJustBe</option>
+      </select>
+    </label>
 
-              <label>
-                Mode of Payment:
-                <select
-                  name="modeOfPayment"
-                  value={newPayment.modeOfPayment}
-                  onChange={handlePaymentChange}
-                >
-                  <option value="GPay">GPay</option>
-                  <option value="Razorpay">Razorpay</option>
-                  <option value="Bank Transfer">Bank Transfer</option>
-                  <option value="Cash">Cash</option>
-                  <option value="Other">Other</option>
-                </select>
-              </label>
+    <label>
+      Mode of Payment:
+      <select
+        name="modeOfPayment"
+        value={newPayment.modeOfPayment}
+        onChange={handlePaymentChange}
+      >
+        <option value="GPay">GPay</option>
+        <option value="Razorpay">Razorpay</option>
+        <option value="Bank Transfer">Bank Transfer</option>
+        <option value="Cash">Cash</option>
+        <option value="Other">Other</option>
+      </select>
+    </label>
 
-              <label>
-                Payment Date:
-                <input
-                  type="date"
-                  name="paymentDate"
-                  value={newPayment.paymentDate}
-                  onChange={handlePaymentChange}
-                />
-              </label>
+    {/* Conditional fields */}
+    {(newPayment.modeOfPayment === "GPay" ||
+      newPayment.modeOfPayment === "Razorpay" ||
+      newPayment.modeOfPayment === "Bank Transfer" ||
+      newPayment.modeOfPayment === "Other") && (
+      <label>
+        Transaction Reference Number:
+        <input
+          type="text"
+          name="transactionRef"
+          value={newPayment.transactionRef || ""}
+          onChange={handlePaymentChange}
+        />
+      </label>
+    )}
 
-              <label>
-                Description:
-                <textarea
-                  name="description"
-                  value={newPayment.description}
-                  onChange={handlePaymentChange}
-                />
-              </label>
+    {newPayment.modeOfPayment === "Other" && (
+      <label>
+        Comment:
+        <textarea
+          name="comment"
+          value={newPayment.comment || ""}
+          onChange={handlePaymentChange}
+        />
+      </label>
+    )}
 
-              <label>
-                Amount Received:
-                <input
-                  type="number"
-                  name="amountReceived"
-                  value={newPayment.amountReceived}
-                  onChange={handlePaymentChange}
-                />
-              </label>
+    <label>
+      Payment Date:
+      <input
+        type="date"
+        name="paymentDate"
+        value={newPayment.paymentDate}
+        onChange={handlePaymentChange}
+      />
+    </label>
 
-              <div className="formButtons">
-                <button onClick={handleAddPayment}>Save Payment</button>
-                <button
-                  className="cancelBtn"
-                  onClick={() => setShowAddPaymentForm(false)}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          )}
+    <label>
+      Amount Received:
+      <input
+        type="number"
+        name="amountReceived"
+        value={newPayment.amountReceived}
+        onChange={handlePaymentChange}
+      />
+    </label>
+
+    <div className="formButtons">
+      <button onClick={handleAddPayment}>Save Payment</button>
+      <button
+        className="cancelBtn"
+        onClick={() => setShowAddPaymentForm(false)}
+      >
+        Cancel
+      </button>
+    </div>
+  </div>
+)}
+
         </div>
 
 

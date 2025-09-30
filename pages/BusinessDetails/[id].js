@@ -189,7 +189,21 @@ const handlePassReferral = async () => {
     alert("Failed to pass referral.");
   }
 };
-
+const handleLogout = () => {
+  Swal.fire({
+    title: 'Are you sure?',
+    text: 'You will be logged out.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, Logout',
+    cancelButtonText: 'Cancel',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      localStorage.removeItem('mmOrbiter');
+      window.location.href = "/"; // redirect to home
+    }
+  });
+}; 
 
   const getInitials = (name) => name?.split(' ').map(n => n[0]).join('').toUpperCase();
 
@@ -205,9 +219,10 @@ const handlePassReferral = async () => {
             <img src="/ujustlogo.png" alt="Logo" className="logo" />
           </div>
           <div className='headerRight'>
-            <div className="userName" onClick={() => router.push('/')} style={{ cursor: 'pointer' }}>
-              <span>{getInitials(orbiterDetails.name)}</span>
-            </div>
+           <div className="userName" onClick={handleLogout} title="Logout">
+  <span>{getInitials(userName)}</span>
+</div>
+
           </div>
         </section>
       </header>

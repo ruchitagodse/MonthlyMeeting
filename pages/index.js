@@ -317,7 +317,7 @@ const handleLogin = async (e) => {
               <img src="/logo.png" alt="Logo" className="logos" />
 
             </div>
-            <p>Monthly Meeting</p>
+            <p>UJustBe Unniverse</p>
             <form onSubmit={handleLogin}>
               <ul>
                 <li>

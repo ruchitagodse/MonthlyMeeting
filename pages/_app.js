@@ -4,17 +4,19 @@ import Head from 'next/head';
 function MyApp({ Component, pageProps }) {
   return (
     <UserProvider>
-      
+
       <Head>
         <link rel="icon" href="/favicon.ico" />
-        {/* <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-        <link rel="manifest" href="/site.webmanifest" /> */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Forum&family=Mukta:wght@200;300;400;500;600;700;800&display=swap"
+          rel="stylesheet"
+        />
         <meta name="description" content="UJustBe" />
-        <title>Monthly Meeting App</title>
+        <title>UJustBe Unniverse</title>
       </Head>
-      
+
       {/* Render the main component */}
       <Component {...pageProps} />
     </UserProvider>

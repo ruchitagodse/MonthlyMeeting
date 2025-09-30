@@ -13,7 +13,7 @@ const db = getFirestore(app);
 
 const Profile = () => {
   const [userName, setUserName] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState(''); 
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [cpPoints, setCPPoints] = useState(0);
   const [userDetails, setUserDetails] = useState({});
   const [activeTab, setActiveTab] = useState('basic');
@@ -33,22 +33,25 @@ const [showContentOnly, setShowContentOnly] = useState(false);
     }
   }, []);
 
-  const fetchUserDetails = async (phone) => {
-    const docSnap = await getDoc(doc(db, 'userdetail', phone));
-    if (docSnap.exists()) {
-      const data = docSnap.data();
-      setUserDetails({
-        name: data[' Name'] || '',
-        email: data.Email || '',
-        dob: data.DOB || '',
-        gender: data.Gender || '',
-        mobile: data['Mobile no'] || '',
-        category: data.Category || '',
-        ujbCode: data['UJB Code'] || '',
-        ...data,
-      });
-    }
-  };
+const fetchUserDetails = async (phone) => {
+  const docSnap = await getDoc(doc(db, 'userdetail', phone));
+  if (docSnap.exists()) {
+    const data = docSnap.data();
+    setUserDetails({
+      ...data, // spread first
+      name: data[' Name'] || '',
+      email: data.Email || '',
+      dob: data.DOB || '',
+      gender: data.Gender || '',
+      mobile: data['Mobile no'] || '',
+      category: data.Category || '',
+      ujbCode: data['UJB Code'] || '',
+      services: Array.isArray(data.services) ? data.services : [],
+      products: Array.isArray(data.products) ? data.products : [],
+    });
+  }
+};
+
 
   const fetchUserName = async (phone) => {
     const docSnap = await getDoc(doc(db, 'userdetail', phone));
@@ -341,6 +344,7 @@ const [showContentOnly, setShowContentOnly] = useState(false);
           </div>
         </div>
       )}
+      
     </div>
   </div>
 )}
@@ -355,6 +359,5 @@ const [showContentOnly, setShowContentOnly] = useState(false);
     </main>
   );
 };
-
 
 export default Profile;

@@ -273,35 +273,38 @@ const handleLogin = async (e) => {
   // }, [phoneNumber]);
 
 
-  const fetchUserName = async (phoneNumber) => {
-    console.log("Fetch User from NTMember", phoneNumber);
-    const userRef = doc(db, 'Orbiters', phoneNumber);
+  
+
+useEffect(() => {
+  const storedPhoneNumber = localStorage.getItem('mmOrbiter');
+  if (storedPhoneNumber) {
+    fetchUserName(storedPhoneNumber);
+    setPhoneNumber(storedPhoneNumber);
+  } else {
+    console.error("Phone number not found in localStorage.");
+  }
+}, []);
+const fetchUserName = async (phoneNumber) => {
+  if (!phoneNumber || typeof phoneNumber !== 'string' || phoneNumber.trim() === '') {
+    console.error("Invalid phone number:", phoneNumber);
+    return;
+  }
+
+  console.log("Fetch User from Userdetails", phoneNumber);
+  try {
+    const userRef = doc(db, 'userdetails', phoneNumber);
     const userDoc = await getDoc(userRef);
 
-    console.log("Check Details", userDoc.data());
-
     if (userDoc.exists()) {
-      const orbitername = userDoc.data().name;
-      const mobileNumber = userDoc.data().phoneNumber;
+      const orbitername = userDoc.data()[" Name"] || 'User';
       setUserName(orbitername);
-      setPhoneNumber(mobileNumber);
-
+    } else {
+      console.log("User not found in userdetails");
     }
-
-    else {
-      console.log("user not found");
-
-      // setError('User not found.');
-    }
-  };
-
-  // useEffect(() => {
-  //   if (isLoggedIn || error) {
-  //     setLoading(false);
-  //   }
-  // }, [isLoggedIn, error]);
-
-
+  } catch (err) {
+    console.error("Error fetching user name:", err);
+  }
+};
 
 
 
@@ -501,7 +504,7 @@ const handleLogin = async (e) => {
 </section>
 
 
-
+ 
           <section className="upcoming-events">
   <h1>Upcoming Events</h1>
 

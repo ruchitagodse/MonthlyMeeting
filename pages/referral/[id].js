@@ -233,7 +233,7 @@ if (data.cosmoOrbiter?.phone) {
         updatedAt: Timestamp.now(),
       };
 
-      await updateDoc(docRef, {
+      await updateDoc(docRef, { 
         dealStatus: formState.dealStatus,
         statusLogs: arrayUnion(newLog), // 👈 push instead of replace
         lastUpdated: Timestamp.now(),

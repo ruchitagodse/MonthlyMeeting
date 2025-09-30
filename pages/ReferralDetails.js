@@ -23,6 +23,7 @@ const AllEvents = () => {
     return (
       co.name.toLowerCase().includes(query) ||
       co.businessName.toLowerCase().includes(query) ||
+       co.businessHistory.toLowerCase().includes(query) ||
       co.city.toLowerCase().includes(query) ||
       co.locality.toLowerCase().includes(query) ||
       co.state.toLowerCase().includes(query)
@@ -54,6 +55,7 @@ const AllEvents = () => {
               id: doc.id,
               name: data[' Name'] || 'Unknown',
               businessName: data['Business Name'] || 'N/A',
+                businessHistory: data['Business History'] || 'N/A',
               tagline: data['Tag Line'] || '',
               city: data.City || '',
               locality: data.Locality || '',

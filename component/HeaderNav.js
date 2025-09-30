@@ -9,6 +9,7 @@ import { doc, getDoc, collection, getDocs, setDoc } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 import { useRouter } from 'next/router';
 import Link from 'next/link'
+import { MdBusinessCenter } from "react-icons/md";
 import { HiUser } from "react-icons/hi2";
 function HeaderNav() {
     const router = useRouter();
@@ -134,6 +135,10 @@ function HeaderNav() {
    <div className="icon-wrapper" onClick={() => router.push(`/cp-details/${phoneNumber}`)}>
     <BiSolidCoinStack size={26} />
     <span className="icon-label">CP</span>
+  </div>
+     <div className="icon-wrapper" onClick={() => router.push("/ReferralDetails")}>
+    <MdBusinessCenter size={26} />
+    <span className="icon-label">Referrals</span>
   </div>
   <div className="icon-wrapper" onClick={() => router.push("/ProfilePage")}>
     <HiUser size={26} />

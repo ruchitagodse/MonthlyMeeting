@@ -282,6 +282,7 @@ const fetchUserName = async (phoneNumber) => {
                   <p><strong>From:</strong> {req.reqfrom} — {req.reqDescription}</p>
                     
                 </div>
+                
               ))
             ) : (
               <p>No Requirements Identified</p>

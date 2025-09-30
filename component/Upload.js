@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import * as XLSX from "xlsx";
 import { db } from "../firebaseConfig";
-import { collection, setDoc, doc } from "firebase/firestore"; // Import setDoc and doc
-
-
+import { collection, doc, updateDoc } from "firebase/firestore"; // Import updateDoc
 
 const UploadExcel = () => {
   const [excelData, setExcelData] = useState(null);
@@ -18,8 +16,8 @@ const UploadExcel = () => {
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
       const jsonData = XLSX.utils.sheet_to_json(worksheet);
-      setExcelData(jsonData); // Set parsed Excel data
-      console.log(jsonData); // Log the parsed data for debugging
+      setExcelData(jsonData); 
+      console.log(jsonData);
     };
 
     reader.readAsArrayBuffer(file);
@@ -28,19 +26,36 @@ const UploadExcel = () => {
   const uploadDataToFirestore = async () => {
     if (excelData) {
       try {
-        const collectionRef = collection(db, "userdetail"); // Replace with your Firestore collection name
+        const collectionRef = collection(db, "userdetail");
+
         for (let row of excelData) {
-          const mobileNumber = String(row["Mobile no"]); // Convert 'Mobile no' column value to string
+          const mobileNumber = String(row["Mobile no"]); // Column from Excel
           if (mobileNumber) {
-            // Use the mobile number as the document ID, ensuring it's a string
-            await setDoc(doc(collectionRef, mobileNumber), row);
+            const docRef = doc(collectionRef, mobileNumber);
+
+            // Fields you want to update
+            const updateFields = {
+              Location: row["Location"] || "",
+              State: row["State"] || "",
+              Hobbies: row["Hobbies"] || "",
+              "Business Name": row["Business Name"] || "",
+              Locality: row["Locality"] || "",
+              "Business History": row["Business History"] || "",
+              "Business Details (Nature & Type)": row["Business Details (Nature & Type)"] || "",
+              "Category 1": row["Category 1"] || "",
+              "Category 2": row["Category 2"] || "",
+              "Business Email ID": row["Business Email ID"] || ""
+            };
+
+            await updateDoc(docRef, updateFields);
           } else {
             console.error("Mobile number missing in row:", row);
           }
         }
-        alert("Data uploaded successfully to Firestore using mobile numbers!");
+
+        alert("Data updated successfully in Firestore!");
       } catch (error) {
-        console.error("Error uploading data:", error);
+        console.error("Error updating data:", error);
       }
     } else {
       alert("Please upload a file first.");
@@ -49,28 +64,35 @@ const UploadExcel = () => {
 
   return (
     <>
-    
-    <section className='c-form  box'>
-    <h2>Upload Excel</h2>
-    <button className="m-button-5" onClick={() => window.history.back()}>
-    Back
-  </button>
-    <ul>
-   
-                  
+      <section className="c-form box">
+        <h2>Upload Excel</h2>
+        <button className="m-button-5" onClick={() => window.history.back()}>
+          Back
+        </button>
+        <ul>
+          <div className="upload-container">
+            <input
+              type="file"
+              id="fileUpload"
+              className="file-input"
+              onChange={handleFileUpload}
+              accept=".xlsx, .xls"
+            />
+          </div>
 
-    <div className="upload-container">
-    <input type="file" id="fileUpload" className="file-input" onChange={handleFileUpload} accept=".xlsx, .xls" />
-    </div>
-   
-      <li className='form-row'>
-                    <div>
-                        <button className='m-button-7' onClick={uploadDataToFirestore}  style={{ backgroundColor: '#f16f06', color: 'white' }}>Upload</button>
-                
-                    </div>    
-                </li>
- </ul>
-    </section>
+          <li className="form-row">
+            <div>
+              <button
+                className="m-button-7"
+                onClick={uploadDataToFirestore}
+                style={{ backgroundColor: "#f16f06", color: "white" }}
+              >
+                Update Data
+              </button>
+            </div>
+          </li>
+        </ul>
+      </section>
     </>
   );
 };

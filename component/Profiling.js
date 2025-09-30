@@ -20,6 +20,10 @@ const UserProfileForm = () => {
   const searchParams = useSearchParams();
 const userPhone = searchParams.get('user');
 const [activeTab, setActiveTab] = useState('Personal Info');
+const [profilePreview, setProfilePreview] = useState('');
+const [businessLogoPreview, setBusinessLogoPreview] = useState('');
+const [servicePreviews, setServicePreviews] = useState([]); 
+const [productPreviews, setProductPreviews] = useState([]);
 
 
 
@@ -37,7 +41,8 @@ useEffect(() => {
 
         setFormData(userData);
         setDocId(userDoc.id);
-
+     if (userData['Profile Photo URL']) setProfilePreview(userData['Profile Photo URL']);
+          if (userData['Business Logo']) setBusinessLogoPreview(userData['Business Logo']);
         // Load services and products from DB
         if (userData.services && userData.services.length > 0) {
           setServices(
@@ -82,19 +87,23 @@ const [businessLogo, setBusinessLogo] = useState(null);
 
 
 const handleChange = (e) => {
-  const { name, value, files } = e.target;
+  const { name, files } = e.target;
 
   if (name === 'Upload Photo') {
     setProfilePic(files[0]);
+    setProfilePreview(URL.createObjectURL(files[0])); // preview
   } else if (name === 'Business Logo') {
     setBusinessLogo(files[0]);
+    setBusinessLogoPreview(URL.createObjectURL(files[0])); // preview
   } else {
+    const { value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
   }
 };
+
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -115,6 +124,17 @@ const handleChange = (e) => {
   }, []);
 
  
+useEffect(() => {
+  if (formData['Profile Photo URL']) setProfilePreview(formData['Profile Photo URL']);
+  if (formData['Business Logo']) setBusinessLogoPreview(formData['Business Logo']);
+  
+  if (formData.services) {
+    setServicePreviews(formData.services.map(s => s.imageURL || ''));
+  }
+  if (formData.products) {
+    setProductPreviews(formData.products.map(p => p.imageURL || ''));
+  }
+}, [formData]);
 
   
   const handleMultiSelect = (name, value) => {
@@ -163,8 +183,12 @@ const uploadImage = async (file, path) => {
 
 const handleDynamicChange = (type, index, field, value) => {
   const updater = type === 'service' ? [...services] : [...products];
+  const previews = type === 'service' ? [...servicePreviews] : [...productPreviews];
+
   if (field === 'image') {
     updater[index][field] = value.target.files[0];
+    previews[index] = URL.createObjectURL(value.target.files[0]);
+    type === 'service' ? setServicePreviews(previews) : setProductPreviews(previews);
   } else {
     updater[index][field] = value;
   }
@@ -304,7 +328,8 @@ const fieldGroups = {
   'Business Info': [
     'Business Name', 'Business Details (Nature & Type)', 'Business History',
     'Noteworthy Achievements', 'Clientele Base', 'Business Social Media Pages',
-    'Website', 'Locality', 'Area of Services', 'USP', 'Business Logo', 'Tag Line'
+    'Website', 'Locality', 'Area of Services', 'USP', 'Business Logo', 'Tag Line',
+    'Tags', 'Established At' // ✅ New fields added here
   ],
   'Additional Info': [
     'Hobbies', 'Interest Area', 'Skills', 'Exclusive Knowledge', 'Aspirations',
@@ -367,20 +392,34 @@ const fieldGroups = {
       );
     }
 
-   if (field.toLowerCase().includes('upload') || field.toLowerCase().includes('logo')) {
+  if (field.toLowerCase().includes('upload') || field.toLowerCase().includes('logo')) {
+  const preview =
+    field === 'Upload Photo' ? profilePreview :
+    field === 'Business Logo' ? businessLogoPreview : '';
+  
   return (
-    <label className="upload-label">
-      Choose {field}
-      <input
-        type="file"
-        name={field}
-        onChange={handleChange}
-        className="file-input-hidden"
-        accept="image/*"
-      />
-    </label>
+    <div>
+      <label className="upload-label">
+        Choose {field}
+        <input
+          type="file"
+          name={field}
+          onChange={handleChange}
+          className="file-input-hidden"
+          accept="image/*"
+        />
+      </label>
+      {preview && (
+        <img
+          src={preview}
+          alt={`${field} Preview`}
+          style={{ width: '100px', marginTop: '10px', borderRadius: '5px' }}
+        />
+      )}
+    </div>
   );
 }
+
 
 
     return (
@@ -458,6 +497,7 @@ const fieldGroups = {
 {activeTab === 'Business Info' && formData?.Category?.toLowerCase() === 'cosmorbiter' && (
   <>
     <div >
+      
  {/* --- SERVICES SECTION --- */}
 <h3>Services (Max 5)</h3>
 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
@@ -512,17 +552,7 @@ const fieldGroups = {
   />
 </div>
 
-      <div className="form-row">
-        <h4>Service Image (Optional)</h4>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) =>
-            handleDynamicChange('service', index, 'image', e)
-          }
-          className="multipleitem"
-        />
-      </div>
+        <div className="form-row"><h4>Service Image (Optional)</h4><input type="file" accept="image/*" onChange={(e)=>handleDynamicChange('service',index,'image',e)} className="multipleitem" />{servicePreviews[index] && <img src={servicePreviews[index]} alt={`Service ${index+1} Preview`} style={{width:'100px', marginTop:'10px'}} />}</div>
     </div>
   ))}
 </div>
@@ -589,16 +619,7 @@ const fieldGroups = {
   />
 </div>
 
-      <div className="form-row">
-        <h4>Product Image (Optional)</h4>
-        <input
-          type="file"
-          onChange={(e) =>
-            handleDynamicChange('product', index, 'image', e)
-          }
-          className="multipleitem"
-        />
-      </div>
+     <div className="form-row"><h4>Product Image (Optional)</h4><input type="file" accept="image/*" onChange={(e)=>handleDynamicChange('product',index,'image',e)} className="multipleitem" />{productPreviews[index] && <img src={productPreviews[index]} alt={`Product ${index+1} Preview`} style={{width:'100px', marginTop:'10px'}} />}</div>
     </div>
   ))}
 </div>

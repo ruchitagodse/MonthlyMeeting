@@ -11,6 +11,8 @@
     align-items: center;
     z-index: 1000;
     font-family: 'Mukta';
+
+
 }
 
 /* Modal Box */
@@ -25,6 +27,20 @@
     text-align: center;
     height: 90vh;
     overflow-y: hidden;
+
+    .businessLogo {
+        width: 80px;
+        height: 80px;
+        background-color: #e7e7e7;
+        border-radius: 50%;
+        font-size: 30px;
+        display: flex;
+        align-items: center;
+        color: #222;
+        background: url('/space.jpeg') no-repeat;
+        border: 1px solid $bordercolor;
+        color: $pclr;
+    }
 }
 
 /* Header */
@@ -84,16 +100,7 @@
 
 }
 
-.businessLogo {
-    width: 80px;
-    height: 80px;
-    background-color: #e7e7e7;
-    border-radius: 50%;
-    font-size: 30px;
-    display: flex;
-    align-items: center;
-    color: #222;
-}
+
 
 .ref-modal-content .profile-name {
     // font-weight: bold;
@@ -150,8 +157,9 @@
     align-items: center;
     row-gap: 15px;
     width: 100%;
+
     // max-width: 300px;
-    button{
+    button {
         width: 100%;
     }
 }
@@ -184,7 +192,7 @@
 /* Submit Button */
 .ref-modal-content .submit-btn {
     width: 100%;
-    padding: 5px 12px ;
+    padding: 5px 12px;
     background: $mcolor;
     color: white;
     // font-weight: bold;
@@ -193,7 +201,7 @@
     font-size: 18px;
     text-transform: uppercase;
     cursor: pointer;
-    font-family:$mukta ;
+    font-family: $mukta ;
     // margin-top: 10px;
 }
 
@@ -271,7 +279,7 @@
     background: #fff;
     border-radius: 10px;
     padding: 15px;
-    margin-bottom: 15px;
+    // margin-bottom: 15px;
     box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
 }
 
@@ -279,6 +287,24 @@
     display: flex;
     align-items: center;
     gap: 12px;
+    .cardLogo {
+        width: 60px;
+        height: 60px;
+        background-color: $blueclr;
+        border-radius: 50%;
+        font-size: 30px;
+        justify-content: center;
+        display: flex;
+        align-items: center;
+        color: $pclr;
+        overflow: hidden;
+        background: url('/space.jpeg') no-repeat;
+        border: 1px solid $bordercolor;
+        img{
+            object-fit: cover;
+            width: 100%;
+        }
+    }
 }
 
 .cosmoCard-logo {
@@ -367,19 +393,22 @@
     align-items: center;
     justify-content: space-between;
     text-align: center;
+    // background-color: #fff;
+    padding: 0 15px;
+    position: relative;
 }
 
 .search__input {
     font-family: inherit;
     font-size: inherit;
-    background-color: #f4f2f2;
+    // background-color: #FFF;
     border: none;
     color: #646464;
     padding: 0.7rem 1rem;
     border-radius: 30px;
-    width: 12em;
+    width: 100%;
     transition: all ease-in-out .5s;
-    margin-right: -2rem;
+    // margin-right: -2rem;
 }
 
 .search__input:hover,
@@ -403,8 +432,12 @@
 
 .search__button {
     border: none;
-    background-color: #f4f2f2;
+    // background-color: #f4f2f2;
     margin-top: .1em;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 30px;
 }
 
 .search__button:hover {
@@ -426,7 +459,7 @@
     flex-direction: column;
     row-gap: 10px;
 
-    .ref-section{
+    .ref-section {
         padding: 15px;
         background-color: $pclr;
         border-radius: 7px;
@@ -436,7 +469,7 @@
         width: 100%;
         margin-bottom: 0px;
 
-        h4{
+        h4 {
             color: $bluecolor;
             text-align: left;
             font-family: $forum;

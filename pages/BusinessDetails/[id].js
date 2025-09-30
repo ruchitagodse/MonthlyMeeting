@@ -7,6 +7,7 @@ import HeaderNav from "../../component/HeaderNav";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Radio, RadioGroup, FormControlLabel } from "@mui/material";
 import "../../src/app/styles/user.scss";
 import { MdArrowBack } from "react-icons/md";
+import { IoPlanetOutline } from "react-icons/io5";
 
 const db = getFirestore(app);
 
@@ -191,7 +192,7 @@ const ReferralDetails = () => {
       alert("Failed to pass referral.");
     }
   };
-  const imgSrc = userDetails.logo || userDetails.profilePic;
+  
 
   const getInitials = (name) => name?.split(' ').map(n => n[0]).join('').toUpperCase();
 
@@ -367,7 +368,9 @@ const ReferralDetails = () => {
 
       {/* Referral Modal */}
       {/* Referral Modal */}
-      {modalOpen && (
+      {
+      modalOpen && (
+        // const imgSrc = userDetails.logo || userDetails.profilePic;
         <div className="ref-modal-overlay">
           <div></div>
           <div className="ref-modal-content">
@@ -385,9 +388,10 @@ const ReferralDetails = () => {
 
 
                 <div className="businessLogo">
-                  {imgSrc ? (
+                  
+                  {userDetails.logo || userDetails.profilePic ? (
                     <Image
-                      src={imgSrc}
+                      src={userDetails.logo || userDetails.profilePic}
                       alt={userDetails.businessName || "Company Logo"}
                       width={100}   // adjust size as needed
                       height={100}  // adjust size as needed

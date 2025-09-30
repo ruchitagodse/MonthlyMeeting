@@ -5,12 +5,12 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.8);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    font-family: 'Mukta'; 
+    font-family: 'Mukta';
 }
 
 /* Modal Box */
@@ -19,20 +19,23 @@
     max-width: 400px;
     background: white;
     border-radius: 16px;
-    padding: 25px;
+    padding: 15px 0;
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
     animation: fadeIn 0.3s ease-in-out;
     text-align: center;
+    height: 90vh;
+    overflow-y: hidden;
 }
 
 /* Header */
-.ref-modal-content .header {
+.ref-modal-content .modelheader {
     display: flex;
     align-items: center;
     gap: 10px;
     font-size: 18px;
     font-weight: bold;
-    padding: 10px 0;
+    padding: 10px 15px;
+    color: #000;
 }
 
 .ref-modal-content .back-btn {
@@ -48,11 +51,11 @@
     flex-direction: column;
     align-items: center;
     gap: 10px;
-    background: white;
-    padding: 10px;
-    margin-bottom: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    // background: white;
+    // padding: 10px;
+    // margin-bottom: 20px;
+    // border-radius: 10px;
+    // box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .ref-modal-content .profile-img {
@@ -62,18 +65,49 @@
     object-fit: cover;
 }
 
+.dropdownMain {
+    position: relative;
+    width: 100%;
+
+    .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        width: 100%;
+        display: flex;
+        background-color: #e7e7e7;
+        flex-direction: column;
+        row-gap: 5px;
+        text-align: left;
+        padding: 15px;
+        border-radius: 5px;
+    }
+
+}
+
+.businessLogo {
+    width: 80px;
+    height: 80px;
+    background-color: #e7e7e7;
+    border-radius: 50%;
+    font-size: 30px;
+    display: flex;
+    align-items: center;
+    color: #222;
+}
+
 .ref-modal-content .profile-name {
     // font-weight: bold;
     color: #003366;
     font-family: "Forum", serif;
+    margin-bottom: 0px;
 }
 
 /* Form Container */
 .ref-modal-content .form-container {
-    background: white;
-    padding: 15px;
+    // background: white;
+    // padding: 15px;
     border-radius: 10px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    // box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Dropdown and Description */
@@ -81,12 +115,13 @@
 .ref-modal-content .description-input {
     width: 100%;
     padding: 10px;
-    margin: 10px 0;
+    // margin: 10px 0;
     border: 1px solid #ccc;
     border-radius: 5px;
+    text-align: left;
 }
 
-.ref-modal-content .dropdown-menu{
+.ref-modal-content .dropdown-menu {
     color: #555;
 }
 
@@ -99,7 +134,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 20px 0;
+    // margin: 20px 0;
 }
 
 .ref-modal-content .selection-icon img {
@@ -114,11 +149,16 @@
     flex-direction: column;
     align-items: center;
     row-gap: 15px;
+    width: 100%;
+    // max-width: 300px;
+    button{
+        width: 100%;
+    }
 }
 
 .ref-modal-content .border-btn {
-    width: 300px;
-    padding: 10px 0;
+
+    padding: 10px 15px;
     border-radius: 24px;
     border: 1px solid #003366;
     background-color: #fff;
@@ -129,25 +169,32 @@
     display: flex;
     justify-content: center;
     transition: background-color 0.3s, color 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 500;
 }
 
 .ref-modal-content .border-btn.active,
 .ref-modal-content .border-btn:hover {
     background-color: #003366;
     color: #fff;
+
 }
 
 /* Submit Button */
 .ref-modal-content .submit-btn {
     width: 100%;
-    padding: 12px;
-    background: #003366;
+    padding: 5px 12px ;
+    background: $mcolor;
     color: white;
-    font-weight: bold;
+    // font-weight: bold;
     border: none;
     border-radius: 5px;
+    font-size: 18px;
+    text-transform: uppercase;
     cursor: pointer;
-    margin-top: 10px;
+    font-family:$mukta ;
+    // margin-top: 10px;
 }
 
 /* Dropdown arrow */
@@ -194,7 +241,7 @@
 .businessLogo {
     display: flex;
     justify-content: center;
-    margin-bottom: 10px;
+    // margin-bottom: 10px;
 }
 
 .logoImg {
@@ -273,7 +320,8 @@
     column-gap: 10px;
     vertical-align: top;
     align-items: flex-start;
-    > div{
+
+    >div {
         margin-top: 4px;
     }
 
@@ -312,57 +360,89 @@
 .cosmoCard-referBtn:hover {
     background: #0055aa;
 }
-/* From Uiverse.io by joe-watson-sbf */ 
+
+/* From Uiverse.io by joe-watson-sbf */
 .search {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: center;
 }
 
 .search__input {
-  font-family: inherit;
-  font-size: inherit;
-  background-color: #f4f2f2;
-  border: none;
-  color: #646464;
-  padding: 0.7rem 1rem;
-  border-radius: 30px;
-  width: 12em;
-  transition: all ease-in-out .5s;
-  margin-right: -2rem;
+    font-family: inherit;
+    font-size: inherit;
+    background-color: #f4f2f2;
+    border: none;
+    color: #646464;
+    padding: 0.7rem 1rem;
+    border-radius: 30px;
+    width: 12em;
+    transition: all ease-in-out .5s;
+    margin-right: -2rem;
 }
 
-.search__input:hover, .search__input:focus {
-  box-shadow: 0 0 1em #00000013;
+.search__input:hover,
+.search__input:focus {
+    box-shadow: 0 0 1em #00000013;
 }
 
 .search__input:focus {
-  outline: none;
-  background-color: #f0eeee;
+    outline: none;
+    background-color: #f0eeee;
 }
 
 .search__input::-webkit-input-placeholder {
-  font-weight: 100;
-  color: #ccc;
+    font-weight: 100;
+    color: #ccc;
 }
 
-.search__input:focus + .search__button {
-  background-color: #f0eeee;
+.search__input:focus+.search__button {
+    background-color: #f0eeee;
 }
 
 .search__button {
-  border: none;
-  background-color: #f4f2f2;
-  margin-top: .1em;
+    border: none;
+    background-color: #f4f2f2;
+    margin-top: .1em;
 }
 
 .search__button:hover {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 .search__icon {
-  height: 1.3em;
-  width: 1.3em;
-  fill: #b4b4b4;
+    height: 1.3em;
+    width: 1.3em;
+    fill: #b4b4b4;
+}
+
+.modelContent {
+    height: calc(100% - 100px);
+    overflow-y: scroll;
+    padding: 15px;
+    background-color: #f2f2f2;
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+
+    .ref-section{
+        padding: 15px;
+        background-color: $pclr;
+        border-radius: 7px;
+        display: flex;
+        flex-direction: column;
+        row-gap: 10px;
+        width: 100%;
+        margin-bottom: 0px;
+
+        h4{
+            color: $bluecolor;
+            text-align: left;
+            font-family: $forum;
+            font-size: 20px;
+        }
+
+    }
+
 }

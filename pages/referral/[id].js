@@ -298,34 +298,39 @@ const { orbiter: referralOrbiter, cosmoOrbiter: referralCosmoOrbiter, service, p
 
         
 
-            {/* Status Update */}
-            <div className="cardSection">
-              <label>
-                Deal Status:
-                <select
-                  name="dealStatus"
-                  value={formState.dealStatus}
-                  onChange={handleChange}
-                >
-                  <option value="Pending">Pending</option>
-                  <option value="Deal Lost">Deal Lost</option>
-                  <option value="Received Part Payment">Received Part Payment</option>
-                  <option value="Transferred to UJustBe">Transferred to UJustBe</option>
-                  <option value="Work in Progress">Work in Progress</option>
-                  <option value="Work Completed">Work Completed</option>
-                  <option value="Agreed Percentage Transferred to UJustBe">
-                    Agreed Percentage Transferred to UJustBe
-                  </option>
-                  <option value="On Hold">On Hold</option>
-                  <option value="Rejected">Rejected</option>
-                  <option value="Not Connected">Not Connected</option>
-                  <option value="Called but No Response">Called but No Response</option>
-                  <option value="Discussion in Progress">Discussion in Progress</option>
-                  <option value="Received Full Payment">Received Full Payment</option>
-                </select>
-              </label>
-              <button onClick={handleUpdate}>Update Status</button>
-            </div>
+     {/* Status Update */}
+<div className="cardSection">
+  <label>
+    Deal Status:
+    <select
+      name="dealStatus"
+      value={formState.dealStatus}
+      onChange={handleChange}
+    >
+      <option value="Pending">Pending</option>
+      <option value="Reject">Reject</option>
+      <option value="Not Connected">Not Connected</option>
+      <option value="Called but Not Answered">Called but Not Answered</option>
+      <option value="Discussion in Progress">Discussion in Progress</option>
+      <option value="Hold">Hold</option>
+      <option value="Deal Won">Deal Won</option>
+      <option value="Deal Lost">Deal Lost</option>
+      <option value="Work in Progress">Work in Progress</option>
+      <option value="Work Completed">Work Completed</option>
+      <option value="Received Part Payment and Transferred to UJustBe">
+        Received Part Payment and Transferred to UJustBe
+      </option>
+      <option value="Received Full and Final Payment">
+        Received Full and Final Payment
+      </option>
+      <option value="Agreed % Transferred to UJustBe">
+        Agreed % Transferred to UJustBe
+      </option>
+    </select>
+  </label>
+  <button onClick={handleUpdate}>Update Status</button>
+</div>
+
 
             {/* Timeline */}
             {referralData?.statusLogs && referralData.statusLogs.length > 0 && (
@@ -410,7 +415,7 @@ const { orbiter: referralOrbiter, cosmoOrbiter: referralCosmoOrbiter, service, p
                     className="profileImage"
                   />
                   <h2>{cosmoOrbiter?.name || "No Name"}</h2>
-                  <p className="profileSubtitle">Cosmo Orbiter</p>
+                  <p className="profileSubtitle">CosmOrbiter</p>
                 </div>
 
                 <div className="profileDetails">

@@ -24,6 +24,19 @@
                 padding-bottom: 0rem;
             }
 
+            .business-logo-section {
+
+
+                .businessLogo {
+                    overflow: hidden;
+                    border-radius: 10px;
+
+                    img {
+                        width: 100%;
+                    }
+                }
+            }
+
             .vertical-tabs {
                 row-gap: 15px;
 
@@ -52,7 +65,7 @@
                 width: 100%;
                 align-items: center;
                 justify-content: center;
-                
+
 
                 .offering-card {
                     width: 100%;
@@ -60,6 +73,17 @@
                     padding: 0px;
                     border: 0px solid #ccc;
                     min-height: auto;
+
+                    // padding: 50px;
+                    .nothumbnail {
+                        background-color: $bordercolor;
+                        justify-content: center;
+                        display: flex;
+                        border-radius: 10px;
+                        padding: 50px 0px;
+                        font-size: 60px;
+                        color: $bodytextcolor;
+                    }
 
                     .offerImage {
                         img {

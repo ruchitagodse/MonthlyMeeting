@@ -9,6 +9,8 @@ import { useRouter } from 'next/router';
 import HeaderNav from '../component/HeaderNav';
 import { FaCalendarAlt } from 'react-icons/fa';
 import { MdArrowBack } from "react-icons/md";
+import { CiImageOff } from "react-icons/ci";
+import Headertop from '../component/Header';
 
 const db = getFirestore(app);
 
@@ -30,7 +32,7 @@ const Profile = () => {
       setPhoneNumber(phone);
       fetchUserDetails(phone);
       fetchUserName(phone);
-      fetchCPPoints(phone);
+      // fetchCPPoints(phone);
     }
   }, []);
 
@@ -143,21 +145,7 @@ const Profile = () => {
 
   return (
     <main className="pageContainer">
-      <header className="Main m-Header">
-        <section className="container">
-          <div className="innerLogo" onClick={() => router.push('/')}>
-            <img src="/ujustlogo.png" alt="Logo" className="logo" />
-          </div>
-          <div className="headerRight">
-            <button onClick={() => router.push(`/cp-details/${phoneNumber}`)} className="reward-btn">
-              <div className="text">CP: {cpPoints}</div>
-            </button>
-            <div className="userName">
-              <span>{getInitials(userName)}</span>
-            </div>
-          </div>
-        </section>
-      </header>
+      <Headertop/>
 
       <section className="dashBoardMain profileMainPage">
         {!showContentOnly && (
@@ -295,7 +283,7 @@ const Profile = () => {
                     {activeTab === 'business' && (
                       <div className="business-logo-section">
                         {userDetails['Business Logo'] && (
-                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                          <div className='businessLogo'>
                             <img
                               src={userDetails['Business Logo']}
                               alt="Business Logo"
@@ -319,8 +307,15 @@ const Profile = () => {
                           {userDetails.services.map((srv, i) => (
                             <div key={i} className="offering-card">
                               <div className='offerImage'>
-                                {srv.imageURL && (
-                                  <img src={srv.imageURL} alt={srv.name} />
+                                {srv.imageURL ? (
+                                  <img
+                                    src={srv.imageURL}
+                                    alt={srv.name}
+                                  />
+                                ) : (
+                                  <div className="nothumbnail">
+                                    <CiImageOff />
+                                  </div>
                                 )}
                               </div>
                               <div className='offerDesc'>
@@ -341,8 +336,16 @@ const Profile = () => {
                           {userDetails.products.map((srv, i) => (
                             <div key={i} className="offering-card">
                               <div className='offerImage'>
-                                {srv.imageURL && (
-                                  <img src={srv.imageURL} alt={srv.name}/>
+
+                                {srv.imageURL ? (
+                                  <img
+                                    src={srv.imageURL}
+                                    alt={srv.name}
+                                  />
+                                ) : (
+                                  <div className="nothumbnail">
+                                    <CiImageOff />
+                                  </div>
                                 )}
                               </div>
                               <div className='offerDesc'>

@@ -14,6 +14,7 @@ import { CiImageOff } from "react-icons/ci";
 // Import css files
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import Headertop from "../../component/Header";
 
 const db = getFirestore(app);
 
@@ -233,18 +234,7 @@ const ReferralDetails = () => {
 
   return (
     <main className="pageContainer businessDetailsPage">
-      <header className='Main m-Header'>
-        <section className='container'>
-          <div className='innerLogo' onClick={() => router.push("/")}>
-            <img src="/ujustlogo.png" alt="Logo" className="logo" />
-          </div>
-          <div className='headerRight'>
-            <div className="userName" onClick={() => router.push('/')} style={{ cursor: 'pointer' }}>
-              <span>{getInitials(orbiterDetails.name)}</span>
-            </div>
-          </div>
-        </section>
-      </header>
+      <Headertop/>
 
       <section className='p-meetingDetails'>
         <div className='container pageHeading'>

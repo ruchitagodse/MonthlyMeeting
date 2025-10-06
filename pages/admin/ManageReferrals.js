@@ -69,58 +69,66 @@ const handleEdit = (referralId) => {
 
     <th>Referral ID</th>
     <th>Service/Product Name</th>
-    <th>Service/Product Description</th>
+  
     <th>Updated Date</th>
     <th>Actions</th>
   </tr>
 </thead>
+<tbody>
+  {referrals
+    .sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0))
+    .map((referral, index) => (
+      <tr key={referral.id}>
+        <td>{index + 1}</td>
+        <td>{referral.orbiter?.name || "—"}</td>
+        <td>{referral.cosmoOrbiter?.name || "—"}</td>
+        <td>{referral.referralType}</td>
+        <td>{referral.referralId || "—"}</td>
 
-     <tbody>
-  {referrals.map((referral, index) => (
-    <tr key={referral.id}>
-      <td>{index + 1}</td>
-      <td>{referral.orbiter?.name}</td>
-    
-      <td>{referral.cosmoOrbiter?.name}</td>
+        {/* Service/Product Name */}
+        <td>
+          {referral.service?.name
+            ? referral.product?.name
+              ? `${referral.service.name} / ${referral.product.name}`
+              : referral.service.name
+            : referral.product?.name || "—"}
+        </td>
 
-      <td>{referral.referralType}</td>
-   
-      {/* ✅ Referral ID */}
-      <td>{referral.referralId || '—'}</td>
+        {/* Timestamp */}
+        <td>
+          {referral.timestamp?.seconds
+            ? new Date(referral.timestamp.seconds * 1000).toLocaleString()
+            : "—"}
+        </td>
 
-      {/* ✅ Service/Product Name */}
-      <td>
-        {referral.referralType === 'service' && referral.service
-          ? referral.service.name
-          : referral.product
-          ? referral.product.name
-          : '—'}
-      </td>
-
-      {/* ✅ Service/Product Description */}
-      <td>
-        {referral.referralType === 'service' && referral.service
-          ? referral.service.description
-          : referral.product
-          ? referral.product.description
-          : '—'}
-      </td>
-
-      {/* ✅ Timestamp */}
-      <td>{referral.timestamp?.seconds ? new Date(referral.timestamp.seconds * 1000).toLocaleString() : '—'}</td>
-     <div className='twobtn'>
-                      <button  className="m-button-7" 
-    
-            style={{ marginLeft: '10px', backgroundColor: '#f16f06', color: 'white' }}onClick={() => handleEdit(referral.id)}>✎ Edit</button>
-                      <button  className="m-button-7" 
-          
-            style={{ marginLeft: '10px', backgroundColor: '#FF0000', color: 'white' }} onClick={() => handleDelete(referral.id)}>🗑 Delete</button>
-                    </div>
-      {/* ✅ Actions */}
-      
-    </tr>
+        {/* Actions */}
+        <td>
+          <div className="twobtn">
+            <button
+              className="m-button-7"
+              style={{
+                marginRight: "10px",
+                backgroundColor: "#f16f06",
+                color: "white",
+              }}
+              onClick={() => handleEdit(referral.id)}
+            >
+              ✎ Edit
+            </button>
+            <button
+              className="m-button-7"
+              style={{ backgroundColor: "#FF0000", color: "white" }}
+              onClick={() => handleDelete(referral.id)}
+            >
+              🗑 Delete
+            </button>
+          </div>
+        </td>
+      </tr>
   ))}
 </tbody>
+
+
 
     </table>
   )}

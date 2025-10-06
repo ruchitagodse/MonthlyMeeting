@@ -281,7 +281,7 @@ const HomePage = () => {
               </div>
             </Link>
 
-            <Link href="/ConclaveReferrals">
+            {/* <Link href="/ConclaveReferrals">
               <div className="summary-card on-hold">
                 <p className="count">9</p>
                 <p className="label">Total Referrals</p>
@@ -293,136 +293,140 @@ const HomePage = () => {
                 <p className="count">4</p>
                 <p className="label">Completed Referrals</p>
               </div>
-            </Link>
+            </Link> */}
 
           </section>
 
 
 
-          <section className="upcoming-events">
-            <h1>Upcoming Events</h1>
+     <section className="upcoming-events">
+  <h1>Upcoming Events</h1>
 
-            {upcomingMonthlyMeet && (
-              <div className="meetingBox">
-                <div className="suggestionDetails">
-                  {(() => {
-                    const now = new Date();
-                    const eventDate = upcomingMonthlyMeet.time?.toDate ? upcomingMonthlyMeet.time.toDate() : upcomingMonthlyMeet.time;
-                    const timeLeftMs = eventDate - now;
-                    const timeLeft = timeLeftMs <= 0 ? 'Meeting Ended' : formatTimeLeft(timeLeftMs);
-                    return timeLeft === 'Meeting Ended' ? (
-                      <span className="meetingLable2">Meeting Done</span>
-                    ) : (
-                      <span className="meetingLable3">{timeLeft}</span>
-                    );
-                  })()}
-                  <span className="suggestionTime">
-                    {upcomingMonthlyMeet.time?.toDate
-                      ? upcomingMonthlyMeet.time.toDate().toLocaleString('en-GB', {
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric',
-                        hour: 'numeric',
-                        minute: '2-digit',
-                        hour12: true,
-                      }).replace(',', ' at')
-                      : upcomingMonthlyMeet.time.toLocaleString('en-GB', {
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric',
-                        hour: 'numeric',
-                        minute: '2-digit',
-                        hour12: true,
-                      }).replace(',', ' at')}
-                  </span>
-                </div>
+  {upcomingMonthlyMeet ? (
+    <div className="meetingBox">
+      <div className="suggestionDetails">
+        {(() => {
+          const now = new Date();
+          const eventDate = upcomingMonthlyMeet.time?.toDate ? upcomingMonthlyMeet.time.toDate() : upcomingMonthlyMeet.time;
+          const timeLeftMs = eventDate - now;
+          const timeLeft = timeLeftMs <= 0 ? 'Meeting Ended' : formatTimeLeft(timeLeftMs);
+          return timeLeft === 'Meeting Ended' ? (
+            <span className="meetingLable2">Meeting Done</span>
+          ) : (
+            <span className="meetingLable3">{timeLeft}</span>
+          );
+        })()}
+        <span className="suggestionTime">
+          {upcomingMonthlyMeet.time?.toDate
+            ? upcomingMonthlyMeet.time.toDate().toLocaleString('en-GB', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true,
+              }).replace(',', ' at')
+            : upcomingMonthlyMeet.time.toLocaleString('en-GB', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true,
+              }).replace(',', ' at')}
+        </span>
+      </div>
 
-                <div className="meetingDetailsBox">
-                  <h3 className="eventName">{upcomingMonthlyMeet.Eventname || 'N/A'}</h3>
-                </div>
+      <div className="meetingDetailsBox">
+        <h3 className="eventName">{upcomingMonthlyMeet.Eventname || 'N/A'}</h3>
+      </div>
 
-                <div className="meetingBoxFooter">
-                  <div className="viewDetails">
-                    <Link href={`/MonthlyMeeting/${upcomingMonthlyMeet.id}`}>View Details</Link>
-                  </div>
+      <div className="meetingBoxFooter">
+        <div className="viewDetails">
+          <Link href={`/MonthlyMeeting/${upcomingMonthlyMeet.id}`}>View Details</Link>
+        </div>
 
-                  {(() => {
-                    const now = new Date();
-                    const eventDate = upcomingMonthlyMeet.time?.toDate ? upcomingMonthlyMeet.time.toDate() : upcomingMonthlyMeet.time;
-                    const isWithinOneHour = eventDate > now && (eventDate - now <= 60 * 60 * 1000);
-                    return isWithinOneHour && upcomingMonthlyMeet.zoomLink ? (
-                      <div className="meetingLink">
-                        <a href={upcomingMonthlyMeet.zoomLink} target="_blank" rel="noopener noreferrer">
-                          <span>Join Meeting</span>
-                        </a>
-                      </div>
-                    ) : null;
-                  })()}
-                </div>
-              </div>
-            )}
+        {(() => {
+          const now = new Date();
+          const eventDate = upcomingMonthlyMeet.time?.toDate ? upcomingMonthlyMeet.time.toDate() : upcomingMonthlyMeet.time;
+          const isWithinOneHour = eventDate > now && (eventDate - now <= 60 * 60 * 1000);
+          return isWithinOneHour && upcomingMonthlyMeet.zoomLink ? (
+            <div className="meetingLink">
+              <a href={upcomingMonthlyMeet.zoomLink} target="_blank" rel="noopener noreferrer">
+                <span>Join Meeting</span>
+              </a>
+            </div>
+          ) : null;
+        })()}
+      </div>
+    </div>
+  ) : null}
 
-            {upcomingNTMeet && (
-              <div className="meetingBox">
-                <div className="suggestionDetails">
-                  {(() => {
-                    const now = new Date();
-                    const eventDate = upcomingNTMeet.time?.toDate ? upcomingNTMeet.time.toDate() : upcomingNTMeet.time;
-                    const timeLeftMs = eventDate - now;
-                    const timeLeft = timeLeftMs <= 0 ? 'Meeting Ended' : formatTimeLeft(timeLeftMs);
-                    return timeLeft === 'Meeting Ended' ? (
-                      <span className="meetingLable2">Meeting Done</span>
-                    ) : (
-                      <span className="meetingLable3">{timeLeft}</span>
-                    );
-                  })()}
-                  <span className="suggestionTime">
-                    {upcomingNTMeet.time?.toDate
-                      ? upcomingNTMeet.time.toDate().toLocaleString('en-GB', {
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric',
-                        hour: 'numeric',
-                        minute: '2-digit',
-                        hour12: true,
-                      }).replace(',', ' at')
-                      : upcomingNTMeet.time.toLocaleString('en-GB', {
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric',
-                        hour: 'numeric',
-                        minute: '2-digit',
-                        hour12: true,
-                      }).replace(',', ' at')}
-                  </span>
-                </div>
+  {upcomingNTMeet ? (
+    <div className="meetingBox">
+      <div className="suggestionDetails">
+        {(() => {
+          const now = new Date();
+          const eventDate = upcomingNTMeet.time?.toDate ? upcomingNTMeet.time.toDate() : upcomingNTMeet.time;
+          const timeLeftMs = eventDate - now;
+          const timeLeft = timeLeftMs <= 0 ? 'Meeting Ended' : formatTimeLeft(timeLeftMs);
+          return timeLeft === 'Meeting Ended' ? (
+            <span className="meetingLable2">Meeting Done</span>
+          ) : (
+            <span className="meetingLable3">{timeLeft}</span>
+          );
+        })()}
+        <span className="suggestionTime">
+          {upcomingNTMeet.time?.toDate
+            ? upcomingNTMeet.time.toDate().toLocaleString('en-GB', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true,
+              }).replace(',', ' at')
+            : upcomingNTMeet.time.toLocaleString('en-GB', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true,
+              }).replace(',', ' at')}
+        </span>
+      </div>
 
-                <div className="meetingDetailsBox">
-                  <h3 className="eventName">{upcomingNTMeet.name || 'N/A'}</h3>
-                </div>
+      <div className="meetingDetailsBox">
+        <h3 className="eventName">{upcomingNTMeet.name || 'N/A'}</h3>
+      </div>
 
-                <div className="meetingBoxFooter">
-                  <div className="viewDetails">
-                    <Link href={`/events/${upcomingNTMeet.id}`}>View Details</Link>
-                  </div>
+      <div className="meetingBoxFooter">
+        <div className="viewDetails">
+          <Link href={`/events/${upcomingNTMeet.id}`}>View Details</Link>
+        </div>
 
-                  {(() => {
-                    const now = new Date();
-                    const eventDate = upcomingNTMeet.time?.toDate ? upcomingNTMeet.time.toDate() : upcomingNTMeet.time;
-                    const isWithinOneHour = eventDate > now && (eventDate - now <= 60 * 60 * 1000);
-                    return isWithinOneHour && upcomingNTMeet.zoomLink ? (
-                      <div className="meetingLink">
-                        <a href={upcomingNTMeet.zoomLink} target="_blank" rel="noopener noreferrer">
-                          <span>Join Meeting</span>
-                        </a>
-                      </div>
-                    ) : null;
-                  })()}
-                </div>
-              </div>
-            )}
-          </section>
+        {(() => {
+          const now = new Date();
+          const eventDate = upcomingNTMeet.time?.toDate ? upcomingNTMeet.time.toDate() : upcomingNTMeet.time;
+          const isWithinOneHour = eventDate > now && (eventDate - now <= 60 * 60 * 1000);
+          return isWithinOneHour && upcomingNTMeet.zoomLink ? (
+            <div className="meetingLink">
+              <a href={upcomingNTMeet.zoomLink} target="_blank" rel="noopener noreferrer">
+                <span>Join Meeting</span>
+              </a>
+            </div>
+          ) : null;
+        })()}
+      </div>
+    </div>
+  ) : null}
 
+  {/* Show fallback if no meetings */}
+  {!upcomingMonthlyMeet && !upcomingNTMeet && (
+    <p className="noMeetings">No upcoming meetings</p>
+  )}
+</section>
 
 
 

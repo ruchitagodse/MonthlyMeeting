@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { doc, getDoc, updateDoc, collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
+import Swal from 'sweetalert2';
 
 const ReferralSection = ({ eventID, data = {}, fetchData }) => {
   const [referralSections, setReferralSections] = useState(data.referralSections || []);
@@ -125,30 +126,57 @@ useEffect(() => {
 
   
 
-  const handleRemoveReferralSection = async (index) => {
-    const sectionToRemove = referralSections[index];
+const handleRemoveReferralSection = async (index) => {
+  const sectionToRemove = referralSections[index];
 
-    // If already in Firestore, remove it
-    if (sectionToRemove.referralFrom || sectionToRemove.referralTo) {
+  Swal.fire({
+    title: 'Are you sure?',
+    text: 'This referral section will be removed permanently.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Yes, remove it!',
+    cancelButtonText: 'Cancel',
+  }).then(async (result) => {
+    if (result.isConfirmed) {
       try {
-        const docRef = doc(db, 'MonthlyMeeting', eventID);
-        const snapshot = await getDoc(docRef);
-        if (snapshot.exists()) {
-          const data = snapshot.data();
-          const updatedReferrals = data.referralSections?.filter((_, i) => i !== index) || [];
-          await updateDoc(docRef, { referralSections: updatedReferrals });
-          console.log('Referral section removed from Firestore');
+        // If already in Firestore, remove it
+        if (sectionToRemove.referralFrom || sectionToRemove.referralTo) {
+          const docRef = doc(db, 'MonthlyMeeting', eventID);
+          const snapshot = await getDoc(docRef);
+          if (snapshot.exists()) {
+            const data = snapshot.data();
+            const updatedReferrals =
+              data.referralSections?.filter((_, i) => i !== index) || [];
+            await updateDoc(docRef, { referralSections: updatedReferrals });
+            console.log('Referral section removed from Firestore');
+          }
         }
+
+        // Remove from UI
+        setReferralSections(referralSections.filter((_, i) => i !== index));
+        setReferralSearchFrom(referralSearchFrom.filter((_, i) => i !== index));
+        setReferralSearchTo(referralSearchTo.filter((_, i) => i !== index));
+
+        Swal.fire({
+          title: 'Removed!',
+          text: 'The referral section has been removed.',
+          icon: 'success',
+          timer: 1500,
+          showConfirmButton: false,
+        });
       } catch (error) {
         console.error('Error removing referral section:', error);
+        Swal.fire({
+          title: 'Error!',
+          text: 'Failed to remove referral section. Please try again.',
+          icon: 'error',
+        });
       }
     }
-
-    // Remove from UI
-    setReferralSections(referralSections.filter((_, i) => i !== index));
-    setReferralSearchFrom(referralSearchFrom.filter((_, i) => i !== index));
-    setReferralSearchTo(referralSearchTo.filter((_, i) => i !== index));
-  };
+  });
+};
 const handleStatusChange = (index, newStatus) => {
   const updated = [...referralSections];
   updated[index].status = newStatus;
@@ -156,26 +184,28 @@ const handleStatusChange = (index, newStatus) => {
 };
 
 
-  const handleSaveReferralSections = async () => {
-    try {
-      const cleanedReferralSections = referralSections.map(({ id, referralFrom, referralTo, referralDesc,status }) => ({
-        id,
-        referralFrom,
-        referralTo,
-        referralDesc,
-        status
-      }));
+const handleSaveReferralSections = async () => {
+  try {
+    const cleanedReferralSections = referralSections.map(section => ({
+      id: section.id ?? null,
+      referralFrom: section.referralFrom ?? '',
+      referralTo: section.referralTo ?? '',
+      referralDesc: section.referralDesc ?? '',
+      status: section.status ?? 'Pending'
+    }));
+
+    const docRef = doc(db, 'MonthlyMeeting', eventID);
+    await updateDoc(docRef, { referralSections: cleanedReferralSections });
+
+    console.log('Referral sections updated');
+    fetchData?.();
+  } catch (error) {
+    console.error('Error saving referral sections:', error);
+  }
+};
+
   
-      const docRef = doc(db, 'MonthlyMeeting', eventID);
-      await updateDoc(docRef, { referralSections: cleanedReferralSections });
-  
-      console.log('Referral sections updated');
-      fetchData(); // optional
-    } catch (error) {
-      console.error('Error saving referral sections:', error);
-    }
-  };
-  
+
 
   return (
     <div className='content-wrapper'>

@@ -86,7 +86,12 @@ const Navbar = (props) => {
                                 <li><Link href="/admin/CPList">Manage CP</Link></li>
                             </ul>
                             </li>
-                        
+                         <li>
+                            <Link href="/admin/userlogin">
+                                <span className="icons"><RiListSettingsLine /></span>
+                                <span className="linklabel">User Logins</span>
+                            </Link>
+                        </li>
                         <li>
                             <Link href="/admin/event/upload">
                                 <span className="icons"><RiListSettingsLine /></span>

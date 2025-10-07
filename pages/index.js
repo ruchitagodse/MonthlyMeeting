@@ -152,7 +152,55 @@ const HomePage = () => {
     fetchConclaveData();
   }, []);
 
+// 📝 Function to log user login events in Firestore
+const logUserLogin = async (phoneNumber) => {
+  try {
+    if (!phoneNumber) {
+      console.warn("⚠️ No phone number provided for login log.");
+      return;
+    }
 
+    const todayDateStr = new Date().toLocaleDateString("en-GB"); // dd/mm/yyyy
+    const deviceInfo = navigator.userAgent;
+    const loginTime = new Date();
+
+    // 🧠 Fetch IP Address
+    let ipAddress = "Unknown";
+    try {
+      const res = await fetch("https://api.ipify.org?format=json");
+      const data = await res.json();
+      ipAddress = data.ip;
+    } catch (err) {
+      console.warn("Could not fetch IP:", err);
+    }
+
+    // 📝 Check if today's log already exists
+    const logsRef = collection(db, "LoginLogs");
+    const q = query(
+      logsRef,
+      where("phoneNumber", "==", phoneNumber),
+      where("date", "==", todayDateStr)
+    );
+    const existingLogsSnap = await getDocs(q);
+
+    if (existingLogsSnap.empty) {
+      // ✅ No log for today → create new
+      await setDoc(doc(logsRef), {
+        phoneNumber,
+        loginTime,
+        deviceInfo,
+        ipAddress,
+        date: todayDateStr,
+      });
+
+      console.log(`✅ Login log saved for ${phoneNumber} on ${todayDateStr}`);
+    } else {
+      console.log(`ℹ️ Login log for ${phoneNumber} already exists for today`);
+    }
+  } catch (error) {
+    console.error("❌ Error saving login log:", error);
+  }
+};
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -169,6 +217,8 @@ const HomePage = () => {
         setIsLoggedIn(true);
         fetchUserName(phoneNumber);
         setLoading(false);
+          // 📝 Log the login event
+  logUserLogin(phoneNumber);
       } else {
         setError('You are not a Orbiter.');
       }

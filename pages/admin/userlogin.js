@@ -23,7 +23,6 @@ const AdminLoginLogs = () => {
             loginTime: logData.loginTime?.toDate
               ? logData.loginTime.toDate()
               : new Date(logData.loginTime),
-            date: logData.date || "", // include date field
           };
         });
         setLogs(data);
@@ -52,7 +51,6 @@ const AdminLoginLogs = () => {
               <tr>
                 <th>#</th>
                 <th>Phone Number</th>
-                <th>Date</th>
                 <th>Login Time</th>
                 <th>IP Address</th>
                 <th>Device Info</th>
@@ -63,7 +61,6 @@ const AdminLoginLogs = () => {
                 <tr key={log.id}>
                   <td>{index + 1}</td>
                   <td>{log.phoneNumber || "—"}</td>
-                  <td>{log.date || "—"}</td>
                   <td>
                     {log.loginTime
                       ? log.loginTime.toLocaleString("en-GB", {
@@ -78,14 +75,7 @@ const AdminLoginLogs = () => {
                       : "—"}
                   </td>
                   <td>{log.ipAddress || "—"}</td>
-                  <td
-                    style={{
-                      maxWidth: "400px",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
+                  <td style={{ maxWidth: "400px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     {log.deviceInfo || "—"}
                   </td>
                 </tr>

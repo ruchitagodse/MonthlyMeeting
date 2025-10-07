@@ -153,12 +153,11 @@ const HomePage = () => {
   }, []);
 
 // 📝 Function to log user login events in Firestore
-const logUserLogin = async (phoneNumber) => {
+const logUserLogin = async (phoneNumber, userName) => {
   try {
     const deviceInfo = navigator.userAgent;
     const loginTime = new Date();
 
-    // Optional: fetch IP address
     let ipAddress = 'Unknown';
     try {
       const res = await fetch('https://api.ipify.org?format=json');
@@ -168,15 +167,13 @@ const logUserLogin = async (phoneNumber) => {
       console.warn("Could not fetch IP:", err);
     }
 
-    await setDoc(
-      doc(collection(db, 'LoginLogs')),
-      {
-        phoneNumber,
-        loginTime,
-        deviceInfo,
-        ipAddress
-      }
-    );
+    await setDoc(doc(collection(db, 'LoginLogs')), {
+      phoneNumber,
+      name: userName || 'Unknown',  // Pass the name here
+      loginTime,
+      deviceInfo,
+      ipAddress
+    });
 
     console.log("✅ Login log saved for", phoneNumber);
   } catch (error) {
@@ -184,64 +181,67 @@ const logUserLogin = async (phoneNumber) => {
   }
 };
 
+
   const handleLogin = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
+  try {
+    const docRef = doc(db, "userdetails", phoneNumber);
+    const docSnap = await getDoc(docRef);
 
+    if (docSnap.exists()) {
+      localStorage.setItem('mmOrbiter', phoneNumber);
+      setIsLoggedIn(true);
 
-    try {
-      const docRef = doc(db, "userdetails", phoneNumber);
-      const docSnap = await getDoc(docRef);
+      const fetchedName = docSnap.data()[" Name"] || 'User'; // get user name
+      setUserName(fetchedName);
 
-      if (docSnap.exists()) {
-        console.log('✅ Phone number found in NTMembers');
+      // 📝 Log login with phone and name
+      logUserLogin(phoneNumber, fetchedName);
 
-        localStorage.setItem('mmOrbiter', phoneNumber);
-        setIsLoggedIn(true);
-        fetchUserName(phoneNumber);
-        setLoading(false);
-          // 📝 Log the login event
-  logUserLogin(phoneNumber);
-      } else {
-        setError('You are not a Orbiter.');
-      }
-    } catch (err) {
-      console.error('❌ Error checking phone number:', err);
-      setError('Login failed. Please try again.');
+      setLoading(false);
+    } else {
+      setError('You are not an Orbiter.');
     }
-  };
+  } catch (err) {
+    console.error('❌ Error checking phone number:', err);
+    setError('Login failed. Please try again.');
+  }
+};
+
 
 
   useEffect(() => {
-    const storedPhoneNumber = localStorage.getItem('mmOrbiter');
-    if (storedPhoneNumber) {
-      fetchUserName(storedPhoneNumber);
-      setPhoneNumber(storedPhoneNumber);
-    } else {
-      console.error("Phone number not found in localStorage.");
-    }
-  }, []);
+  const storedPhoneNumber = localStorage.getItem('mmOrbiter');
+  if (storedPhoneNumber) {
+    setPhoneNumber(storedPhoneNumber);
+
+    // fetch username first
+    fetchUserName(storedPhoneNumber).then((fetchedName) => {
+      logUserLogin(storedPhoneNumber, fetchedName);
+      setIsLoggedIn(true);
+    });
+  }
+}, []);
+
   const fetchUserName = async (phoneNumber) => {
-    if (!phoneNumber || typeof phoneNumber !== 'string' || phoneNumber.trim() === '') {
-      console.error("Invalid phone number:", phoneNumber);
-      return;
-    }
+  if (!phoneNumber) return 'User';
+  try {
+    const userRef = doc(db, 'userdetails', phoneNumber);
+    const userDoc = await getDoc(userRef);
 
-    console.log("Fetch User from Userdetails", phoneNumber);
-    try {
-      const userRef = doc(db, 'userdetails', phoneNumber);
-      const userDoc = await getDoc(userRef);
-
-      if (userDoc.exists()) {
-        const orbitername = userDoc.data()[" Name"] || 'User';
-        setUserName(orbitername);
-      } else {
-        console.log("User not found in userdetails");
-      }
-    } catch (err) {
-      console.error("Error fetching user name:", err);
+    if (userDoc.exists()) {
+      const name = userDoc.data()[" Name"] || 'User';
+      setUserName(name);
+      return name;
     }
-  };
+    return 'User';
+  } catch (err) {
+    console.error(err);
+    return 'User';
+  }
+};
+
 
 
 

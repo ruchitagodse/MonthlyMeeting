@@ -19,10 +19,13 @@ const AdminLoginLogs = () => {
           const logData = doc.data();
           return {
             id: doc.id,
-            ...logData,
+            phoneNumber: logData.phoneNumber || "—",
+            name: logData.name || "—", // ✅ use proper name field
             loginTime: logData.loginTime?.toDate
               ? logData.loginTime.toDate()
               : new Date(logData.loginTime),
+            ipAddress: logData.ipAddress || "—",
+            deviceInfo: logData.deviceInfo || "—",
           };
         });
         setLogs(data);
@@ -51,6 +54,7 @@ const AdminLoginLogs = () => {
               <tr>
                 <th>#</th>
                 <th>Phone Number</th>
+                <th>Name</th>
                 <th>Login Time</th>
                 <th>IP Address</th>
                 <th>Device Info</th>
@@ -60,7 +64,8 @@ const AdminLoginLogs = () => {
               {logs.map((log, index) => (
                 <tr key={log.id}>
                   <td>{index + 1}</td>
-                  <td>{log.phoneNumber || "—"}</td>
+                  <td>{log.phoneNumber}</td>
+                  <td>{log.name}</td> {/* ✅ show name here */}
                   <td>
                     {log.loginTime
                       ? log.loginTime.toLocaleString("en-GB", {
@@ -74,9 +79,16 @@ const AdminLoginLogs = () => {
                         })
                       : "—"}
                   </td>
-                  <td>{log.ipAddress || "—"}</td>
-                  <td style={{ maxWidth: "400px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                    {log.deviceInfo || "—"}
+                  <td>{log.ipAddress}</td>
+                  <td
+                    style={{
+                      maxWidth: "400px",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {log.deviceInfo}
                   </td>
                 </tr>
               ))}

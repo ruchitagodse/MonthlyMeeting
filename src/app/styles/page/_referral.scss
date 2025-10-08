@@ -27,6 +27,43 @@
     margin-bottom: 20px;
   }
 }
+.itemDetails {
+  padding: 15px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin-bottom: 15px;
+}
+
+.itemDetails:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+}
+
+.itemDetails h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1e1e1e;
+  margin-bottom: 6px;
+}
+
+.itemDetails p {
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+
+.itemDetails p.itemType {
+  font-size: 0.8rem;
+  color: #0b62d6;
+  font-weight: 500;
+  margin-top: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 
 /* Orbiter / Cosmo Profile Card */
 .OrbiterProfileCard {

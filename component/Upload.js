@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import * as XLSX from "xlsx";
 import { db } from "../firebaseConfig";
-import { collection, doc, updateDoc } from "firebase/firestore"; // Import updateDoc
+import { collection, doc, getDoc, updateDoc } from "firebase/firestore";
 
 const UploadExcel = () => {
   const [excelData, setExcelData] = useState(null);
@@ -16,56 +16,82 @@ const UploadExcel = () => {
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
       const jsonData = XLSX.utils.sheet_to_json(worksheet);
-      setExcelData(jsonData); 
-      console.log(jsonData);
+      setExcelData(jsonData);
+      console.log("Excel Data:", jsonData);
     };
 
     reader.readAsArrayBuffer(file);
   };
 
+  const updateKeywordsInArray = (existingArray, row, type) => {
+    // type = "Service" or "Product"
+    if (!Array.isArray(existingArray)) return existingArray;
+
+    return existingArray.map((item, index) => {
+      const keywordValue = row[`${type} ${index + 1}_Keywords`] || "";
+      return {
+        ...item,
+        keywords: keywordValue,
+      };
+    });
+  };
+
   const uploadDataToFirestore = async () => {
-    if (excelData) {
-      try {
-        const collectionRef = collection(db, "userdetail");
+    if (!excelData) {
+      alert("Please upload a file first.");
+      return;
+    }
 
-        for (let row of excelData) {
-          const mobileNumber = String(row["Mobile no"]); // Column from Excel
-          if (mobileNumber) {
-            const docRef = doc(collectionRef, mobileNumber);
+    try {
+      const collectionRef = collection(db, "userdetail");
 
-            // Fields you want to update
-            const updateFields = {
-              Location: row["Location"] || "",
-              State: row["State"] || "",
-              Hobbies: row["Hobbies"] || "",
-              "Business Name": row["Business Name"] || "",
-              Locality: row["Locality"] || "",
-              "Business History": row["Business History"] || "",
-              "Business Details (Nature & Type)": row["Business Details (Nature & Type)"] || "",
-              "Category 1": row["Category 1"] || "",
-              "Category 2": row["Category 2"] || "",
-              "Business Email ID": row["Business Email ID"] || ""
-            };
-
-            await updateDoc(docRef, updateFields);
-          } else {
-            console.error("Mobile number missing in row:", row);
-          }
+      for (let row of excelData) {
+        const mobileNumber = String(row["Mobile no"])?.trim();
+        if (!mobileNumber) {
+          console.error("❌ Mobile number missing in row:", row);
+          continue;
         }
 
-        alert("Data updated successfully in Firestore!");
-      } catch (error) {
-        console.error("Error updating data:", error);
+        const docRef = doc(collectionRef, mobileNumber);
+        const docSnap = await getDoc(docRef);
+
+        if (!docSnap.exists()) {
+          console.warn(`⚠️ Document not found for Mobile no: ${mobileNumber}`);
+          continue;
+        }
+
+        const userData = docSnap.data();
+
+        const updatedServices = updateKeywordsInArray(
+          userData.services || [],
+          row,
+          "Service"
+        );
+        const updatedProducts = updateKeywordsInArray(
+          userData.products || [],
+          row,
+          "Product"
+        );
+
+        await updateDoc(docRef, {
+          services: updatedServices,
+          products: updatedProducts,
+        });
+
+        console.log(`✅ Keywords updated for ${mobileNumber}`);
       }
-    } else {
-      alert("Please upload a file first.");
+
+      alert("✅ Keywords updated successfully for all rows!");
+    } catch (error) {
+      console.error("❌ Error updating keywords:", error);
+      alert("Error updating keywords. Check console for details.");
     }
   };
 
   return (
     <>
       <section className="c-form box">
-        <h2>Upload Excel</h2>
+        <h2>Upload Excel (Only Keywords)</h2>
         <button className="m-button-5" onClick={() => window.history.back()}>
           Back
         </button>
@@ -87,7 +113,7 @@ const UploadExcel = () => {
                 onClick={uploadDataToFirestore}
                 style={{ backgroundColor: "#f16f06", color: "white" }}
               >
-                Update Data
+                Update Keywords
               </button>
             </div>
           </li>

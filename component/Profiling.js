@@ -44,27 +44,30 @@ useEffect(() => {
      if (userData['Profile Photo URL']) setProfilePreview(userData['Profile Photo URL']);
           if (userData['Business Logo']) setBusinessLogoPreview(userData['Business Logo']);
         // Load services and products from DB
-        if (userData.services && userData.services.length > 0) {
-          setServices(
-            userData.services.map(s => ({
-              name: s.name || '',
-              description: s.description || '',
-              image: null, // images will be uploaded anew if needed
-              percentage: s.percentage || ''
-            }))
-          );
-        }
+     if (userData.services && userData.services.length > 0) {
+  setServices(
+    userData.services.map(s => ({
+      name: s.name || '',
+      description: s.description || '',
+      keywords: s.keywords || '',
+      image: null,
+      percentage: s.percentage || '',
+    }))
+  );
+}
 
-        if (userData.products && userData.products.length > 0) {
-          setProducts(
-            userData.products.map(p => ({
-              name: p.name || '',
-              description: p.description || '',
-              image: null, // images will be uploaded anew if needed
-              percentage: p.percentage || ''
-            }))
-          );
-        }
+       if (userData.products && userData.products.length > 0) {
+  setProducts(
+    userData.products.map(p => ({
+      name: p.name || '',
+      description: p.description || '',
+      keywords: p.keywords || '',
+      image: null,
+      percentage: p.percentage || '',
+    }))
+  );
+}
+
       }
     } catch (err) {
       console.error('Error fetching user:', err);
@@ -231,34 +234,35 @@ const handleDynamicChange = (type, index, field, value) => {
     const filteredProducts = products.filter(p => p.name.trim() && p.description.trim());
 
     const serviceData = await Promise.all(
-      filteredServices.map(async (srv, i) => {
-        const imgURL = srv.image
-          ? await uploadImage(srv.image, `serviceImages/${docId}/service_${i}`)
-          : '';
-return {
-  name: srv.name,
-  description: srv.description,
-  imageURL: imgURL,
-  percentage: srv.percentage || '',
-};
+  filteredServices.map(async (srv, i) => {
+    const imgURL = srv.image
+      ? await uploadImage(srv.image, `serviceImages/${docId}/service_${i}`)
+      : '';
+    return {
+      name: srv.name,
+      description: srv.description,
+      keywords: srv.keywords || '',
+      imageURL: imgURL,
+      percentage: srv.percentage || '',
+    };
+  })
+);
 
-      })
-    );
 
-    const productData = await Promise.all(
-      filteredProducts.map(async (prd, i) => {
-        const imgURL = prd.image
-          ? await uploadImage(prd.image, `productImages/${docId}/product_${i}`)
-          : '';
-  return {
-  name: prd.name,
-  description: prd.description,
-  imageURL: imgURL,
-  percentage: prd.percentage || '',
-};
-
-      })
-    );
+   const productData = await Promise.all(
+  filteredProducts.map(async (prd, i) => {
+    const imgURL = prd.image
+      ? await uploadImage(prd.image, `productImages/${docId}/product_${i}`)
+      : '';
+    return {
+      name: prd.name,
+      description: prd.description,
+      keywords: prd.keywords || '',
+      imageURL: imgURL,
+      percentage: prd.percentage || '',
+    };
+  })
+);
 
     const updatedData = {
       ...formData,
@@ -537,22 +541,54 @@ const fieldGroups = {
           className="multipleitem"
         />
       </div>
-<div className="form-row">
-  <h4>Agreed Percentage</h4>
-  <input
-    type="number"
-    min="0"
-    max="100"
-    value={service.percentage || ''}
-    onChange={(e) =>
-      handleDynamicChange('service', index, 'percentage', e.target.value)
-    }
-    className="multipleitem"
-    placeholder="Enter agreed %"
-  />
-</div>
 
-        <div className="form-row"><h4>Service Image (Optional)</h4><input type="file" accept="image/*" onChange={(e)=>handleDynamicChange('service',index,'image',e)} className="multipleitem" />{servicePreviews[index] && <img src={servicePreviews[index]} alt={`Service ${index+1} Preview`} style={{width:'100px', marginTop:'10px'}} />}</div>
+      {/* Keywords Field */}
+      <div className="form-row">
+        <h4>Keywords <span style={{ fontWeight: 'normal' }}>(comma-separated)</span></h4>
+        <input
+          type="text"
+          value={service.keywords || ''}
+          onChange={(e) =>
+            handleDynamicChange('service', index, 'keywords', e.target.value)
+          }
+          className="multipleitem"
+          placeholder="e.g. vastu, residential, consultation"
+        />
+      </div>
+
+      <div className="form-row">
+        <h4>Agreed Percentage</h4>
+        <input
+          type="number"
+          min="0"
+          max="100"
+          value={service.percentage || ''}
+          onChange={(e) =>
+            handleDynamicChange('service', index, 'percentage', e.target.value)
+          }
+          className="multipleitem"
+          placeholder="Enter agreed %"
+        />
+      </div>
+
+      <div className="form-row">
+        <h4>Service Image (Optional)</h4>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) =>
+            handleDynamicChange('service', index, 'image', e)
+          }
+          className="multipleitem"
+        />
+        {servicePreviews[index] && (
+          <img
+            src={servicePreviews[index]}
+            alt={`Service ${index + 1} Preview`}
+            style={{ width: '100px', marginTop: '10px' }}
+          />
+        )}
+      </div>
     </div>
   ))}
 </div>
@@ -604,22 +640,54 @@ const fieldGroups = {
           className="multipleitem"
         />
       </div>
-<div className="form-row">
-  <h4>Agreed Percentage</h4>
-  <input
-    type="number"
-    min="0"
-    max="100"
-    value={product.percentage || ''}
-    onChange={(e) =>
-      handleDynamicChange('product', index, 'percentage', e.target.value)
-    }
-    className="multipleitem"
-    placeholder="Enter agreed %"
-  />
-</div>
 
-     <div className="form-row"><h4>Product Image (Optional)</h4><input type="file" accept="image/*" onChange={(e)=>handleDynamicChange('product',index,'image',e)} className="multipleitem" />{productPreviews[index] && <img src={productPreviews[index]} alt={`Product ${index+1} Preview`} style={{width:'100px', marginTop:'10px'}} />}</div>
+      {/* Keywords Field */}
+      <div className="form-row">
+        <h4>Keywords <span style={{ fontWeight: 'normal' }}>(comma-separated)</span></h4>
+        <input
+          type="text"
+          value={product.keywords || ''}
+          onChange={(e) =>
+            handleDynamicChange('product', index, 'keywords', e.target.value)
+          }
+          className="multipleitem"
+          placeholder="e.g. skincare, organic, beauty"
+        />
+      </div>
+
+      <div className="form-row">
+        <h4>Agreed Percentage</h4>
+        <input
+          type="number"
+          min="0"
+          max="100"
+          value={product.percentage || ''}
+          onChange={(e) =>
+            handleDynamicChange('product', index, 'percentage', e.target.value)
+          }
+          className="multipleitem"
+          placeholder="Enter agreed %"
+        />
+      </div>
+
+      <div className="form-row">
+        <h4>Product Image (Optional)</h4>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) =>
+            handleDynamicChange('product', index, 'image', e)
+          }
+          className="multipleitem"
+        />
+        {productPreviews[index] && (
+          <img
+            src={productPreviews[index]}
+            alt={`Product ${index + 1} Preview`}
+            style={{ width: '100px', marginTop: '10px' }}
+          />
+        )}
+      </div>
     </div>
   ))}
 </div>
@@ -631,10 +699,8 @@ const fieldGroups = {
     </button>
   </div>
 )}
-
 </div>
-
-  </>
+</>
 )}
 
         {/* --- OTHER TABS: HEALTH, EDUCATION, ETC. --- */}

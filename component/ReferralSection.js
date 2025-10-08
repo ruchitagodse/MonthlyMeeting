@@ -177,7 +177,7 @@ const handleRemoveReferralSection = async (index) => {
     }
   });
 };
-const handleStatusChange = (index, newStatus) => {
+const handleStatusChange = (index, newStatus) => {  
   const updated = [...referralSections];
   updated[index].status = newStatus;
   setReferralSections(updated);

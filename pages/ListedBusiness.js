@@ -84,6 +84,7 @@ const AllServicesProducts = () => {
         });
 
         setItems(list);
+        console.log(list,"data");
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -288,14 +289,15 @@ const openReferralModal = async (item) => {
                 <div className={styles.cardImg}>
                   {item.imageURL ? (
                     <img src={item.imageURL} alt={item.name} />
+
                   ) : (
                     <div className={styles.thumbnail_NA}><CiImageOff /></div>
                   )}
+                  <span className={styles.wdp_ribbon}>{item.percentage}<abbr>%</abbr></span>
                 </div>
 
                 <div className={styles.description}>
                   <h4>{item.name}</h4>
-                  {item.percentage && <p className={styles.percentageTag}>Agreed Percentage: {item.percentage}%</p>}
                   <p className={styles.ownerInfo}>
                     <strong>By:</strong> {item.ownerName}
                   </p>
@@ -304,7 +306,7 @@ const openReferralModal = async (item) => {
                   
                     onClick={() => openReferralModal(item)}
                   >
-                    Pass Referral
+                    Send Referral
                   </button>
                 </div>
               </div>

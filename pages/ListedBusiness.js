@@ -33,67 +33,76 @@ const AllServicesProducts = () => {
   const [otherPhone, setOtherPhone] = useState("");
   const [otherEmail, setOtherEmail] = useState("");
 
-  // Fetch all CosmOrbiter services/products
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const snapshot = await getDocs(collection(db, "userdetail"));
-        const list = [];
+  const fetchData = async () => {
+    try {
+      const snapshot = await getDocs(collection(db, "userdetail"));
+      const list = [];
 
-        snapshot.forEach((doc) => {
-          const data = doc.data();
+      // Allowed categories
+      const allowedCategories = ["IT & TECH", "Healthcare", "Beauty", "Food Industry" ,"Art & Design","Travel & Tourism","Fashion & Garments"," Organic Products"];
 
-          if (data.Category === "CosmOrbiter") {
-            const ownerName = data[" Name"] || "—";
-            const businessName = data["Business Name"] || "—";
+      snapshot.forEach((doc) => {
+        const data = doc.data();
 
-            // Services
-            if (Array.isArray(data.services)) {
-              data.services.forEach((s) => {
-                list.push({
-                  id: doc.id,
-                  type: "Service",
-                  name: s.name || "—",
-                  description: s.description || "—",
-                  imageURL: s.imageURL || "",
-                  percentage: s.percentage || "",
-                  keywords: s.keywords || "",
-                  ownerName,
-                  businessName,
-                });
+        // ✅ Notice the space in key names
+        const category1 = data["Category 1"]?.trim();
+        const category2 = data["Category 2"]?.trim();
+
+        const isAllowedCategory =
+          allowedCategories.includes(category1) || allowedCategories.includes(category2);
+
+        if (isAllowedCategory) {
+          const ownerName = data[" Name"] || "—";
+          const businessName = data["Business Name"] || "—";
+
+          // ✅ Services
+          if (Array.isArray(data.services)) {
+            data.services.forEach((s) => {
+              list.push({
+                id: doc.id,
+                type: "Service",
+                name: s.name || "—",
+                description: s.description || "—",
+                imageURL: s.imageURL || "",
+                percentage: s.percentage || "",
+                keywords: s.keywords || "",
+                ownerName,
+                businessName,
               });
-            }
-
-            // Products
-            if (Array.isArray(data.products)) {
-              data.products.forEach((p) => {
-                list.push({
-                  id: doc.id,
-                  type: "Product",
-                  name: p.name || "—",
-                  description: p.description || "—",
-                  imageURL: p.imageURL || "",
-                  percentage: p.percentage || "",
-                  keywords: p.keywords || "",
-                  ownerName,
-                  businessName,
-                });
-              });
-            }
+            });
           }
-        });
 
-        setItems(list);
-        console.log(list,"data");
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+          // ✅ Products
+          if (Array.isArray(data.products)) {
+            data.products.forEach((p) => {
+              list.push({
+                id: doc.id,
+                type: "Product",
+                name: p.name || "—",
+                description: p.description || "—",
+                imageURL: p.imageURL || "",
+                percentage: p.percentage || "",
+                keywords: p.keywords || "",
+                ownerName,
+                businessName,
+              });
+            });
+          }
+        }
+      });
 
-    fetchData();
-  }, []);
+      setItems(list);
+      console.log("Filtered data:", list);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchData();
+}, []);
 
   // Function to open modal and fetch CosmOrbiter + Orbiter info
  // Function to open modal and fetch CosmOrbiter + Orbiter info
@@ -299,7 +308,7 @@ const openReferralModal = async (item) => {
                 <div className={styles.description}>
                   <h4>{item.name}</h4>
                   <p className={styles.ownerInfo}>
-                    <strong>By:</strong> {item.ownerName}
+                    {item.businessName}
                   </p>
 
                   <button

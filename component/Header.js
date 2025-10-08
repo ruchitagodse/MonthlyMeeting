@@ -1,78 +1,42 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { getFirestore, doc, getDoc, getDocs, collection } from "firebase/firestore";
-import { app } from "../firebaseConfig";
-import Swal from 'sweetalert2';
-
-const db = getFirestore(app);
+import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import { db } from "../firebaseConfig";
+import { useAuth } from "../context/authContext";
+import Swal from "sweetalert2";
 
 const Headertop = () => {
-  const [userName, setUserName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const { user, logout } = useAuth();
   const [cpPoints, setCPPoints] = useState(0);
-
   const router = useRouter();
 
-  const getInitials = (name) =>
-    name ? name.split(" ").map((word) => word[0]).join("") : "";
-  // 🔎 Fetch user when phone number is in localStorage
   useEffect(() => {
-    const storedPhoneNumber = localStorage.getItem("mmOrbiter");
-    if (storedPhoneNumber) {
-      fetchUserName(storedPhoneNumber);
-      setPhoneNumber(storedPhoneNumber);
-      fetchCPPoints(storedPhoneNumber);
-    } else {
-      console.error("Phone number not found in localStorage.");
-    }
-  }, []);
+    if (!user) return;
+    fetchCPPoints(user.phoneNumber);
+  }, [user]);
 
-  const handleLogout = () => {
-      Swal.fire({
-        title: 'Are you sure?',
-        text: 'You will be logged out.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, Logout',
-        cancelButtonText: 'Cancel',
-      }).then((result) => {
-        if (result.isConfirmed) {
-          localStorage.removeItem('mmOrbiter');
-          window.location.href = "/"; // redirect to home
-        }
-      });
-    };
-
-  const fetchUserName = async (phoneNumber) => {
-    if (!phoneNumber || typeof phoneNumber !== "string" || phoneNumber.trim() === "") {
-      console.error("Invalid phone number:", phoneNumber);
-      return;
-    }
-
-    try {
-      const userRef = doc(db, "userdetails", phoneNumber);
-      const userDoc = await getDoc(userRef);
-
-      if (userDoc.exists()) {
-        const orbitername = userDoc.data()[" Name"] || "User";
-        console.log("Header",orbitername),
-        
-        setUserName(orbitername);
-      } else {
-        console.log("User not found in userdetails");
-      }
-    } catch (err) {
-      console.error("Error fetching user name:", err);
-    }
-  };
-
-const fetchCPPoints = async (phone) => {
+  const fetchCPPoints = async (phone) => {
     const snap = await getDocs(collection(db, 'Orbiters', phone, 'activities'));
     let total = 0;
     snap.forEach(doc => total += Number(doc.data()?.points) || 0);
     setCPPoints(total);
   };
 
+  const getInitials = (name) =>
+    name ? name.split(" ").map((w) => w[0]).join("") : "";
+
+  const handleLogout = () => {
+    Swal.fire({
+      title: "Logout?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes",
+    }).then((res) => {
+      if (res.isConfirmed) logout();
+    });
+  };
+
+  if (!user) return null;
 
   return (
     <header className="Main m-Header">
@@ -80,16 +44,12 @@ const fetchCPPoints = async (phone) => {
         <div className="innerLogo" onClick={() => router.push("/")}>
           <img src="/ujustlogo.png" alt="Logo" className="logo" />
         </div>
-
         <div className="headerRight">
-          <button
-            onClick={() => router.push(`/cp-details/${phoneNumber}`)}
-            className="reward-btn"
-          >
-            <div className="text">CP: {cpPoints}</div>
+          <button onClick={() => router.push(`/cp-details/${user.phoneNumber}`)} className="reward-btn">
+            CP: {cpPoints}
           </button>
           <div className="userName" onClick={handleLogout}>
-            <span>{getInitials(userName)}</span>
+            {getInitials(user.name)}
           </div>
         </div>
       </section>

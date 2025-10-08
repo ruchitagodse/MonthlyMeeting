@@ -7,10 +7,7 @@ import {
     getDoc,
     addDoc,
     collection,
-    query,
-    orderBy,
-    limit,
-    getDocs,
+    runTransaction
 } from 'firebase/firestore';
 import { app } from '../firebaseConfig';
 import { CiImageOn } from 'react-icons/ci';
@@ -20,7 +17,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const db = getFirestore(app);
 
-const ReferralModal = ({ item, onClose, userCache, setUserCache }) => {
+const ReferralModalold = ({ item, onClose, userCache, setUserCache }) => {
     const [userDetails, setUserDetails] = useState(null);
     const [orbiterDetails, setOrbiterDetails] = useState({ name: '', phone: '', email: '' });
     const [selectedOption, setSelectedOption] = useState('');
@@ -36,24 +33,31 @@ const ReferralModal = ({ item, onClose, userCache, setUserCache }) => {
 
     const dropdownRef = useRef();
 
-    // 🔹 Generate referral ID (simple query-based)
+    // 🔹 Generate referral ID safely using Firestore transaction
     const generateReferralId = async () => {
         const now = new Date();
         const year1 = now.getFullYear() % 100;
         const year2 = (now.getFullYear() + 1) % 100;
         const refPrefix = `Ref/${year1}-${year2}/`;
 
-        const q = query(collection(db, 'Referral'), orderBy('timestamp', 'desc'), limit(1));
-        const snapshot = await getDocs(q);
-        let lastNum = 2999;
+        const refCounterDoc = doc(db, "ReferralCounter", "counter");
 
-        if (!snapshot.empty) {
-            const lastRef = snapshot.docs[0].data().referralId;
-            const match = lastRef?.match(/\/(\d{8})$/);
-            if (match) lastNum = parseInt(match[1]);
+        try {
+            const newNum = await runTransaction(db, async (transaction) => {
+                const counterSnap = await transaction.get(refCounterDoc);
+                let lastNum = 2999;
+                if (counterSnap.exists()) lastNum = counterSnap.data().lastNum;
+
+                const nextNum = lastNum + 1;
+                transaction.set(refCounterDoc, { lastNum: nextNum }, { merge: true });
+                return nextNum;
+            });
+
+            return `${refPrefix}${String(newNum).padStart(8, "0")}`;
+        } catch (err) {
+            console.error("Error generating referral ID:", err);
+            throw new Error("Failed to generate referral ID.");
         }
-
-        return `${refPrefix}${String(lastNum + 1).padStart(8, '0')}`;
     };
 
     // 🔹 Fetch user & orbiter details
@@ -198,6 +202,7 @@ const ReferralModal = ({ item, onClose, userCache, setUserCache }) => {
             setOtherEmail("");
             setSelectedFor("self");
 
+            // Delay closing modal for toast visibility
             setTimeout(() => onClose(), 500);
         } catch (err) {
             console.error("Error passing referral:", err);
@@ -213,7 +218,8 @@ const ReferralModal = ({ item, onClose, userCache, setUserCache }) => {
             <AnimatePresence>
                 <motion.div
                     className="ref-modal-overlay"
-                    initial={{ opacity: 0 }}
+                    initial={{ opacity: 0 }
+                    }
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                 >
@@ -224,81 +230,88 @@ const ReferralModal = ({ item, onClose, userCache, setUserCache }) => {
                         exit={{ y: 50, opacity: 0 }}
                         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                     >
-                        <div className="modelheader">
-                            <button className="back-btn" onClick={onClose}>
+                        <div className="modelheader" >
+                            <button className="back-btn" onClick={onClose} >
                                 <MdArrowBack />
                             </button>
-                            <h3>Refer Now</h3>
+                            < h3 > Refer Now </h3>
                         </div>
 
-                        <div className="modelContent">
-                            <div className="profile-section">
-                                <div className="businessLogo">
-                                    {userDetails?.logo ? (
-                                        <img src={userDetails.logo} alt={userDetails.businessName} />
-                                    ) : (
-                                        <CiImageOn />
-                                    )}
+                        < div className="modelContent" >
+                            <div className="profile-section" >
+                                <div className="businessLogo" >
+                                    {
+                                        userDetails?.logo ? (
+                                            <img src={userDetails.logo} alt={userDetails.businessName} />
+                                        ) : (
+                                            <CiImageOn />
+                                        )}
                                 </div>
-                                <h4 className="profile-name">{userDetails?.businessName}</h4>
+                                < h4 className="profile-name" > {userDetails?.businessName} </h4>
 
                                 {/* Dropdown */}
-                                <div className="dropdownMain" ref={dropdownRef}>
+                                <div className="dropdownMain" ref={dropdownRef} >
                                     <button className="dropdown-btn" onClick={() => setDropdownOpen(!dropdownOpen)}>
                                         {selectedOption || 'Select product or service*'}
                                     </button>
-                                    {dropdownOpen && (
-                                        <div className="dropdown-menu">
-                                            {services.concat(products).map((opt, i) => {
-                                                const label = typeof opt === 'string' ? opt : opt?.name || '';
-                                                return (
-                                                    <div
-                                                        key={i}
-                                                        className="dropdown-item"
-                                                        onClick={() => {
-                                                            setSelectedOption(label);
-                                                            setDropdownOpen(false);
-                                                        }}
-                                                    >
-                                                        {label}
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-                                    )}
+                                    {
+                                        dropdownOpen && (
+                                            <div className="dropdown-menu" >
+                                                {
+                                                    services.concat(products).map((opt, i) => {
+                                                        const label = typeof opt === 'string' ? opt : opt?.name || '';
+                                                        return (
+                                                            <div
+                                                                key={i}
+                                                                className="dropdown-item"
+                                                                onClick={() => {
+                                                                    setSelectedOption(label);
+                                                                    setDropdownOpen(false);
+                                                                }
+                                                                }
+                                                            >
+                                                                {label}
+                                                            </div>
+                                                        );
+                                                    })
+                                                }
+                                            </div>
+                                        )}
                                 </div>
 
-                                <textarea
+                                < textarea
                                     className="description-input"
                                     placeholder="Short description of the lead*"
                                     value={leadDescription}
                                     onChange={(e) => setLeadDescription(e.target.value)}
                                 />
 
-                                {selectedFor === 'someone' && (
-                                    <div className="ref-section">
-                                        <h4 className="ref-subtitle">Orbiter Info (Others)</h4>
-                                        <input type="text" placeholder="Name" value={otherName} onChange={(e) => setOtherName(e.target.value)} className="ref-input" />
-                                        <input type="text" placeholder="Phone" value={otherPhone} onChange={(e) => setOtherPhone(e.target.value)} className="ref-input" />
-                                        <input type="email" placeholder="Email" value={otherEmail} onChange={(e) => setOtherEmail(e.target.value)} className="ref-input" />
-                                    </div>
-                                )}
+                                {
+                                    selectedFor === 'someone' && (
+                                        <div className="ref-section" >
+                                            <h4 className="ref-subtitle" > Orbiter Info(Others) </h4>
+                                            < input type="text" placeholder="Name" value={otherName} onChange={(e) => setOtherName(e.target.value)
+                                            } className="ref-input" />
+                                            <input type="text" placeholder="Phone" value={otherPhone} onChange={(e) => setOtherPhone(e.target.value)} className="ref-input" />
+                                            <input type="email" placeholder="Email" value={otherEmail} onChange={(e) => setOtherEmail(e.target.value)} className="ref-input" />
+                                        </div>
+                                    )}
                             </div>
 
-                            <div className="form-container">
-                                <div className="buttons">
+                            < div className="form-container" >
+                                <div className="buttons" >
                                     <button className={`border-btn ${selectedFor === 'self' ? 'active' : ''}`} onClick={() => setSelectedFor('self')}>
                                         For Self
                                     </button>
-                                    <button className={`border-btn ${selectedFor === 'someone' ? 'active' : ''}`} onClick={() => setSelectedFor('someone')}>
+                                    < button className={`border-btn ${selectedFor === 'someone' ? 'active' : ''}`} onClick={() => setSelectedFor('someone')}>
                                         For Someone Else
                                     </button>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="modelheader">
-                            <button className="submit-btn" onClick={handlePassReferral} disabled={submitting}>
+                        < div className="modelheader" >
+                            <button className="submit-btn" onClick={handlePassReferral} disabled={submitting} >
                                 {submitting ? 'Sending...' : 'Send Referral'}
                             </button>
                         </div>
@@ -309,4 +322,4 @@ const ReferralModal = ({ item, onClose, userCache, setUserCache }) => {
     );
 };
 
-export default ReferralModal;
+export default ReferralModalold;

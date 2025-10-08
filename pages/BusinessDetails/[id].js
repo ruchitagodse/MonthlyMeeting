@@ -207,6 +207,8 @@ const ReferralDetails = () => {
 
     try {
       await addDoc(collection(db, "Referral"), data);
+      console.log("Referral", data);
+      
       alert("Referral passed successfully!");
 
       // Reset modal fields

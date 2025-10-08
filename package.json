@@ -25,6 +25,7 @@
     "emailjs": "^4.0.3",
     "firebase": "^10.14.0",
     "firebase-admin": "^12.5.0",
+    "framer-motion": "^12.23.22",
     "next": "^15.3.0",
     "next-app": "^0.0.0",
     "react": "^18",

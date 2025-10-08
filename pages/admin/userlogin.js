@@ -17,6 +17,8 @@ const AdminLoginLogs = () => {
         const snapshot = await getDocs(q);
         const data = snapshot.docs.map((doc) => {
           const logData = doc.data();
+          console.log("Logs", logData);
+          
           return {
             id: doc.id,
             phoneNumber: logData.phoneNumber || "—",
@@ -56,6 +58,7 @@ const AdminLoginLogs = () => {
                 <th>Phone Number</th>
                 <th>Name</th>
                 <th>Login Time</th>
+                <th>Page Name</th>
                 <th>IP Address</th>
                 <th>Device Info</th>
               </tr>
@@ -79,6 +82,7 @@ const AdminLoginLogs = () => {
                         })
                       : "—"}
                   </td>
+                  <td>{log.pageName}</td>
                   <td>{log.ipAddress}</td>
                   <td
                     style={{

@@ -3,12 +3,14 @@ import { useRouter } from 'next/router';
 import * as React from 'react';
 import { db } from '../firebaseConfig';
 import Link from 'next/link'
-import '../src/app/styles/user.scss';
+
 import { doc, getDoc, collection, getDocs, setDoc } from 'firebase/firestore';
 import axios from 'axios';
 import HeaderNav from '../component/HeaderNav';
 import Swal from 'sweetalert2';
 import Headertop from '../component/Header';
+import AllServicesProducts from './AllServicesProducts';
+import '../src/app/styles/user.scss';
 
 const HomePage = () => {
   const router = useRouter();
@@ -152,95 +154,95 @@ const HomePage = () => {
     fetchConclaveData();
   }, []);
 
-// 📝 Function to log user login events in Firestore
-const logUserLogin = async (phoneNumber, userName) => {
-  try {
-    const deviceInfo = navigator.userAgent;
-    const loginTime = new Date();
-
-    let ipAddress = 'Unknown';
+  // 📝 Function to log user login events in Firestore
+  const logUserLogin = async (phoneNumber, userName) => {
     try {
-      const res = await fetch('https://api.ipify.org?format=json');
-      const data = await res.json();
-      ipAddress = data.ip;
-    } catch (err) {
-      console.warn("Could not fetch IP:", err);
+      const deviceInfo = navigator.userAgent;
+      const loginTime = new Date();
+
+      let ipAddress = 'Unknown';
+      try {
+        const res = await fetch('https://api.ipify.org?format=json');
+        const data = await res.json();
+        ipAddress = data.ip;
+      } catch (err) {
+        console.warn("Could not fetch IP:", err);
+      }
+
+      await setDoc(doc(collection(db, 'LoginLogs')), {
+        phoneNumber,
+        name: userName || 'Unknown',  // Pass the name here
+        loginTime,
+        deviceInfo,
+        ipAddress
+      });
+
+      console.log("✅ Login log saved for", phoneNumber);
+    } catch (error) {
+      console.error("❌ Error saving login log:", error);
     }
-
-    await setDoc(doc(collection(db, 'LoginLogs')), {
-      phoneNumber,
-      name: userName || 'Unknown',  // Pass the name here
-      loginTime,
-      deviceInfo,
-      ipAddress
-    });
-
-    console.log("✅ Login log saved for", phoneNumber);
-  } catch (error) {
-    console.error("❌ Error saving login log:", error);
-  }
-};
+  };
 
 
   const handleLogin = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  try {
-    const docRef = doc(db, "userdetails", phoneNumber);
-    const docSnap = await getDoc(docRef);
+    try {
+      const docRef = doc(db, "userdetails", phoneNumber);
+      const docSnap = await getDoc(docRef);
 
-    if (docSnap.exists()) {
-      localStorage.setItem('mmOrbiter', phoneNumber);
-      setIsLoggedIn(true);
+      if (docSnap.exists()) {
+        localStorage.setItem('mmOrbiter', phoneNumber);
+        setIsLoggedIn(true);
 
-      const fetchedName = docSnap.data()[" Name"] || 'User'; // get user name
-      setUserName(fetchedName);
+        const fetchedName = docSnap.data()[" Name"] || 'User'; // get user name
+        setUserName(fetchedName);
 
-      // 📝 Log login with phone and name
-      logUserLogin(phoneNumber, fetchedName);
+        // 📝 Log login with phone and name
+        logUserLogin(phoneNumber, fetchedName);
 
-      setLoading(false);
-    } else {
-      setError('You are not an Orbiter.');
+        setLoading(false);
+      } else {
+        setError('You are not an Orbiter.');
+      }
+    } catch (err) {
+      console.error('❌ Error checking phone number:', err);
+      setError('Login failed. Please try again.');
     }
-  } catch (err) {
-    console.error('❌ Error checking phone number:', err);
-    setError('Login failed. Please try again.');
-  }
-};
+  };
 
 
 
   useEffect(() => {
-  const storedPhoneNumber = localStorage.getItem('mmOrbiter');
-  if (storedPhoneNumber) {
-    setPhoneNumber(storedPhoneNumber);
+    const storedPhoneNumber = localStorage.getItem('mmOrbiter');
+    if (storedPhoneNumber) {
+      setPhoneNumber(storedPhoneNumber);
 
-    // fetch username first
-    fetchUserName(storedPhoneNumber).then((fetchedName) => {
-      logUserLogin(storedPhoneNumber, fetchedName);
-      setIsLoggedIn(true);
-    });
-  }
-}, []);
+      // fetch username first
+      fetchUserName(storedPhoneNumber).then((fetchedName) => {
+        logUserLogin(storedPhoneNumber, fetchedName);
+        setIsLoggedIn(true);
+      });
+    }
+  }, []);
 
   const fetchUserName = async (phoneNumber) => {
-  if (!phoneNumber) return 'User';
-  try {
-    const userRef = doc(db, 'userdetails', phoneNumber);
-    const userDoc = await getDoc(userRef);
+    if (!phoneNumber) return 'User';
+    try {
+      const userRef = doc(db, 'userdetails', phoneNumber);
+      const userDoc = await getDoc(userRef);
 
-    if (userDoc.exists()) {
-      const name = userDoc.data()[" Name"] || 'User';
-      setUserName(name);
-      return name;
+      if (userDoc.exists()) {
+        const name = userDoc.data()[" Name"] || 'User';
+        setUserName(name);
+        return name;
+      }
+      return 'User';
+    } catch (err) {
+      console.error(err);
+      return 'User';
     }
-    return 'User';
-  } catch (err) {
-    console.error(err);
-    return 'User';
-  }
-};
+  };
 
 
 
@@ -290,8 +292,8 @@ const logUserLogin = async (phoneNumber, userName) => {
   return (
     <>
       <main className="pageContainer">
-        <Headertop/>
-        <section className='dashBoardMain'>
+        <Headertop />
+        <section className='HomepageMain'>
           <div className='container pageHeading'>
             <h1>Hi {userName || 'User'}</h1>
             <p>Let's Create Brand Ambassador through Contribution</p>
@@ -332,134 +334,153 @@ const logUserLogin = async (phoneNumber, userName) => {
 
 
 
-     <section className="upcoming-events">
-  <h1>Upcoming Events</h1>
+          <section className="upcoming-events">
+            <h2>Upcoming Events</h2>
 
-  {upcomingMonthlyMeet ? (
-    <div className="meetingBox">
-      <div className="suggestionDetails">
-        {(() => {
-          const now = new Date();
-          const eventDate = upcomingMonthlyMeet.time?.toDate ? upcomingMonthlyMeet.time.toDate() : upcomingMonthlyMeet.time;
-          const timeLeftMs = eventDate - now;
-          const timeLeft = timeLeftMs <= 0 ? 'Meeting Ended' : formatTimeLeft(timeLeftMs);
-          return timeLeft === 'Meeting Ended' ? (
-            <span className="meetingLable2">Meeting Done</span>
-          ) : (
-            <span className="meetingLable3">{timeLeft}</span>
-          );
-        })()}
-        <span className="suggestionTime">
-          {upcomingMonthlyMeet.time?.toDate
-            ? upcomingMonthlyMeet.time.toDate().toLocaleString('en-GB', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric',
-                hour: 'numeric',
-                minute: '2-digit',
-                hour12: true,
-              }).replace(',', ' at')
-            : upcomingMonthlyMeet.time.toLocaleString('en-GB', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric',
-                hour: 'numeric',
-                minute: '2-digit',
-                hour12: true,
-              }).replace(',', ' at')}
-        </span>
-      </div>
+            {upcomingMonthlyMeet ? (
+              <div className="meetingBox">
+                <div className="suggestionDetails">
+                  {(() => {
+                    const now = new Date();
+                    const eventDate = upcomingMonthlyMeet.time?.toDate ? upcomingMonthlyMeet.time.toDate() : upcomingMonthlyMeet.time;
+                    const timeLeftMs = eventDate - now;
+                    const timeLeft = timeLeftMs <= 0 ? 'Meeting Ended' : formatTimeLeft(timeLeftMs);
+                    return timeLeft === 'Meeting Ended' ? (
+                      <span className="meetingLable2">Meeting Done</span>
+                    ) : (
+                      <span className="meetingLable3">{timeLeft}</span>
+                    );
+                  })()}
+                  <span className="suggestionTime">
+                    {upcomingMonthlyMeet.time?.toDate
+                      ? upcomingMonthlyMeet.time.toDate().toLocaleString('en-GB', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        hour12: true,
+                      }).replace(',', ' at')
+                      : upcomingMonthlyMeet.time.toLocaleString('en-GB', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        hour12: true,
+                      }).replace(',', ' at')}
+                  </span>
+                </div>
 
-      <div className="meetingDetailsBox">
-        <h3 className="eventName">{upcomingMonthlyMeet.Eventname || 'N/A'}</h3>
-      </div>
+                <div className="meetingDetailsBox">
+                  <h3 className="eventName">{upcomingMonthlyMeet.Eventname || 'N/A'}</h3>
+                </div>
 
-      <div className="meetingBoxFooter">
-        <div className="viewDetails">
-          <Link href={`/MonthlyMeeting/${upcomingMonthlyMeet.id}`}>View Details</Link>
-        </div>
+                <div className="meetingBoxFooter">
+                  <div className="viewDetails">
+                    <Link href={`/MonthlyMeeting/${upcomingMonthlyMeet.id}`}>View Details</Link>
+                  </div>
 
-        {(() => {
-          const now = new Date();
-          const eventDate = upcomingMonthlyMeet.time?.toDate ? upcomingMonthlyMeet.time.toDate() : upcomingMonthlyMeet.time;
-          const isWithinOneHour = eventDate > now && (eventDate - now <= 60 * 60 * 1000);
-          return isWithinOneHour && upcomingMonthlyMeet.zoomLink ? (
-            <div className="meetingLink">
-              <a href={upcomingMonthlyMeet.zoomLink} target="_blank" rel="noopener noreferrer">
-                <span>Join Meeting</span>
-              </a>
-            </div>
-          ) : null;
-        })()}
-      </div>
-    </div>
-  ) : null}
+                  {(() => {
+                    const now = new Date();
+                    const eventDate = upcomingMonthlyMeet.time?.toDate ? upcomingMonthlyMeet.time.toDate() : upcomingMonthlyMeet.time;
+                    const isWithinOneHour = eventDate > now && (eventDate - now <= 60 * 60 * 1000);
+                    return isWithinOneHour && upcomingMonthlyMeet.zoomLink ? (
+                      <div className="meetingLink">
+                        <a href={upcomingMonthlyMeet.zoomLink} target="_blank" rel="noopener noreferrer">
+                          <span>Join Meeting</span>
+                        </a>
+                      </div>
+                    ) : null;
+                  })()}
+                </div>
+              </div>
+            ) : null}
 
-  {upcomingNTMeet ? (
-    <div className="meetingBox">
-      <div className="suggestionDetails">
-        {(() => {
-          const now = new Date();
-          const eventDate = upcomingNTMeet.time?.toDate ? upcomingNTMeet.time.toDate() : upcomingNTMeet.time;
-          const timeLeftMs = eventDate - now;
-          const timeLeft = timeLeftMs <= 0 ? 'Meeting Ended' : formatTimeLeft(timeLeftMs);
-          return timeLeft === 'Meeting Ended' ? (
-            <span className="meetingLable2">Meeting Done</span>
-          ) : (
-            <span className="meetingLable3">{timeLeft}</span>
-          );
-        })()}
-        <span className="suggestionTime">
-          {upcomingNTMeet.time?.toDate
-            ? upcomingNTMeet.time.toDate().toLocaleString('en-GB', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric',
-                hour: 'numeric',
-                minute: '2-digit',
-                hour12: true,
-              }).replace(',', ' at')
-            : upcomingNTMeet.time.toLocaleString('en-GB', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric',
-                hour: 'numeric',
-                minute: '2-digit',
-                hour12: true,
-              }).replace(',', ' at')}
-        </span>
-      </div>
+            {upcomingNTMeet ? (
+              <div className="meetingBox">
+                <div className="suggestionDetails">
+                  {(() => {
+                    const now = new Date();
+                    const eventDate = upcomingNTMeet.time?.toDate ? upcomingNTMeet.time.toDate() : upcomingNTMeet.time;
+                    const timeLeftMs = eventDate - now;
+                    const timeLeft = timeLeftMs <= 0 ? 'Meeting Ended' : formatTimeLeft(timeLeftMs);
+                    return timeLeft === 'Meeting Ended' ? (
+                      <span className="meetingLable2">Meeting Done</span>
+                    ) : (
+                      <span className="meetingLable3">{timeLeft}</span>
+                    );
+                  })()}
+                  <span className="suggestionTime">
+                    {upcomingNTMeet.time?.toDate
+                      ? upcomingNTMeet.time.toDate().toLocaleString('en-GB', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        hour12: true,
+                      }).replace(',', ' at')
+                      : upcomingNTMeet.time.toLocaleString('en-GB', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        hour12: true,
+                      }).replace(',', ' at')}
+                  </span>
+                </div>
 
-      <div className="meetingDetailsBox">
-        <h3 className="eventName">{upcomingNTMeet.name || 'N/A'}</h3>
-      </div>
+                <div className="meetingDetailsBox">
+                  <h3 className="eventName">{upcomingNTMeet.name || 'N/A'}</h3>
+                </div>
 
-      <div className="meetingBoxFooter">
-        <div className="viewDetails">
-          <Link href={`/events/${upcomingNTMeet.id}`}>View Details</Link>
-        </div>
+                <div className="meetingBoxFooter">
+                  <div className="viewDetails">
+                    <Link href={`/events/${upcomingNTMeet.id}`}>View Details</Link>
+                  </div>
 
-        {(() => {
-          const now = new Date();
-          const eventDate = upcomingNTMeet.time?.toDate ? upcomingNTMeet.time.toDate() : upcomingNTMeet.time;
-          const isWithinOneHour = eventDate > now && (eventDate - now <= 60 * 60 * 1000);
-          return isWithinOneHour && upcomingNTMeet.zoomLink ? (
-            <div className="meetingLink">
-              <a href={upcomingNTMeet.zoomLink} target="_blank" rel="noopener noreferrer">
-                <span>Join Meeting</span>
-              </a>
-            </div>
-          ) : null;
-        })()}
-      </div>
-    </div>
-  ) : null}
+                  {(() => {
+                    const now = new Date();
+                    const eventDate = upcomingNTMeet.time?.toDate ? upcomingNTMeet.time.toDate() : upcomingNTMeet.time;
+                    const isWithinOneHour = eventDate > now && (eventDate - now <= 60 * 60 * 1000);
+                    return isWithinOneHour && upcomingNTMeet.zoomLink ? (
+                      <div className="meetingLink">
+                        <a href={upcomingNTMeet.zoomLink} target="_blank" rel="noopener noreferrer">
+                          <span>Join Meeting</span>
+                        </a>
+                      </div>
+                    ) : null;
+                  })()}
+                </div>
+              </div>
+            ) : null}
 
-  {/* Show fallback if no meetings */}
-  {!upcomingMonthlyMeet && !upcomingNTMeet && (
-    <p className="noMeetings">No upcoming meetings</p>
-  )}
-</section>
+            {/* Show fallback if no meetings */}
+            {!upcomingMonthlyMeet && !upcomingNTMeet && (
+              <p className="noMeetings">No upcoming meetings</p>
+            )}
+          </section>
+          {/* Homepage section showing top few items */}
+          <AllServicesProducts
+            pageHeading="Top Services & Products"
+            hideFilters={true}
+            enableInfiniteScroll={false}
+            maxItems={12}
+            hideHeaderFooter={true}
+            extraSectionClass="homepage-preview"
+          />
+
+          <div className='seeMore'>
+            <Link className="see-more-btn" href="/AllServicesProducts">
+              See More
+            </Link>
+          </div>
+
+          <section>
+
+          </section>
 
 
 

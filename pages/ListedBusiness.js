@@ -93,7 +93,7 @@ const AllServicesProducts = () => {
       });
 
       setItems(list);
-      console.log("Filtered data:", list);
+      console.log("Filtered data:", list.length);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -274,7 +274,7 @@ const openReferralModal = async (item) => {
 
       <section className="dashBoardMain">
         <div className="sectionHeadings">
-          <h2>All Services & Products</h2>
+          <h2>All Services & Products {items.length}</h2>
         </div>
 
         <div className="search">

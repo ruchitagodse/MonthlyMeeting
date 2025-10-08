@@ -33,6 +33,11 @@
   align-items: center;
   row-gap: 20px;
   padding-bottom: 100px;
+  &.homepage-preview{
+    padding: 0px;
+    min-height: auto;
+    background: none;
+  }
 }
 
 .suggestionMains{
@@ -689,21 +694,25 @@ display: flex
  
 }
 .project-summary {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  display: flex;
+  // grid-template-columns: repeat(2, 1fr);
   gap: 16px;
-  padding: 20px;
+  padding: 0px 15px;
+  justify-content: space-between;
+  a{
+    width: 48%;
+  }
  
-  align-items: stretch;
+  // align-items: stretch;
 }
 
 .summary-card {
-  height: 70%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  border-radius: 16px;
-  padding: 30px;
+  border-radius: 10px;
+  padding: 15px;
   background: #fff;
   color: #111827;
   text-align: center;

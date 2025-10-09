@@ -96,7 +96,12 @@ const AdminLoginLogs = () => {
                     </td>
                     <td>{log.browser}</td>
                     <td>{log.os}</td>
-                    <td>{log.durationMs}</td>
+                  <td>
+  {typeof log.durationMs === "number"
+    ? `${Math.floor(log.durationMs / 60000)} min ${Math.floor((log.durationMs % 60000) / 1000)} sec`
+    : "—"}
+</td>
+
                     <td>{log.pageName}</td>
                     <td>{log.pageURL}</td>
                     <td

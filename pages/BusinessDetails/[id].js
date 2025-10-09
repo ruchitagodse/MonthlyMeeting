@@ -208,11 +208,14 @@ const handlePassReferral = async () => {
     await addDoc(collection(db, "Referral"), data);
     console.log("Referral", data);
 
-    // ✅ WhatsApp message using same template
-    await sendWhatsAppMessage(
-      selectedFor === "self" ? orbiterDetails.phone : otherPhone,
-      [userDetails.name, "Your referral has been successfully submitted!"]
-    );
+ // ✅ WhatsApp message using same template
+await sendWhatsAppMessage(
+  selectedFor === "self" ? orbiterDetails.phone : otherPhone,
+  [
+    selectedFor === "self" ? orbiterDetails.name : otherName, // ✅ Orbiter name here
+    "Your referral has been successfully submitted!"
+  ]
+);
 
     alert("Referral passed successfully!");
 
@@ -619,4 +622,5 @@ const sendWhatsAppMessage = async (phone, parameters = []) => {
 };
 
 export default ReferralDetails;
+
 

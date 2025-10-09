@@ -17,12 +17,11 @@ const PAGE_SIZE = 12;
 const allowedCategories = [
     'IT & TECH',
     'Healthcare',
-    'Beauty',
+  
     'Food Industry',
-    'Art & Design',
+ 
     'Travel & Tourism',
-    'Fashion & Garments',
-    'Organic Products',
+   
 ];
 
 const shuffleArray = (arr) => {

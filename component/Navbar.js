@@ -87,7 +87,7 @@ const Navbar = (props) => {
                             </ul>
                             </li>
                          <li>
-                            <Link href="/admin/userlogin">
+                            <Link href="/admin/PageVisit">
                                 <span className="icons"><RiListSettingsLine /></span>
                                 <span className="linklabel">User Logins</span>
                             </Link>
@@ -106,3 +106,4 @@ const Navbar = (props) => {
 }
 
 export default Navbar;
+

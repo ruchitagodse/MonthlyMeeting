@@ -108,89 +108,104 @@ const [otherReferralSource, setOtherReferralSource] = useState("");
   };
 
   const handleSubmit = async () => {
-    if (
-      !selectedOrbiter ||
-      !selectedCosmo ||
-      (!selectedService && !selectedProduct)
-    ) {
-      alert("Please fill in all required fields.");
-      return;
-    }
+  if (
+    !selectedOrbiter ||
+    !selectedCosmo ||
+    (!selectedService && !selectedProduct)
+  ) {
+    alert("Please fill in all required fields.");
+    return;
+  }
 
+  try {
     const referralId = await generateReferralId();
 
     const data = {
-  referralId,
-  orbiter: {
-    name: selectedOrbiter[" Name"],
-    email: selectedOrbiter["Email"],
-    phone: selectedOrbiter["Mobile no"],
-    ujbCode: selectedOrbiter["UJB Code"],
-    mentorName: selectedOrbiter["Mentor Name"],
-    mentorPhone: selectedOrbiter["Mentor Phone"],
-  },
-  cosmoOrbiter: {
-    name: selectedCosmo[" Name"],
-    email: selectedCosmo["Email"],
-    phone: selectedCosmo["Mobile no"],
-    mentorName: selectedCosmo["Mentor Name"],
-    mentorPhone: selectedCosmo["Mentor Phone"],
-  },
-  service: selectedService,
-  product: selectedProduct,
-  referralType: refType,
-   referralSource: referralSource === "Other" ? otherReferralSource : referralSource, // ✅ fixed
-  orbitersInfo:
-    refType === "Others"
-      ? {
-          name: otherName,
-          phone: otherPhone,
-          email: otherEmail,
-        }
-      : null,
-  dealStatus,
-  lastUpdated: lastUpdated,
-  timestamp: new Date(),
+      referralId,
+      orbiter: {
+        name: selectedOrbiter[" Name"],
+        email: selectedOrbiter["Email"],
+        phone: selectedOrbiter["Mobile no"],
+        ujbCode: selectedOrbiter["UJB Code"],
+        mentorName: selectedOrbiter["Mentor Name"],
+        mentorPhone: selectedOrbiter["Mentor Phone"],
+      },
+      cosmoOrbiter: {
+        name: selectedCosmo[" Name"],
+        email: selectedCosmo["Email"],
+        phone: selectedCosmo["Mobile no"],
+        mentorName: selectedCosmo["Mentor Name"],
+        mentorPhone: selectedCosmo["Mentor Phone"],
+      },
+      service: selectedService,
+      product: selectedProduct,
+      referralType: refType,
+      referralSource:
+        referralSource === "Other" ? otherReferralSource : referralSource,
+      orbitersInfo:
+        refType === "Others"
+          ? {
+              name: otherName,
+              phone: otherPhone,
+              email: otherEmail,
+            }
+          : null,
+      dealStatus,
+      lastUpdated,
+      timestamp: new Date(),
+    };
+
+    await addDoc(collection(db, "Referral"), data);
+    alert("Referral submitted successfully!");
+
+    // ✅ Send WhatsApp messages
+    const serviceOrProduct =
+      selectedService?.name || selectedProduct?.name || "";
+
+    await Promise.all([
+      sendWhatsAppTemplate(
+        selectedOrbiter["Mobile no"],
+        selectedOrbiter[" Name"],
+        `🚀 You’ve just passed a referral for *${serviceOrProduct}* to *${selectedCosmo[" Name"]}*. It’s now in motion and will be actioned within 24 hours. Great start toward contribution! 🌱`
+      ),
+      sendWhatsAppTemplate(
+        selectedCosmo["Mobile no"],
+        selectedCosmo[" Name"],
+        `✨ You’ve received a referral from *${selectedOrbiter[" Name"]}* for *${serviceOrProduct}*. Let’s honor their trust — please act within the next 24 hours!`
+      ),
+      // sendWhatsAppTemplate(
+      //   selectedOrbiter["Mentor Phone"],
+      //   selectedOrbiter["Mentor Name"],
+      //   `Your connect *${selectedOrbiter[" Name"]}* passed a referral. 🚀`
+      // ),
+      // sendWhatsAppTemplate(
+      //   selectedCosmo["Mentor Phone"],
+      //   selectedCosmo["Mentor Name"],
+      //   `Your connect *${selectedCosmo[" Name"]}* received a referral. 🌱`
+      // ),
+    ]);
+
+    // ✅ Reset form fields
+    setSelectedOrbiter(null);
+    setSelectedCosmo(null);
+    setOrbiterSearch("");
+    setCosmoSearch("");
+    setServices([]);
+    setProducts([]);
+    setSelectedService(null);
+    setSelectedProduct(null);
+    setRefType("Self");
+    setOtherName("");
+    setOtherPhone("");
+    setOtherEmail("");
+    setReferralSource("MonthlyMeeting");
+    setOtherReferralSource("");
+    setDealStatus("Pending");
+  } catch (err) {
+    console.error("Error submitting referral:", err);
+    alert("Submission failed. Please try again.");
+  }
 };
-
-
-   try {
-  await addDoc(collection(db, "Referral"), data);
-  alert("Referral submitted successfully!");
-
-  // ✅ Reset form fields
-  setSelectedOrbiter(null);
-  setSelectedCosmo(null);
-  setOrbiterSearch("");
-  setCosmoSearch("");
-  setServices([]);
-  setProducts([]);
-  setSelectedService(null);
-  setSelectedProduct(null);
-  setRefType("Self");
-  setOtherName("");
-  setOtherPhone("");
-  setOtherEmail("");
-  setReferralSource("MonthlyMeeting");
-  setOtherReferralSource("");   // ✅ reset Other input
-  setDealStatus("Pending");
-//  const serviceOrProduct = selectedService?.name || selectedProduct?.name || "";
-
-//       await Promise.all([
-//         sendWhatsAppTemplate(selectedOrbiter["Mobile no"], selectedOrbiter[" Name"], `Thanks for passing the referral.`),
-//         sendWhatsAppTemplate(selectedCosmo["Mobile no"], selectedCosmo[" Name"], `${selectedOrbiter[" Name"]} has referred you for ${serviceOrProduct}.`),
-//         sendWhatsAppTemplate(selectedOrbiter["Mentor Phone"], selectedOrbiter["Mentor Name"], `Your connect ${selectedOrbiter[" Name"]} passed a referral.`),
-//         sendWhatsAppTemplate(selectedCosmo["Mentor Phone"], selectedCosmo["Mentor Name"], `Your connect ${selectedCosmo[" Name"]} received a referral.`),
-//       ]);
-  // Send WhatsApp messages...
-} catch (err) {
-  console.error("Error submitting referral:", err);
-  alert("Submission failed.");
-}
-
-
-  
-  };
 
   return (
   <Layout>

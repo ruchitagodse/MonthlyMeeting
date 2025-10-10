@@ -6,6 +6,7 @@ import { BiSolidCoinStack } from "react-icons/bi";
 import { GrGroup } from "react-icons/gr";
 import { HiUser } from "react-icons/hi2";
 import { useAuth } from "../context/authContext";
+import { FaPeopleArrows } from "react-icons/fa";
 
 const HeaderNav = () => {
   const router = useRouter();
@@ -17,7 +18,7 @@ const HeaderNav = () => {
     { label: "Home", icon: <FiHome size={26} />, path: "/" },
     { label: "MM", icon: <MdOutlineBusinessCenter size={26} />, path: "/Monthlymeetdetails" },
     { label: "Conclave", icon: <GrGroup size={26} />, path: "/ConclaveMeeting" },
-    { label: "CP", icon: <BiSolidCoinStack size={26} />, path: `/cp-details/${user.phoneNumber}` },
+    { label: "Referrals", icon: <FaPeopleArrows size={26} />, path: `/ReferralList` },
     { label: "Business", icon: <MdBusinessCenter size={26} />, path: "/ReferralDetails" },
     { label: "Profile", icon: <HiUser size={26} />, path: "/ProfilePage" },
   ], [user.phoneNumber]);

@@ -160,8 +160,10 @@ const HomePage = () => {
         </div>
 
         <section className="project-summary">
-          <SummaryCard className="in-progress" count={ntMeetCount} label="Total Conclaves" href="/ConclaveMeeting" />
-          <SummaryCard  className="in-review" count={monthlyMetCount} label="Monthly Meetings" href="/Monthlymeetdetails" />
+          {/* <SummaryCard className="in-progress" count={ntMeetCount} label="Total Conclaves" href="/ConclaveMeeting" />
+          <SummaryCard  className="in-review" count={monthlyMetCount} label="Monthly Meetings" href="/Monthlymeetdetails" /> */}
+            <SummaryCard className="on-hold" count={ntMeetCount} label="My Referrals" href="/ReferralList" />
+          <SummaryCard  className="completed" count={monthlyMetCount} label="Passed Referrals" href="/PassedReferrals" />
         </section>
 
         <section className="upcoming-events">

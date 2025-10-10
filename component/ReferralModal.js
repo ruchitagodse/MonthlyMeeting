@@ -115,97 +115,184 @@ const ReferralModal = ({ item, onClose, userCache, setUserCache }) => {
     }, []);
 
     // 🔹 Submit referral
-    const handlePassReferral = async () => {
-        if (submitting) return;
-        setSubmitting(true);
+const handlePassReferral = async () => {
+  if (submitting) return;
+  setSubmitting(true);
 
-        if (!orbiterDetails && selectedFor === "self") {
-            toast.error("Orbiter details not found.");
-            setSubmitting(false);
-            return;
-        }
-        if (!userDetails) {
-            toast.error("CosmoOrbiter details not found.");
-            setSubmitting(false);
-            return;
-        }
-        if (!selectedOption) {
-            toast.error("Please select a service or product to refer.");
-            setSubmitting(false);
-            return;
-        }
-        if (!leadDescription.trim()) {
-            toast.error("Please enter a short description of the lead.");
-            setSubmitting(false);
-            return;
-        }
+  if (!orbiterDetails && selectedFor === "self") {
+    toast.error("Orbiter details not found.");
+    setSubmitting(false);
+    return;
+  }
+  if (!userDetails) {
+    toast.error("CosmoOrbiter details not found.");
+    setSubmitting(false);
+    return;
+  }
+  if (!selectedOption) {
+    toast.error("Please select a service or product to refer.");
+    setSubmitting(false);
+    return;
+  }
+  if (!leadDescription.trim()) {
+    toast.error("Please enter a short description of the lead.");
+    setSubmitting(false);
+    return;
+  }
 
-        try {
-            const referralId = await generateReferralId();
+  try {
+    const referralId = await generateReferralId();
 
-            const selectedService = services.find(s => s.name === selectedOption) || null;
-            const selectedProduct = products.find(p => p.name === selectedOption) || null;
+    const selectedService = services.find(s => s.name === selectedOption) || null;
+    const selectedProduct = products.find(p => p.name === selectedOption) || null;
 
-            const data = {
-                referralId,
-                referralSource: "R",
-                referralType: selectedFor === "self" ? "Self" : "Others",
-                leadDescription,
-                dealStatus: "Pending",
-                lastUpdated: new Date(),
-                timestamp: new Date(),
-                cosmoOrbiter: {
-                    name: userDetails.name,
-                    email: userDetails.email,
-                    phone: userDetails.phone,
-                    mentorName: userDetails.mentorName || null,
-                    mentorPhone: userDetails.mentorPhone || null,
-                },
-                orbiter:
-                    selectedFor === "self"
-                        ? orbiterDetails
-                        : { name: otherName, phone: otherPhone, email: otherEmail },
-                product: selectedProduct
-                    ? {
-                        name: selectedProduct.name,
-                        description: selectedProduct.description,
-                        imageURL: selectedProduct.imageURL || "",
-                        percentage: selectedProduct.percentage || "0",
-                    }
-                    : null,
-                service: selectedService
-                    ? {
-                        name: selectedService.name,
-                        description: selectedService.description,
-                        imageURL: selectedService.imageURL || "",
-                        percentage: selectedService.percentage || "0",
-                    }
-                    : null,
-                dealLogs: [],
-                followups: [],
-                statusLogs: [],
-            };
-
-            await addDoc(collection(db, "Referral"), data);
-            toast.success("Referral passed successfully!");
-
-            // Reset fields
-            setSelectedOption(null);
-            setDropdownOpen(false);
-            setLeadDescription("");
-            setOtherName("");
-            setOtherPhone("");
-            setOtherEmail("");
-            setSelectedFor("self");
-
-            setTimeout(() => onClose(), 500);
-        } catch (err) {
-            console.error("Error passing referral:", err);
-            toast.error("Failed to pass referral.");
-        }
-
-        setSubmitting(false);
+    const data = {
+      referralId,
+      referralSource: "R",
+      referralType: selectedFor === "self" ? "Self" : "Others",
+      leadDescription,
+      dealStatus: "Pending",
+      lastUpdated: new Date(),
+      timestamp: new Date(),
+      cosmoOrbiter: {
+        name: userDetails.name,
+        email: userDetails.email,
+        phone: userDetails.phone,
+        mentorName: userDetails.mentorName || null,
+        mentorPhone: userDetails.mentorPhone || null,
+      },
+      orbiter:
+        selectedFor === "self"
+          ? orbiterDetails
+          : { name: otherName, phone: otherPhone, email: otherEmail },
+      product: selectedProduct
+        ? {
+            name: selectedProduct.name,
+            description: selectedProduct.description,
+            imageURL: selectedProduct.imageURL || "",
+            percentage: selectedProduct.percentage || "0",
+          }
+        : null,
+      service: selectedService
+        ? {
+            name: selectedService.name,
+            description: selectedService.description,
+            imageURL: selectedService.imageURL || "",
+            percentage: selectedService.percentage || "0",
+          }
+        : null,
+      dealLogs: [],
+      followups: [],
+      statusLogs: [],
     };
+
+    await addDoc(collection(db, "Referral"), data);
+    toast.success("Referral passed successfully!");
+
+    // ✅ Determine service or product name
+    const serviceOrProduct = selectedService?.name || selectedProduct?.name || "";
+
+    // ✅ Send WhatsApp messages to all 4 people
+    await Promise.all([
+      // 1. Orbiter
+      sendWhatsAppMessage(
+        orbiterDetails.phone,
+        [
+          orbiterDetails.name,
+          `🚀 You’ve just passed a referral for *${serviceOrProduct}* to *${userDetails.name}*. It’s now in motion and will be actioned within 24 hours. 🌱`
+        ]
+      ),
+      // 2. CosmoOrbiter
+      sendWhatsAppMessage(
+        userDetails.phone,
+        [
+          userDetails.name,
+          `✨ You’ve received a referral from *${orbiterDetails.name}* for *${serviceOrProduct}*. Please act within 24 hours!`
+        ]
+      ),
+      // 3. Orbiter's Mentor (if exists)
+      orbiterDetails.mentorPhone
+        ? sendWhatsAppMessage(
+            orbiterDetails.mentorPhone,
+            [
+              orbiterDetails.mentorName || "Mentor",
+              `Your connect *${orbiterDetails.name}* passed a referral. 🚀`
+            ]
+          )
+        : Promise.resolve(),
+      // 4. CosmoOrbiter's Mentor (if exists)
+      userDetails.mentorPhone
+        ? sendWhatsAppMessage(
+            userDetails.mentorPhone,
+            [
+              userDetails.mentorName || "Mentor",
+              `Your connect *${userDetails.name}* received a referral. 🌱`
+            ]
+          )
+        : Promise.resolve(),
+    ]);
+
+    // ✅ Reset fields
+    setSelectedOption(null);
+    setDropdownOpen(false);
+    setLeadDescription("");
+    setOtherName("");
+    setOtherPhone("");
+    setOtherEmail("");
+    setSelectedFor("self");
+
+    setTimeout(() => onClose(), 500);
+  } catch (err) {
+    console.error("Error passing referral:", err);
+    toast.error("Failed to pass referral.");
+  }
+
+  setSubmitting(false);
+};
+// 📩 WhatsApp sender function — fixed template name
+const sendWhatsAppMessage = async (phone, parameters = []) => {
+  const formattedPhone = String(phone || "").replace(/\s+/g, "");
+
+  const payload = {
+    messaging_product: "whatsapp",
+    to: formattedPhone,
+    type: "template",
+    template: {
+      name: "referral_module", // ✅ fixed template name
+      language: { code: "en" },
+      components: [
+        {
+          type: "body",
+          parameters: parameters.map((param) => ({
+            type: "text",
+            text: param,
+          })),
+        },
+      ],
+    },
+  };
+
+  try {
+    const response = await fetch("https://graph.facebook.com/v19.0/527476310441806/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization:
+          "Bearer EAAHwbR1fvgsBOwUInBvR1SGmVLSZCpDZAkn9aZCDJYaT0h5cwyiLyIq7BnKmXAgNs0ZCC8C33UzhGWTlwhUarfbcVoBdkc1bhuxZBXvroCHiXNwZCZBVxXlZBdinVoVnTB7IC1OYS4lhNEQprXm5l0XZAICVYISvkfwTEju6kV4Aqzt4lPpN8D3FD7eIWXDhnA4SG6QZDZD",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      console.error("WhatsApp API Error:", data);
+    } else {
+      console.log("WhatsApp message sent successfully:", data);
+    }
+  } catch (error) {
+    console.error("Error sending WhatsApp message:", error);
+  }
+};
 
     return (
         <>

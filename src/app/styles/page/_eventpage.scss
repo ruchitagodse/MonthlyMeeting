@@ -1278,8 +1278,9 @@ mark {
   transition: all 0.3s;
 }
 .reward-btn {
-  width: 120px;
+  width: auto;
   height: 40px;
+  padding: 0 20px;
   background-color: #101218;
   display: flex;
   position: relative;

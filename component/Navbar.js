@@ -7,6 +7,7 @@ import { FaRegUser } from "react-icons/fa";
 import { BsCake2 } from "react-icons/bs";
 import Link from 'next/link';
 import { useRouter } from "next/router";
+import { FaPeopleArrows } from "react-icons/fa";
 import { BsCashCoin } from "react-icons/bs";
 import { GrGroup } from "react-icons/gr";
 const Navbar = (props) => {

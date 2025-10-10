@@ -4,6 +4,7 @@ import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import { useAuth } from "../context/authContext";
 import Swal from "sweetalert2";
+import { BiSolidCoinStack } from "react-icons/bi";
 
 const Headertop = () => {
   const { user, logout } = useAuth();
@@ -43,13 +44,14 @@ const Headertop = () => {
       <section className="container">
         <div className="innerLogo" onClick={() => router.push("/")}>
           <img src="/ujustlogo.png" alt="Logo" className="logo" />
+          <div className="beta">BETA</div>
         </div>
         <div className="headerRight">
           <button onClick={() => router.push(`/cp-details/${user.phoneNumber}`)} className="reward-btn">
-            CP: {cpPoints}
+            <BiSolidCoinStack size={18} /> CP: {cpPoints}
           </button>
           <div className="userName" onClick={handleLogout}>
-            {getInitials(user.name)}
+            <span>{getInitials(user.name)}</span>
           </div>
         </div>
       </section>

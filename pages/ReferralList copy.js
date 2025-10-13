@@ -6,7 +6,6 @@ import {
     collection,
     getDocs,
     query,
-    where,
     orderBy,
     doc,
     updateDoc,
@@ -18,8 +17,6 @@ import Link from 'next/link';
 import HeaderNav from "../component/HeaderNav";
 import Headertop from "../component/Header";
 import "../src/app/styles/user.scss";
-import { HiOutlineMail } from "react-icons/hi";
-import { IoIosCall } from "react-icons/io";
 
 
 const db = getFirestore(app);
@@ -87,28 +84,19 @@ const statusMessages = {
 };
 
 const UserReferrals = () => {
-    // const [referrals, setReferrals] = useState([]);
+    const [referrals, setReferrals] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState("my");
-    const [allReferrals, setAllReferrals] = useState({
-        my: [],
-        passed: [],
-    });
+    const [activeTab, setActiveTab] = useState('My Passed Referrals');
 
 
-    // Tabs
     const tabs = [
-        { name: "My Referrals", key: "my" },
-        { name: "Passed Referrals", key: "passed" },
+        { name: "My Passed Referrals", href: "/PassedReferrals" },
+        { name: "My Referrals", href: "/ReferralList" },
     ];
-
-
-
-
+    // ✅ Fetch referrals
     useEffect(() => {
         const fetchReferrals = async () => {
             try {
-                setLoading(true);
                 const storedPhoneNumber = localStorage.getItem("mmOrbiter");
                 if (!storedPhoneNumber) {
                     console.warn("Phone number not found in localStorage");
@@ -117,32 +105,14 @@ const UserReferrals = () => {
                 }
 
                 const referralsCol = collection(db, "Referral");
+                const q = query(referralsCol, orderBy("timestamp", "desc"));
+                const snapshot = await getDocs(q);
 
-                // My Referrals
-                const myQuery = query(
-                    referralsCol,
-                    where("cosmoOrbiter.phone", "==", storedPhoneNumber),
-                    orderBy("timestamp", "desc")
-                );
-                const mySnapshot = await getDocs(myQuery);
-                const myReferrals = mySnapshot.docs.map((doc) => ({
-                    id: doc.id,
-                    ...doc.data(),
-                }));
+                const userReferrals = snapshot.docs
+                    .map((doc) => ({ id: doc.id, ...doc.data() }))
+                    .filter((ref) => ref.cosmoOrbiter.phone === storedPhoneNumber);
 
-                // Passed Referrals
-                const passedQuery = query(
-                    referralsCol,
-                    where("orbiter.phone", "==", storedPhoneNumber),
-                    orderBy("timestamp", "desc")
-                );
-                const passedSnapshot = await getDocs(passedQuery);
-                const passedReferrals = passedSnapshot.docs.map((doc) => ({
-                    id: doc.id,
-                    ...doc.data(),
-                }));
-
-                setAllReferrals({ my: myReferrals, passed: passedReferrals });
+                setReferrals(userReferrals);
             } catch (error) {
                 console.error("Error fetching referrals:", error);
             } finally {
@@ -228,36 +198,23 @@ const UserReferrals = () => {
         "Hold",
     ];
 
-    // ✅ Handle tab change
-    const handleTabClick = (tabKey) => {
-        setActiveTab(tabKey);
-    };
-
-    // Referrals for the active tab
-    const referrals = allReferrals[activeTab];
-
-
     return (
         <main className="pageContainer">
             <Headertop />
 
             <section className="dashBoardMain">
                 <div className="sectionHeadings">
-                    <h2>{activeTab === "my" ? "My Referrals" : "Passed Referrals"}</h2>
+                    <h2>My Referrals</h2>
                 </div>
-
-
-                {/* Tabs */}
                 <div className="referralTabs">
-                    {tabs.map((tab) => (
-                        <button
-                            key={tab.key}
-                            onClick={() => handleTabClick(tab.key)}
-                            className={`tabButton ${activeTab === tab.key ? "active" : ""}`}
-                        >
-                            {tab.name}
-                        </button>
-                    ))}
+                    <Link href="/ReferralList" className="active">
+                        My Referral
+
+                    </Link>
+                    <Link href="/PassedReferrals">
+                        Passed Referrals
+                    </Link>
+
                 </div>
 
 
@@ -269,47 +226,38 @@ const UserReferrals = () => {
                     ) : referrals.length === 0 ? (
                         <p className="noDataText">No referrals found.</p>
                     ) : (
-                        referrals.map((ref) => (
-                            <div key={ref.id} className="referralBox">
-                                <div className="boxHeader">
-                                    <div>{ref.referralId ? ref.referralId : null}
-                                        Date:{" "}
-                                        {ref.timestamp?.toDate
-                                            ? ref.timestamp.toDate().toLocaleString()
-                                            : "N/A"}
-                                    </div>
-                                    <div> <span class="meetingLable">Status: {ref.dealStatus}</span></div>
-
-                                </div>
-                                <div className="cosmoCard-info">
-                                    <p className="cosmoCard-category">
-                                        {ref.product?.name || ref.service?.name || "-"}
-                                    </p>
-                                    <h3 className="cosmoCard-owner">{ref.orbiter?.name}</h3>
-
-                                    {/* ✅ Hide or blur contact info if Deal Lost */}
-                                    {ref.dealStatus === "Deal Lost" ? (
-                                        <p className="text-gray-400 italic">
-                                            Contact details hidden (Deal Lost)
+                        referrals.map((ref, index) => (
+                            <div key={index} className="cosmoCard">
+                                <div className="cosmoCard-header">
+                                    <div className="cosmoCard-info">
+                                        <p className="cosmoCard-category">
+                                            {ref.product?.name || ref.service?.name || "-"}
                                         </p>
-                                    ) : (
-                                        <div className="cosmoCard-location">
-                                            <p>
-                                                <HiOutlineMail /> {ref.orbiter?.email} | <IoIosCall /> {ref.orbiter?.phone}
-                                            </p>
+
+                                        <h3 className="cosmoCard-owner">{ref.orbiter.name}</h3>
+                                        <div className="contactDetails">
+                                        {/* 👇 Contact info conditional */}
+                                        {ref.dealStatus === "Deal Lost" ? (
+                                            <p className="text-gray-400 italic">Contact details hidden (Deal Lost)</p>
+                                        ) : (
+                                            <div className="cosmoCard-location">
+                                                <p>
+                                                    📧 {ref.orbiter.email} | 📞 {ref.orbiter.phone}
+                                                </p>
+                                            </div>
+                                        )}
                                         </div>
-                                    )}
 
-                                    <div>
-                                        Date:{" "}
-                                        {ref.timestamp?.toDate
-                                            ? ref.timestamp.toDate().toLocaleString()
-                                            : "N/A"}
+                                        <p>
+                                            Date:{" "}
+                                            {ref.timestamp?.toDate
+                                                ? ref.timestamp.toDate().toLocaleString()
+                                                : "N/A"}
+                                        </p>
+                                        <p>Status: {ref.dealStatus}</p>
                                     </div>
-
                                 </div>
                             </div>
-
                         ))
                     )}
                 </div>
@@ -317,7 +265,7 @@ const UserReferrals = () => {
 
                 <HeaderNav />
             </section>
-        </main >
+        </main>
     );
 };
 

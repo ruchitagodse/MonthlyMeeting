@@ -7,7 +7,11 @@ import { FaRegUser } from "react-icons/fa";
 import { BsCake2 } from "react-icons/bs";
 import Link from 'next/link';
 import { useRouter } from "next/router";
+<<<<<<< HEAD
 
+=======
+// import { FaPeopleArrows } from "react-icons/fa";
+>>>>>>> 37993991f2503c7fa270f780496d45af26144ea0
 import { BsCashCoin } from "react-icons/bs";
 import { GrGroup } from "react-icons/gr";
 const Navbar = (props) => {

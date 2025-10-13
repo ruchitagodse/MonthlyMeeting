@@ -959,7 +959,7 @@
   column-gap: 10px;
   padding: 0 15px;
 
-  a {
+  button {
     padding: 12px 15px;
     font-size: 12px;
     letter-spacing: 1px;
@@ -975,6 +975,7 @@
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     list-style: none;
     text-decoration: none;
+    border: none;
     &.active {
     background: #d45e00;
     color: white;

@@ -8,7 +8,7 @@ import {
     addDoc,
     collection,
     query,
-    orderBy,
+    orderBy,runTransaction,
     limit,
     getDocs,
 } from 'firebase/firestore';
@@ -36,26 +36,48 @@ const ReferralModal = ({ item, onClose, userCache, setUserCache }) => {
 
     const dropdownRef = useRef();
 
-    // 🔹 Generate referral ID (simple query-based)
-    const generateReferralId = async () => {
-        const now = new Date();
-        const year1 = now.getFullYear() % 100;
-        const year2 = (now.getFullYear() + 1) % 100;
-        const refPrefix = `Ref/${year1}-${year2}/`;
+   
+const generateReferralId = async () => {
+  const now = new Date();
+  const year1 = now.getFullYear() % 100;
+  const year2 = (now.getFullYear() + 1) % 100;
+  const refPrefix = `Ref/${year1}-${year2}/`;
 
-        const q = query(collection(db, 'Referral'), orderBy('timestamp', 'desc'), limit(1));
-        const snapshot = await getDocs(q);
-        let lastNum = 2999;
+  try {
+    // Run transaction for atomic safety
+    const newReferralId = await runTransaction(db, async (transaction) => {
+      // Fetch the latest referral doc (most recent)
+      const q = query(collection(db, "Referral"), orderBy("timestamp", "desc"), limit(1));
+      const snapshot = await getDocs(q);
 
-        if (!snapshot.empty) {
-            const lastRef = snapshot.docs[0].data().referralId;
-            const match = lastRef?.match(/\/(\d{8})$/);
-            if (match) lastNum = parseInt(match[1]);
-        }
+      let lastNum = 2999;
 
-        return `${refPrefix}${String(lastNum + 1).padStart(8, '0')}`;
-    };
+      if (!snapshot.empty) {
+        const lastRef = snapshot.docs[0].data().referralId;
+        const match = lastRef?.match(/\/(\d{8})$/);
+        if (match) lastNum = parseInt(match[1]);
+      }
 
+      const newNum = lastNum + 1;
+      const newId = `${refPrefix}${String(newNum).padStart(8, "0")}`;
+
+      // Create a placeholder doc in Referral to reserve the ID (avoids duplicates)
+      const tempRef = doc(collection(db, "Referral"));
+      transaction.set(tempRef, {
+        referralId: newId,
+        timestamp: new Date(),
+        reserved: true,
+      });
+
+      return newId;
+    });
+
+    return newReferralId;
+  } catch (error) {
+    console.error("Error generating referral ID:", error);
+    throw error;
+  }
+};
     // 🔹 Fetch user & orbiter details
     useEffect(() => {
         const fetchUserDetails = async () => {

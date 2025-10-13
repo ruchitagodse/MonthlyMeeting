@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { getFirestore, doc, getDoc, collection, getDocs, addDoc } from "firebase/firestore";
+import { getFirestore, doc, getDoc, collection, getDocs, addDoc,query,orderBy,limit } from "firebase/firestore";
 import { CiImageOn } from "react-icons/ci";
 import { app } from "../../firebaseConfig";
 import HeaderNav from "../../component/HeaderNav";
@@ -121,23 +121,33 @@ const ReferralDetails = () => {
     fetchCosmo();
   }, [id]);
 
-  const generateReferralId = async () => {
-    const now = new Date();
-    const year1 = now.getFullYear() % 100;
-    const year2 = (now.getFullYear() + 1) % 100;
-    const refPrefix = `Ref/${year1}-${year2}/`;
+const generateReferralId = async () => {
+  const now = new Date();
+  const year1 = now.getFullYear() % 100;
+  const year2 = (now.getFullYear() + 1) % 100;
+  const refPrefix = `Ref/${year1}-${year2}/`;
 
-    const q = collection(db, "Referral");
+  try {
+    // Fetch the latest referral document (ordered by timestamp)
+    const q = query(collection(db, "Referral"), orderBy("timestamp", "desc"), limit(1));
     const snapshot = await getDocs(q);
-    let lastNum = 2999;
+
+    let lastNum = 2999; // Start base number (Ref/25-26/00003000)
+
     if (!snapshot.empty) {
-      const lastRef = snapshot.docs[snapshot.docs.length - 1].data().referralId;
+      const lastRef = snapshot.docs[0].data().referralId;
       const match = lastRef?.match(/\/(\d{8})$/);
       if (match) lastNum = parseInt(match[1]);
     }
-    return `${refPrefix}${String(lastNum + 1).padStart(8, "0")}`;
-  };
 
+    // Increment and generate new ID
+    const newId = `${refPrefix}${String(lastNum + 1).padStart(8, "0")}`;
+    return newId;
+  } catch (error) {
+    console.error("Error generating referral ID:", error);
+    throw error;
+  }
+};
 const handlePassReferral = async () => {
   if (!orbiterDetails && selectedFor === "self") {
     alert("Orbiter details not found.");

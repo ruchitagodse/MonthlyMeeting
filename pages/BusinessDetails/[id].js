@@ -15,7 +15,7 @@ import { CiImageOff } from "react-icons/ci";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Headertop from "../../component/Header";
-
+import toast from "react-hot-toast";
 const db = getFirestore(app);
 
 const ReferralDetails = () => {
@@ -148,86 +148,121 @@ const generateReferralId = async () => {
     throw error;
   }
 };
+
+
 const handlePassReferral = async () => {
   if (!orbiterDetails && selectedFor === "self") {
-    alert("Orbiter details not found.");
+    toast.error("Orbiter details not found.");
     return;
   }
 
   if (!userDetails) {
-    alert("CosmoOrbiter details not found.");
+    toast.error("CosmoOrbiter details not found.");
     return;
   }
 
   if (!selectedOption) {
-    alert("Please select a service or product to refer.");
+    toast.error("Please select a service or product to refer.");
     return;
   }
 
   if (!leadDescription || leadDescription.trim() === "") {
-    alert("Please enter a short description of the lead.");
+    toast.error("Please enter a short description of the lead.");
     return;
   }
 
-  const referralId = await generateReferralId();
-
-  const selectedService = services.find((s) => s.name === selectedOption) || null;
-  const selectedProduct = products.find((p) => p.name === selectedOption) || null;
-
-  const data = {
-    referralId,
-    referralSource: "R",
-    referralType: selectedFor === "self" ? "Self" : "Others",
-    leadDescription,
-    dealStatus: "Pending",
-    lastUpdated: new Date(),
-    timestamp: new Date(),
-    cosmoOrbiter: {
-      name: userDetails.name,
-      email: userDetails.email,
-      phone: userDetails.phone,
-      mentorName: userDetails.mentorName || null,
-      mentorPhone: userDetails.mentorPhone || null,
-    },
-    orbiter:
-      selectedFor === "self"
-        ? orbiterDetails
-        : { name: otherName, phone: otherPhone, email: otherEmail },
-    product: selectedProduct
-      ? {
-          name: selectedProduct.name,
-          description: selectedProduct.description,
-          imageURL: selectedProduct.imageURL || "",
-          percentage: selectedProduct.percentage || "0",
-        }
-      : null,
-    service: selectedService
-      ? {
-          name: selectedService.name,
-          description: selectedService.description,
-          imageURL: selectedService.imageURL || "",
-          percentage: selectedService.percentage || "0",
-        }
-      : null,
-    dealLogs: [],
-    followups: [],
-    statusLogs: [],
-  };
-
   try {
+    const referralId = await generateReferralId();
+
+    const selectedService = services.find((s) => s.name === selectedOption) || null;
+    const selectedProduct = products.find((p) => p.name === selectedOption) || null;
+
+    const data = {
+      referralId,
+      referralSource: "R",
+      referralType: selectedFor === "self" ? "Self" : "Others",
+      leadDescription,
+      dealStatus: "Pending",
+      lastUpdated: new Date(),
+      timestamp: new Date(),
+      cosmoOrbiter: {
+        name: userDetails.name,
+        email: userDetails.email,
+        phone: userDetails.phone,
+        mentorName: userDetails.mentorName || null,
+        mentorPhone: userDetails.mentorPhone || null,
+      },
+      orbiter:
+        selectedFor === "self"
+          ? orbiterDetails
+          : { name: otherName, phone: otherPhone, email: otherEmail },
+      product: selectedProduct
+        ? {
+            name: selectedProduct.name,
+            description: selectedProduct.description,
+            imageURL: selectedProduct.imageURL || "",
+            percentage: selectedProduct.percentage || "0",
+          }
+        : null,
+      service: selectedService
+        ? {
+            name: selectedService.name,
+            description: selectedService.description,
+            imageURL: selectedService.imageURL || "",
+            percentage: selectedService.percentage || "0",
+          }
+        : null,
+      dealLogs: [],
+      followups: [],
+      statusLogs: [],
+    };
+
     await addDoc(collection(db, "Referral"), data);
-    console.log("Referral", data);
 
- // ✅ WhatsApp message using same template
-await sendWhatsAppMessage(
-  selectedFor === "self" ? orbiterDetails.phone : otherPhone,
-  [
-    selectedFor === "self" ? orbiterDetails.name : otherName, // ✅ Orbiter name here
-    "Your referral has been successfully submitted!"
-  ]
-);
+    // Determine service or product name
+    const serviceOrProduct = selectedService?.name || selectedProduct?.name || "";
 
-    alert("Referral passed successfully!");
+    // Send WhatsApp messages to all 4 people
+    await Promise.all([
+      // 1. Orbiter
+      sendWhatsAppMessage(
+        orbiterDetails.phone,
+        [
+          orbiterDetails.name,
+          `🚀 You’ve just passed a referral for *${serviceOrProduct}* to *${userDetails.name}*. It’s now in motion and will be actioned within 24 hours. 🌱`
+        ]
+      ),
+      // 2. CosmoOrbiter
+      sendWhatsAppMessage(
+        userDetails.phone,
+        [
+          userDetails.name,
+          `✨ You’ve received a referral from *${orbiterDetails.name}* for *${serviceOrProduct}*. Please act within 24 hours!`
+        ]
+      ),
+      // 3. Orbiter's Mentor (if exists)
+      orbiterDetails.mentorPhone
+        ? sendWhatsAppMessage(
+            orbiterDetails.mentorPhone,
+            [
+              orbiterDetails.mentorName || "Mentor",
+              `Your connect *${orbiterDetails.name}* passed a referral. 🚀`
+            ]
+          )
+        : Promise.resolve(),
+      // 4. CosmoOrbiter's Mentor (if exists)
+      userDetails.mentorPhone
+        ? sendWhatsAppMessage(
+            userDetails.mentorPhone,
+            [
+              userDetails.mentorName || "Mentor",
+              `Your connect *${userDetails.name}* received a referral. 🌱`
+            ]
+          )
+        : Promise.resolve(),
+    ]);
+
+    toast.success("Referral passed successfully!");
 
     // Reset fields
     setSelectedOption(null);
@@ -240,9 +275,10 @@ await sendWhatsAppMessage(
     setModalOpen(false);
   } catch (err) {
     console.error("Error passing referral:", err);
-    alert("Failed to pass referral.");
+    toast.error("Failed to pass referral.");
   }
 };
+
 
 
 

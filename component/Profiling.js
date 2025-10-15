@@ -24,7 +24,35 @@ const [profilePreview, setProfilePreview] = useState('');
 const [businessLogoPreview, setBusinessLogoPreview] = useState('');
 const [servicePreviews, setServicePreviews] = useState([]); 
 const [productPreviews, setProductPreviews] = useState([]);
+const socialPlatforms = [
+  'Facebook',
+  'Instagram',
+  'LinkedIn',
+  'YouTube',
+  'Twitter',
+  'Pinterest',
+  'Other' // 👈 Added here
+];
 
+const [socialMediaLinks, setSocialMediaLinks] = useState([
+  { platform: '', url: '', customPlatform: '' },
+]);
+
+const handleSocialMediaChange = (index, key, value) => {
+  const updated = [...socialMediaLinks];
+  updated[index][key] = value;
+  setSocialMediaLinks(updated);
+};
+
+const addSocialMediaField = () => {
+  setSocialMediaLinks([...socialMediaLinks, { platform: '', url: '', customPlatform: '' }]);
+};
+
+const removeSocialMediaField = (index) => {
+  const updated = [...socialMediaLinks];
+  updated.splice(index, 1);
+  setSocialMediaLinks(updated);
+};
 
 
 useEffect(() => {
@@ -211,7 +239,7 @@ const handleDynamicChange = (type, index, field, value) => {
   }
 };
 
- const handleSubmit = async () => {
+const handleSubmit = async () => {
   try {
     const profileURL = await uploadProfilePhoto();
 
@@ -221,55 +249,65 @@ const handleDynamicChange = (type, index, field, value) => {
       await uploadBytes(logoRef, businessLogo);
       businessLogoURL = await getDownloadURL(logoRef);
       Swal.fire({
-  icon: 'success',
-  title: 'Business Logo Uploaded!',
-  text: 'Your business logo has been successfully uploaded.',
-  timer: 2000,
-  showConfirmButton: false
-});
-
+        icon: 'success',
+        title: 'Business Logo Uploaded!',
+        text: 'Your business logo has been successfully uploaded.',
+        timer: 2000,
+        showConfirmButton: false
+      });
     }
 
+    // First, filter services and products
     const filteredServices = services.filter(s => s.name.trim() && s.description.trim());
     const filteredProducts = products.filter(p => p.name.trim() && p.description.trim());
 
+    // Upload service images
     const serviceData = await Promise.all(
-  filteredServices.map(async (srv, i) => {
-    const imgURL = srv.image
-      ? await uploadImage(srv.image, `serviceImages/${docId}/service_${i}`)
-      : '';
-    return {
-      name: srv.name,
-      description: srv.description,
-      keywords: srv.keywords || '',
-      imageURL: imgURL,
-      percentage: srv.percentage || '',
-    };
-  })
-);
+      filteredServices.map(async (srv, i) => {
+        const imgURL = srv.image
+          ? await uploadImage(srv.image, `serviceImages/${docId}/service_${i}`)
+          : '';
+        return {
+          name: srv.name,
+          description: srv.description,
+          keywords: srv.keywords || '',
+          imageURL: imgURL,
+          percentage: srv.percentage || '',
+        };
+      })
+    );
 
+    // Upload product images
+    const productData = await Promise.all(
+      filteredProducts.map(async (prd, i) => {
+        const imgURL = prd.image
+          ? await uploadImage(prd.image, `productImages/${docId}/product_${i}`)
+          : '';
+        return {
+          name: prd.name,
+          description: prd.description,
+          keywords: prd.keywords || '',
+          imageURL: imgURL,
+          percentage: prd.percentage || '',
+        };
+      })
+    );
 
-   const productData = await Promise.all(
-  filteredProducts.map(async (prd, i) => {
-    const imgURL = prd.image
-      ? await uploadImage(prd.image, `productImages/${docId}/product_${i}`)
-      : '';
-    return {
-      name: prd.name,
-      description: prd.description,
-      keywords: prd.keywords || '',
-      imageURL: imgURL,
-      percentage: prd.percentage || '',
-    };
-  })
-);
-
+    // Now declare updatedData
     const updatedData = {
       ...formData,
       ...(profileURL && { 'Profile Photo URL': profileURL }),
       ...(businessLogoURL && { 'Business Logo': businessLogoURL }),
       ...(serviceData.length > 0 && { services: serviceData }),
       ...(productData.length > 0 && { products: productData }),
+      ...(socialMediaLinks.length > 0 && { 
+        'Business Social Media Pages': socialMediaLinks
+          .filter((s) => s.url)
+          .map((s) => ({
+            platform: s.platform === 'Other' ? s.customPlatform || 'Other' : s.platform,
+            url: s.url
+          }))
+      }),
     };
 
     const userRef = doc(db, 'userdetail', docId);
@@ -281,6 +319,7 @@ const handleDynamicChange = (type, index, field, value) => {
     alert('Failed to update profile');
   }
 };
+
 
 
 const dropdowns = {
@@ -310,15 +349,17 @@ const orbiterFields = [
   'Family History Summary', 'Marital Status', 'Professional History',
   'Current Profession', 'Educational Background', 'Languages Known',
   'Contribution Area in UJustBe', 'Immediate Desire', 'Mastery',
-  'Special Social Contribution', 'Profile Status',
+  'Special Social Contribution', 'Profile Status',  'Business Social Media Pages',  // 👈 add this line
+
 ];
 
 const cosmorbiterFields = [
   ...orbiterFields,
   'Business Name', 'Business Details (Nature & Type)', 'Business History',
-  'Noteworthy Achievements', 'Clientele Base', 'Business Social Media Pages',
+  'Noteworthy Achievements', 'Clientele Base', 
   'Website', 'Locality', 'Area of Services', 'USP', 'Business Logo',
-  'Tag Line',
+  'Tag Line',  'Business Social Media Pages',  // 👈 add this line
+  'Established At'
 ];
 
 const fieldGroups = {
@@ -330,15 +371,26 @@ const fieldGroups = {
   'Health': ['Health Parameters', 'Current Health Condition', 'Family History Summary'],
   'Education': ['Educational Background', 'Professional History', 'Current Profession'],
   'Business Info': [
-    'Business Name', 'Business Details (Nature & Type)', 'Business History',
-    'Noteworthy Achievements', 'Clientele Base', 'Business Social Media Pages',
-    'Website', 'Locality', 'Area of Services', 'USP', 'Business Logo', 'Tag Line',
-    'Tags', 'Established At' // ✅ New fields added here
-  ],
+  'Business Name',
+  'Business Details (Nature & Type)',
+  'Business History',
+  'Noteworthy Achievements',
+  'Clientele Base',
+  'Website',
+  'Locality',
+  'Area of Services',
+  'USP',
+  'Business Logo',
+  'Tag Line',
+
+  'Tags',
+  'Established At'
+],
+
   'Additional Info': [
     'Hobbies', 'Interest Area', 'Skills', 'Exclusive Knowledge', 'Aspirations',
     'Contribution Area in UJustBe', 'Immediate Desire', 'Mastery',
-    'Special Social Contribution', 'Profile Status'
+    'Special Social Contribution', 'Profile Status' , 'Business Social Media Pages',
   ],
 };
 
@@ -367,6 +419,66 @@ const fieldGroups = {
         </div>
       );
     }
+if (field === 'Business Social Media Pages') {
+  return (
+    <div>
+      <h4>Business Social Media Pages</h4>
+      {socialMediaLinks.map((link, index) => (
+        <div
+          key={index}
+          style={{ display: 'flex', gap: '10px', marginBottom: '10px', alignItems: 'center' }}
+        >
+          <select
+            value={link.platform}
+            onChange={(e) => handleSocialMediaChange(index, 'platform', e.target.value)}
+          >
+            <option value="">Select Platform</option>
+            {socialPlatforms.map((p) => (
+              <option key={p} value={p}>
+                {p}
+              </option>
+            ))}
+          </select>
+
+          {/* 👇 if 'Other' is selected, show an input box for custom name */}
+          {link.platform === 'Other' && (
+            <input
+              type="text"
+              placeholder="Enter Custom Platform"
+              value={link.customPlatform || ''}
+              onChange={(e) => handleSocialMediaChange(index, 'customPlatform', e.target.value)}
+              style={{ flex: 1 }}
+            />
+          )}
+
+          <input
+            type="url"
+            placeholder="Enter Page URL"
+            value={link.url}
+            onChange={(e) => handleSocialMediaChange(index, 'url', e.target.value)}
+            style={{ flex: 1 }}
+          />
+
+          {socialMediaLinks.length > 1 && (
+            <button
+              type="button"
+              onClick={() => removeSocialMediaField(index)}
+              style={{ color: 'red', fontWeight: 'bold' }}
+            >
+              ✕
+            </button>
+          )}
+        </div>
+      ))}
+
+      {socialMediaLinks.length < 6 && (
+        <button type="button" onClick={addSocialMediaField} className="submitbtn">
+          + Add
+        </button>
+      )}
+    </div>
+  );
+}
 
     if (field === 'Contribution Area in UJustBe') {
       return (

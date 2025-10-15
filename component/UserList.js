@@ -14,75 +14,48 @@ const UserList = () => {
     const [phoneFilter, setPhoneFilter] = useState('');
     const [roleFilter, setRoleFilter] = useState('');
     const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false);
-    const [userToDelete, setUserToDelete] = useState(null); // Track which user to delete
-const [newUser, setNewUser] = useState({
-    name: '',
-    phoneNumber: '',
-    role: '',
-    dob: '',
-    email: '',
-    gender: '',
-    ujbCode: ''
+
+  const [mentors, setMentors] = useState([]); // ✅ Store mentor list
+ 
+  const [userToDelete, setUserToDelete] = useState(null);
+
+  const [newUser, setNewUser] = useState({
+  name: '',
+  phoneNumber: '',
+  role: '',
+  dob: '',
+  email: '',
+  gender: '',
+  ujbCode: '',
+  mentor: '',       // user input for mentor
+  mentorName: '',   // mentor's real name fetched
+  mentorPhone: '',  // mentor's phone fetched
+  mentorUjbCode: '',// mentor's UJB Code fetched
 });
-const formatDOB = (dob) => {
-  const [year, month, day] = dob.split("-");
-  return `${day}/${month}/${year}`;
-};
 
-const handleAddUser = async (e) => {
-    e.preventDefault();
-const formattedDOB = formatDOB(newUser.dob); // Convert to dd/mm/yyyy
-
-    const userDoc = {
-        " Name": newUser.name,
-        "Mobile no": newUser.phoneNumber,
-        "Category": newUser.role,
-         "DOB": formattedDOB,
-        "Email": newUser.email,
-        "Gender": newUser.gender,
-        "UJB Code": newUser.ujbCode,
-    };
-
-    try {
-        await setDoc(doc(db, 'userdetail', newUser.phoneNumber), userDoc);
-        setUsers([...users, {
-            id: newUser.phoneNumber,
-            name: newUser.name,
-            phoneNumber: newUser.phoneNumber,
-            role: newUser.role
-        }]);
-        setNewUser({
-            name: '',
-            phoneNumber: '',
-            role: '',
-            dob: '',
-            email: '',
-            gender: '',
-            ujbCode: ''
-        });
-        alert("User added successfully!");
-    } catch (err) {
-        console.error("Error adding user:", err);
-        alert("Failed to add user.");
-    }
-};
-
-    // Fetch users from Firestore
- useEffect(() => {
+  const formatDOB = (dob) => {
+    const [year, month, day] = dob.split("-");
+    return `${day}/${month}/${year}`;
+  };
+// Fetch users from 'usersdetail' collection (UJB Code as doc ID)
+useEffect(() => {
   const fetchUsers = async () => {
     try {
-      const userCollection = collection(db, 'userdetail'); // Fixed collection name
+      const userCollection = collection(db, 'usersdetail'); // Correct collection
       const userSnapshot = await getDocs(userCollection);
 
       const userList = userSnapshot.docs.map(doc => {
         const data = doc.data();
         return {
-          id: doc.id,
-          phoneNumber: data["Mobile no"] || '',
-          name: data[" Name"] || '',
+          id: doc.id, // UJB Code as ID
+          phoneNumber: data["MobileNo"] || '',  // match your Firestore field
+          name: data["Name"] || '',             // match your Firestore field
           role: data["Category"] || '',
-          idNumber: data["ID Number"] || '',
-           status: data["Profile Status"] || '',
+          idNumber: data["IDNumber"] || '',     // optional
+          status: data["ProfileStatus"] || '',
+          mentorName: data["Mentor Name"] || '',
+          mentorPhone: data["Mentor Phone"] || '',
+          mentorUjbCode: data["Mentor UJB Code"] || ''
         };
       });
 
@@ -98,46 +71,221 @@ const formattedDOB = formatDOB(newUser.dob); // Convert to dd/mm/yyyy
   fetchUsers();
 }, []);
 
-    // Filter users based on name and phone filters
-    const filteredUsers = users.filter(user => {
-        const lowerCaseNameFilter = nameFilter.toLowerCase();
-        const lowerCasePhoneFilter = phoneFilter.toLowerCase();
-        const lowerCaseRoleFilter = roleFilter.toLowerCase();
-        const userName = user.name ? user.name.toLowerCase() : '';
-        const userPhone = user.phoneNumber ? user.phoneNumber.toLowerCase() : '';
-        const userRole = user.role ? user.role.toLowerCase() : '';
+  const handleAddUser = async (e) => {
+  e.preventDefault();
+  const formattedDOB = formatDOB(newUser.dob);
 
-        return (
-            userName.includes(lowerCaseNameFilter) &&
-            userPhone.includes(lowerCasePhoneFilter) &&
-            userRole.includes(lowerCaseRoleFilter)
-        );
+  let mentorName = '';
+  let mentorPhone = '';
+  let mentorUjbCode = '';
+  let mentorId = '';
+
+  if (newUser.mentor) {
+    const selectedMentor = mentors.find((m) => 
+      m.name.toLowerCase() === newUser.mentor.toLowerCase() ||
+      m.phone === newUser.mentor
+    );
+
+    if (selectedMentor) {
+      mentorName = selectedMentor.name;
+      mentorPhone = selectedMentor.phone;
+      mentorUjbCode = selectedMentor.ujbCode;
+      mentorId = selectedMentor.id;
+    } else {
+      Swal.fire("Mentor not found!", "", "error");
+      return;
+    }
+  }
+
+  const userDoc = {
+    "Name": newUser.name,
+    "MobileNo": newUser.phoneNumber,
+    "Category": newUser.role,
+    "DOB": formattedDOB,
+    "Email": newUser.email,
+    "Gender": newUser.gender,
+    "UJB Code": newUser.ujbCode,
+    "Mentor Name": mentorName,
+    "Mentor Phone": mentorPhone,
+    "Mentor UJB Code": mentorUjbCode,
+  };
+
+  try {
+    // ✅ Use UJB Code as document ID
+    await setDoc(doc(db, 'usersdetail', newUser.ujbCode), userDoc);
+
+    // ✅ Update mentor's connects if assigned
+    if (mentorUjbCode) {
+      const mentorRef = doc(db, 'usersdetail', mentorUjbCode);
+      const mentorSnapshot = await getDocs(collection(db, 'usersdetail'));
+      const mentorData = mentorSnapshot.docs.find(d => d.id === mentorUjbCode)?.data();
+      const existingConnects = mentorData?.connects || [];
+
+      await setDoc(
+        mentorRef,
+        {
+          connects: [
+            ...existingConnects,
+            {
+              name: newUser.name,
+              phone: newUser.phoneNumber,
+              email: newUser.email,
+              ujbCode: newUser.ujbCode
+            }
+          ]
+        },
+        { merge: true }
+      );
+    }
+
+    setUsers([...users, {
+      id: newUser.ujbCode,
+      name: newUser.name,
+      phoneNumber: newUser.phoneNumber,
+      role: newUser.role,
+      status: "incomplete"
+    }]);
+
+    // Reset form
+    setNewUser({
+      name: '',
+      phoneNumber: '',
+      role: '',
+      dob: '',
+      email: '',
+      gender: '',
+      ujbCode: '',
+      mentor: '',
+      mentorName: '',
+      mentorPhone: '',
+      mentorUjbCode: '',
     });
 
-    // Open delete confirmation modal
-    const openDeleteModal = (user) => {
-        setUserToDelete(user);
-        setDeleteModalIsOpen(true);
-    };
+    Swal.fire({
+      icon: "success",
+      title: "User added successfully!",
+      timer: 2000,
+      showConfirmButton: false,
+    });
 
-    // Close delete modal
-    const closeDeleteModal = () => {
-        setDeleteModalIsOpen(false);
-        setUserToDelete(null);
-    };
+  } catch (err) {
+    console.error("Error adding user:", err);
+    Swal.fire("Error", "Failed to add user.", "error");
+  }
+};
 
-    // Delete user from Firestore
-    const deleteUser = async () => {
-        if (userToDelete) {
-            try {
-                await deleteDoc(doc(db, 'userdetails', userToDelete.id));
-                setUsers(users.filter(user => user.id !== userToDelete.id));
-                closeDeleteModal();
-            } catch (err) {
-                console.error('Error deleting user:', err);
-            }
-        }
-    };
+// ✅ Fetch users from 'usersdetail' with UJB Code as doc ID
+useEffect(() => {
+  const fetchUsers = async () => {
+    try {
+      const userCollection = collection(db, 'usersdetail');
+      const userSnapshot = await getDocs(userCollection);
+
+      const userList = userSnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id, // UJB Code
+          phoneNumber: data["MobileNo"] || '',
+          name: data["Name"] || '',
+          role: data["Category"] || '',
+          idNumber: data["IDNumber"] || '',
+          status: data["ProfileStatus"] || '',
+          mentorName: data["Mentor Name"] || '',
+          mentorPhone: data["Mentor Phone"] || '',
+          mentorUjbCode: data["Mentor UJB Code"] || ''
+        };
+      });
+
+      setUsers(userList);
+      setLoading(false);
+    } catch (err) {
+      console.error(err);
+      setError('Error fetching user data.');
+      setLoading(false);
+    }
+  };
+
+  fetchUsers();
+}, []);
+
+
+  const filteredUsers = users.filter(user => {
+    const name = user.name?.toLowerCase() || '';
+    const phone = user.phoneNumber?.toLowerCase() || '';
+    const role = user.role?.toLowerCase() || '';
+    return (
+      name.includes(nameFilter.toLowerCase()) &&
+      phone.includes(phoneFilter.toLowerCase()) &&
+      role.includes(roleFilter.toLowerCase())
+    );
+  });
+
+  const openDeleteModal = (user) => {
+    setUserToDelete(user);
+    setDeleteModalIsOpen(true);
+  };
+
+  const closeDeleteModal = () => {
+    setDeleteModalIsOpen(false);
+    setUserToDelete(null);
+  };
+
+ // Delete user by UJB Code
+const deleteUser = async () => {
+  if (userToDelete) {
+    try {
+      // ✅ Use usersdetail collection and UJB Code as doc ID
+      await deleteDoc(doc(db, 'usersdetail', userToDelete.id));
+      setUsers(users.filter(user => user.id !== userToDelete.id));
+      closeDeleteModal();
+      Swal.fire({
+        icon: 'success',
+        title: 'User deleted successfully!',
+        timer: 2000,
+        showConfirmButton: false,
+      });
+    } catch (err) {
+      console.error('Error deleting user:', err);
+      Swal.fire("Error", "Failed to delete user.", "error");
+    }
+  }
+};
+
+// Fetch users from usersdetail with UJB Code as doc ID
+useEffect(() => {
+  const fetchUsers = async () => {
+    try {
+      const userCollection = collection(db, 'usersdetail');
+      const userSnapshot = await getDocs(userCollection);
+
+      const userList = userSnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id, // UJB Code as ID
+          phoneNumber: data["MobileNo"] || '',
+          name: data["Name"] || '',
+          role: data["Category"] || '',
+          idNumber: data["IDNumber"] || '',
+          status: data["ProfileStatus"] || '',
+          mentorName: data["Mentor Name"] || '',
+          mentorPhone: data["Mentor Phone"] || '',
+          mentorUjbCode: data["Mentor UJB Code"] || '',
+        };
+      });
+
+      setUsers(userList);
+      setLoading(false);
+    } catch (err) {
+      console.error(err);
+      setError('Error fetching user data.');
+      setLoading(false);
+    }
+  };
+
+  fetchUsers();
+}, []);
+
+   
 
     return (
         <>
@@ -146,110 +294,187 @@ const formattedDOB = formatDOB(newUser.dob); // Convert to dd/mm/yyyy
             
                 <ExportButton/>
 <div>
-    <h2>Add New User</h2>
-    <form onSubmit={handleAddUser}>
-          <ul>
-          <li className='form-row'>
-            <h4>Name<sup>*</sup></h4>
-            <div className='multipleitem'>
-        <input 
+  <h2>Add New User</h2>
+  <form onSubmit={handleAddUser}>
+    <ul>
+      <li className='form-row'>
+        <h4>Name<sup>*</sup></h4>
+        <div className='multipleitem'>
+          <input 
             type="text" 
             placeholder="Full Name" 
             value={newUser.name} 
             onChange={(e) => setNewUser({...newUser, name: e.target.value})} 
             required 
-        />
+          />
         </div>
-        </li>
-        
-          <li className='form-row'>
-            <h4>Mobile no<sup>*</sup></h4>
-            <div className='multipleitem'>
-        <input 
+      </li>
+
+      <li className='form-row'>
+        <h4>Mobile no<sup>*</sup></h4>
+        <div className='multipleitem'>
+          <input 
             type="text" 
             placeholder="Mobile No" 
             value={newUser.phoneNumber} 
             onChange={(e) => setNewUser({...newUser, phoneNumber: e.target.value})} 
             required 
-        />
+          />
         </div>
-        </li>
-          <li className='form-row'>
-            <h4>Category<sup>*</sup></h4>
-            <div className='multipleitem'>
-        {/* Category Dropdown */}
-        <select 
+      </li>
+
+      <li className='form-row'>
+        <h4>Category<sup>*</sup></h4>
+        <div className='multipleitem'>
+          <select 
             value={newUser.role} 
             onChange={(e) => setNewUser({...newUser, role: e.target.value})}
             required
-        >
+          >
             <option value="">Select Category</option>
             <option value="Orbiter">Orbiter</option>
             <option value="CosmOrbiter">CosmOrbiter</option>
-        </select>
-</div>
-</li>
-<li className='form-row'>
-  <h4>DOB<sup>*</sup></h4>
-  <div className='multipleitem'>
-    <input
-      type="date"
-      value={newUser.dob}
-      onChange={(e) => setNewUser({ ...newUser, dob: e.target.value })}
-      required
-    />
-  </div>
-</li>
+          </select>
+        </div>
+      </li>
 
-          <li className='form-row'>
-            <h4>Email<sup>*</sup></h4>
-            <div className='multipleitem'>
-        <input 
-            type="text" 
+      <li className='form-row'>
+        <h4>DOB<sup>*</sup></h4>
+        <div className='multipleitem'>
+          <input
+            type="date"
+            value={newUser.dob}
+            onChange={(e) => setNewUser({ ...newUser, dob: e.target.value })}
+            required
+          />
+        </div>
+      </li>
+
+      <li className='form-row'>
+        <h4>Email<sup>*</sup></h4>
+        <div className='multipleitem'>
+          <input 
+            type="email" 
             placeholder="Email" 
             value={newUser.email} 
             onChange={(e) => setNewUser({...newUser, email: e.target.value})} 
-        />
+          />
         </div>
-</li>
- <li className='form-row'>
-            <h4>Category<sup>*</sup></h4>
-            <div className='multipleitem'>
-   
-        {/* Gender Dropdown */}
-        <select 
+      </li>
+
+      <li className='form-row'>
+        <h4>Gender<sup>*</sup></h4>
+        <div className='multipleitem'>
+          <select 
             value={newUser.gender} 
             onChange={(e) => setNewUser({...newUser, gender: e.target.value})}
             required
-        >
+          >
             <option value="">Select Gender</option>
             <option value="Male">Male</option>
             <option value="Female">Female</option>
-        </select>
-</div>
-</li>
-  <li className='form-row'>
-            <h4>UJB Code<sup>*</sup></h4>
-            <div className='multipleitem'>
-        <input 
+          </select>
+        </div>
+      </li>
+
+      <li className='form-row'>
+        <h4>UJB Code<sup>*</sup></h4>
+        <div className='multipleitem'>
+          <input 
             type="text" 
             placeholder="UJB Code" 
             value={newUser.ujbCode} 
             onChange={(e) => setNewUser({...newUser, ujbCode: e.target.value})} 
-        />
+          />
         </div>
-        </li>
-   
-      
-          <li className='form-row'>
-     
-            <div className='multipleitem'>
-        <button type="submit" className="m-button-7" style={{ backgroundColor: '#f16f06', color: 'white',marginBottom: '20px' }}>Add User</button>
+      </li>
+
+      {/* ✅ NEW FIELD: Mentor Search */}
+      <li className='form-row'>
+        <h4>Assign Mentor<sup>*</sup></h4>
+        <div className='multipleitem'>
+          <input
+            type="text"
+            placeholder="Search Mentor by Name or Mobile"
+            value={newUser.mentor}
+            onChange={(e) => setNewUser({ ...newUser, mentor: e.target.value })}
+          />
+          <button
+            type="button"
+            className="m-button-7"
+            style={{ marginLeft: "10px", backgroundColor: "#f16f06", color: "white" }}
+            onClick={async () => {
+              try {
+                const snapshot = await getDocs(collection(db, "userdetail"));
+                const mentors = snapshot.docs.map((doc) => ({
+                  id: doc.id,
+                  ...doc.data(),
+                }));
+
+                const foundMentor = mentors.find(
+                  (m) =>
+                    m[" Name"]?.toLowerCase() === newUser.mentor.toLowerCase() ||
+                    m["Mobile no"] === newUser.mentor
+                );
+
+                if (foundMentor) {
+                  Swal.fire({
+                    icon: "success",
+                    title: "Mentor Found",
+                    text: `${foundMentor[" Name"]} (${foundMentor["Mobile no"]})`,
+                    timer: 2000,
+                    showConfirmButton: false,
+                  });
+
+                setNewUser((prev) => ({
+  ...prev,
+  mentorName: foundMentor[" Name"] || '',
+  mentorPhone: foundMentor["Mobile no"] || '',
+  mentorUjbCode: foundMentor["UJB Code"] || '',
+}));
+
+                } else {
+                  Swal.fire({
+                    icon: "error",
+                    title: "Mentor Not Found",
+                    text: "No matching mentor found in userdetail collection.",
+                  });
+                }
+              } catch (err) {
+                console.error("Error fetching mentor:", err);
+                Swal.fire("Error", "Unable to fetch mentor details", "error");
+              }
+            }}
+          >
+            Search
+          </button>
         </div>
-        </li>
-        </ul>
-    </form>
+
+        {/* ✅ Show mentor details after search */}
+        {newUser.mentorName && (
+          <div className="mentor-details">
+            <p><strong>Mentor Name:</strong> {newUser.mentorName}</p>
+            <p><strong>Mentor Phone:</strong> {newUser.mentorPhone}</p>
+            <p><strong>Mentor UJB Code:</strong> {newUser.mentorUjbCode}</p>
+          </div>
+        )}
+      </li>
+
+      <li className='form-row'>
+        <div className='multipleitem'>
+          <button 
+            type="submit" 
+            className="m-button-7"
+            style={{ backgroundColor: '#f16f06', color: 'white', marginBottom: '20px' }}
+          >
+            Add User
+          </button>
+        </div>
+      </li>
+    </ul>
+  </form>
 </div>
+
 
 
                 {loading && <div className='loader'><span className="loader2"></span></div>}

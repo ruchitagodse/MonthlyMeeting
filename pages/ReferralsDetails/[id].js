@@ -125,8 +125,8 @@ const ReferralDetails = () => {
           <p><span>Name:</span> {referral.orbiter?.name || "N/A"}</p>
           <p><span>Email:</span> {referral.orbiter?.email || "N/A"}</p>
           <p><span>Phone:</span> {referral.orbiter?.phone || "N/A"}</p>
-          <p><span>Mentor:</span> {referral.orbiter?.mentorName || "N/A"}</p>
-          <p><span>Mentor Phone:</span> {referral.orbiter?.mentorPhone || "N/A"}</p>
+          <p><span>MentOrbiter:</span> {referral.orbiter?.mentorName || "N/A"}</p>
+          <p><span>MentOrbiter Phone:</span> {referral.orbiter?.mentorPhone || "N/A"}</p>
           <p><span>UJB Code:</span> {referral.orbiter?.ujbCode || "N/A"}</p>
         </div>
       </div>
@@ -140,8 +140,8 @@ const ReferralDetails = () => {
           <p><span>Name:</span> {referral.cosmoOrbiter?.name || "N/A"}</p>
           <p><span>Email:</span> {referral.cosmoOrbiter?.email || "N/A"}</p>
           <p><span>Phone:</span> {referral.cosmoOrbiter?.phone || "N/A"}</p>
-          <p><span>Mentor:</span> {referral.cosmoOrbiter?.mentorName || "N/A"}</p>
-          <p><span>Mentor Phone:</span> {referral.cosmoOrbiter?.mentorPhone || "N/A"}</p>
+          <p><span>MentOrbiter:</span> {referral.cosmoOrbiter?.mentorName || "N/A"}</p>
+          <p><span>MentOrbiter Phone:</span> {referral.cosmoOrbiter?.mentorPhone || "N/A"}</p>
         </div>
       </div>
     )}

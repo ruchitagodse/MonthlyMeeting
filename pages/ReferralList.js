@@ -300,12 +300,12 @@ const UserReferrals = () => {
                                         </div>
                                     )}
 
-                                    <div>
-                                        Date:{" "}
-                                        {ref.timestamp?.toDate
-                                            ? ref.timestamp.toDate().toLocaleString()
-                                            : "N/A"}
-                                    </div>
+                                  <div className="cosmoCard-actions">
+  <Link href={`/ReferralsDetails/${ref.id}`} className="viewButton">
+    View Details
+  </Link>
+</div>
+
 
                                 </div>
                             </div>

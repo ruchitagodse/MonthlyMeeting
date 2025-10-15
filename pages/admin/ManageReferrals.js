@@ -4,6 +4,7 @@ import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 import { useRouter } from "next/router";
 import "../../src/app/styles/main.scss";
 import Layout from "../../component/Layout";
+import ReferralExportButton from "./ExportReferral";
 
 
 const ManageReferrals = () => {
@@ -54,7 +55,7 @@ const handleEdit = (referralId) => {
     <Layout>
    <section className="c-userslist box">
   <h2>Manage Referrals</h2>
-
+<ReferralExportButton/>
   {referrals.length === 0 ? (
     <p>No referrals found.</p>
   ) : (

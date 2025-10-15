@@ -57,98 +57,120 @@ const ReferralDetails = () => {
       <Headertop />
 
       <section className="p-meetingDetails">
-        <div className="container pageHeading">
+    <div className="sectionHeadings">
           <h2>Referral Details</h2>
 
+</div>
           {/* Tabs Navigation */}
       {/* Tabs */}
-<div className="custom-tabs">
-  <button
-    className={`custom-tab ${activeTab === "referral" ? "active" : ""}`}
-    onClick={() => setActiveTab("referral")}
-  >
-    Referral Info
-  </button>
+{/* Tabs */}
+<div className="referralTabsWrapper">
 
-  <button
-    className={`custom-tab ${activeTab === "orbiter" ? "active" : ""}`}
-    onClick={() => setActiveTab("orbiter")}
-  >
-    Orbiter Details
-  </button>
+  {/* Tab Buttons */}
+  <div className="referralTabsHeader">
+    <button
+      className={`referralTabButton ${activeTab === "referral" ? "active" : ""}`}
+      onClick={() => setActiveTab("referral")}
+    >
+      Referral Info
+    </button>
 
-  <button
-    className={`custom-tab ${activeTab === "cosmo" ? "active" : ""}`}
-    onClick={() => setActiveTab("cosmo")}
-  >
-    CosmoOrbiter Details
-  </button>
+    <button
+      className={`referralTabButton ${activeTab === "orbiter" ? "active" : ""}`}
+      onClick={() => setActiveTab("orbiter")}
+    >
+      Orbiter Details
+    </button>
 
-  <button
-    className={`custom-tab ${activeTab === "product" ? "active" : ""}`}
-    onClick={() => setActiveTab("product")}
-  >
-    Product / Service
-  </button>
+    <button
+      className={`referralTabButton ${activeTab === "cosmo" ? "active" : ""}`}
+      onClick={() => setActiveTab("cosmo")}
+    >
+      CosmoOrbiter Details
+    </button>
+
+    <button
+      className={`referralTabButton ${activeTab === "product" ? "active" : ""}`}
+      onClick={() => setActiveTab("product")}
+    >
+      Product / Service
+    </button>
+  </div>
+
+  {/* Tab Content */}
+  <div className="referralTabsContent">
+
+    {/* Referral Info */}
+    {activeTab === "referral" && (
+      <div className="referralCard">
+        <h3 className="referralCardTitle">Referral Information</h3>
+        <div className="referralCardBody">
+          <p><span>Referral ID:</span> {referral.referralId || "N/A"}</p>
+          <p><span>Deal Status:</span> {referral.dealStatus || "N/A"}</p>
+          <p><span>Type:</span> {referral.referralType || "N/A"}</p>
+          <p><span>Source:</span> {referral.referralSource || "N/A"}</p>
+          <p><span>Last Updated:</span> {referral.lastUpdated?.toDate
+            ? referral.lastUpdated.toDate().toLocaleString()
+            : "N/A"}
+          </p>
+        </div>
+      </div>
+    )}
+
+    {/* Orbiter Details */}
+    {activeTab === "orbiter" && (
+      <div className="referralCard">
+        <h3 className="referralCardTitle">Orbiter Details</h3>
+        <div className="referralCardBody">
+          <p><span>Name:</span> {referral.orbiter?.name || "N/A"}</p>
+          <p><span>Email:</span> {referral.orbiter?.email || "N/A"}</p>
+          <p><span>Phone:</span> {referral.orbiter?.phone || "N/A"}</p>
+          <p><span>Mentor:</span> {referral.orbiter?.mentorName || "N/A"}</p>
+          <p><span>Mentor Phone:</span> {referral.orbiter?.mentorPhone || "N/A"}</p>
+          <p><span>UJB Code:</span> {referral.orbiter?.ujbCode || "N/A"}</p>
+        </div>
+      </div>
+    )}
+
+    {/* CosmoOrbiter Details */}
+    {activeTab === "cosmo" && (
+      <div className="referralCard">
+        <h3 className="referralCardTitle">CosmoOrbiter Details</h3>
+        <div className="referralCardBody">
+          <p><span>Name:</span> {referral.cosmoOrbiter?.name || "N/A"}</p>
+          <p><span>Email:</span> {referral.cosmoOrbiter?.email || "N/A"}</p>
+          <p><span>Phone:</span> {referral.cosmoOrbiter?.phone || "N/A"}</p>
+          <p><span>Mentor:</span> {referral.cosmoOrbiter?.mentorName || "N/A"}</p>
+          <p><span>Mentor Phone:</span> {referral.cosmoOrbiter?.mentorPhone || "N/A"}</p>
+        </div>
+      </div>
+    )}
+
+    {/* Product / Service Details */}
+    {activeTab === "product" && (
+      <div className="referralCard">
+        <h3 className="referralCardTitle">Product / Service</h3>
+        <div className="referralCardBody">
+          <p><span>Name:</span> {referral.product?.name || referral.service?.name || "N/A"}</p>
+          <p><span>Description:</span> {referral.product?.description || referral.service?.description || "N/A"}</p>
+          <p><span>Percentage:</span> {referral.product?.percentage || "N/A"}%</p>
+
+          {referral.product?.imageURL && (
+            <div className="referralImageBox">
+              <img
+                src={referral.product.imageURL}
+                alt="Product"
+              />
+            </div>
+          )}
+        </div>
+      </div>
+    )}
+
+  </div>
 </div>
 
-{/* Tab Content */}
-<div className="eventinnerContent">
-  {activeTab === "referral" && (
-    <div className="tabs about-section">
-      <h3>Referral Info</h3>
-      <p><strong>Referral ID:</strong> {referral.referralId || "N/A"}</p>
-      <p><strong>Deal Status:</strong> {referral.dealStatus || "N/A"}</p>
-      <p><strong>Type:</strong> {referral.referralType || "N/A"}</p>
-      <p><strong>Source:</strong> {referral.referralSource || "N/A"}</p>
-      <p><strong>Last Updated:</strong> {referral.lastUpdated?.toDate
-        ? referral.lastUpdated.toDate().toLocaleString()
-        : "N/A"}
-      </p>
-    </div>
-  )}
 
-  {activeTab === "orbiter" && (
-    <div className="tabs about-section">
-      <h3>Orbiter Details</h3>
-      <p><strong>Name:</strong> {referral.orbiter?.name}</p>
-      <p><strong>Email:</strong> {referral.orbiter?.email}</p>
-      <p><strong>Phone:</strong> {referral.orbiter?.phone}</p>
-      <p><strong>Mentor:</strong> {referral.orbiter?.mentorName}</p>
-      <p><strong>Mentor Phone:</strong> {referral.orbiter?.mentorPhone}</p>
-      <p><strong>UJB Code:</strong> {referral.orbiter?.ujbCode}</p>
-    </div>
-  )}
-
-  {activeTab === "cosmo" && (
-    <div className="tabs about-section">
-      <h3>CosmoOrbiter Details</h3>
-      <p><strong>Name:</strong> {referral.cosmoOrbiter?.name}</p>
-      <p><strong>Email:</strong> {referral.cosmoOrbiter?.email}</p>
-      <p><strong>Phone:</strong> {referral.cosmoOrbiter?.phone}</p>
-      <p><strong>Mentor:</strong> {referral.cosmoOrbiter?.mentorName}</p>
-      <p><strong>Mentor Phone:</strong> {referral.cosmoOrbiter?.mentorPhone}</p>
-    </div>
-  )}
-
-  {activeTab === "product" && (
-    <div className="tabs about-section">
-      <h3>Product / Service Details</h3>
-      <p><strong>Name:</strong> {referral.product?.name || referral.service?.name}</p>
-      <p><strong>Description:</strong> {referral.product?.description || referral.service?.description}</p>
-      <p><strong>Percentage:</strong> {referral.product?.percentage || "N/A"}%</p>
-
-      {referral.product?.imageURL && (
-        <img
-          src={referral.product.imageURL}
-          alt="Product"
-          className="productImage"
-        />
-      )}
-    </div>
-  )}
-</div>
-</div>
 
         <HeaderNav />
       </section>

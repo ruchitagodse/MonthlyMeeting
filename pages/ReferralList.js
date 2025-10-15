@@ -278,7 +278,7 @@ const UserReferrals = () => {
                                             ? ref.timestamp.toDate().toLocaleString()
                                             : "N/A"}
                                     </div>
-                                    <div> <span class="meetingLable">Status: {ref.dealStatus}</span></div>
+                                    <div> <span class="meetingLable"> {ref.dealStatus}</span></div>
 
                                 </div>
                                 <div className="cosmoCard-info">

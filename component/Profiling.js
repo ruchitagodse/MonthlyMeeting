@@ -69,33 +69,46 @@ useEffect(() => {
 
         setFormData(userData);
         setDocId(userDoc.id);
-     if (userData['Profile Photo URL']) setProfilePreview(userData['Profile Photo URL']);
-          if (userData['Business Logo']) setBusinessLogoPreview(userData['Business Logo']);
-        // Load services and products from DB
-     if (userData.services && userData.services.length > 0) {
-  setServices(
-    userData.services.map(s => ({
-      name: s.name || '',
-      description: s.description || '',
-      keywords: s.keywords || '',
-      image: null,
-      percentage: s.percentage || '',
-    }))
-  );
-}
 
-       if (userData.products && userData.products.length > 0) {
-  setProducts(
-    userData.products.map(p => ({
-      name: p.name || '',
-      description: p.description || '',
-      keywords: p.keywords || '',
-      image: null,
-      percentage: p.percentage || '',
-    }))
-  );
-}
+        if (userData['Profile Photo URL']) setProfilePreview(userData['Profile Photo URL']);
+        if (userData['Business Logo']) setBusinessLogoPreview(userData['Business Logo']);
 
+        // Load services
+        if (userData.services?.length > 0) {
+          setServices(
+            userData.services.map(s => ({
+              name: s.name || '',
+              description: s.description || '',
+              keywords: s.keywords || '',
+              image: null,
+              percentage: s.percentage || '',
+            }))
+          );
+        }
+
+        // Load products
+        if (userData.products?.length > 0) {
+          setProducts(
+            userData.products.map(p => ({
+              name: p.name || '',
+              description: p.description || '',
+              keywords: p.keywords || '',
+              image: null,
+              percentage: p.percentage || '',
+            }))
+          );
+        }
+
+        // Load Business Social Media Pages
+        if (userData['Business Social Media Pages']?.length > 0) {
+          setSocialMediaLinks(
+            userData['Business Social Media Pages'].map((s) => ({
+              platform: socialPlatforms.includes(s.platform) ? s.platform : 'Other',
+              url: s.url,
+              customPlatform: !socialPlatforms.includes(s.platform) ? s.platform : '',
+            }))
+          );
+        }
       }
     } catch (err) {
       console.error('Error fetching user:', err);
@@ -104,6 +117,7 @@ useEffect(() => {
 
   fetchUserByPhone();
 }, [userPhone]);
+
 
   const [allUsers, setAllUsers] = useState([]);
   const [formData, setFormData] = useState({});

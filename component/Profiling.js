@@ -358,7 +358,7 @@ const cosmorbiterFields = [
   'Business Name', 'Business Details (Nature & Type)', 'Business History',
   'Noteworthy Achievements', 'Clientele Base', 
   'Website', 'Locality', 'Area of Services', 'USP', 'Business Logo',
-  'Tag Line',  'Business Social Media Pages',  // 👈 add this line
+  'Tag Line',  
   'Established At'
 ];
 

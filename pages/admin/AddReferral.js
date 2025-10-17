@@ -120,40 +120,41 @@ const [otherReferralSource, setOtherReferralSource] = useState("");
   try {
     const referralId = await generateReferralId();
 
-    const data = {
-      referralId,
-      orbiter: {
-        name: selectedOrbiter[" Name"],
-        email: selectedOrbiter["Email"],
-        phone: selectedOrbiter["Mobile no"],
-        ujbCode: selectedOrbiter["UJB Code"],
-        mentorName: selectedOrbiter["Mentor Name"],
-        mentorPhone: selectedOrbiter["Mentor Phone"],
-      },
-      cosmoOrbiter: {
-        name: selectedCosmo[" Name"],
-        email: selectedCosmo["Email"],
-        phone: selectedCosmo["Mobile no"],
-        mentorName: selectedCosmo["Mentor Name"],
-        mentorPhone: selectedCosmo["Mentor Phone"],
-      },
-      service: selectedService,
-      product: selectedProduct,
-      referralType: refType,
-      referralSource:
-        referralSource === "Other" ? otherReferralSource : referralSource,
-      orbitersInfo:
-        refType === "Others"
-          ? {
-              name: otherName,
-              phone: otherPhone,
-              email: otherEmail,
-            }
-          : null,
-      dealStatus,
-      lastUpdated,
-      timestamp: new Date(),
-    };
+   const data = {
+  referralId,
+  orbiter: {
+    name: selectedOrbiter[" Name"] || "",
+    email: selectedOrbiter["Email"] || "",
+    phone: selectedOrbiter["Mobile no"] || "",
+    ujbCode: selectedOrbiter["UJB Code"] || "",
+    mentorName: selectedOrbiter["Mentor Name"] || "",
+    mentorPhone: selectedOrbiter["Mentor Phone"] || "", // <– FIX
+  },
+  cosmoOrbiter: {
+    name: selectedCosmo[" Name"] || "",
+    email: selectedCosmo["Email"] || "",
+    phone: selectedCosmo["Mobile no"] || "",
+    mentorName: selectedCosmo["Mentor Name"] || "",
+    mentorPhone: selectedCosmo["Mentor Phone"] || "", // <– FIX
+  },
+  service: selectedService || null,
+  product: selectedProduct || null,
+  referralType: refType || "",
+  referralSource:
+    referralSource === "Other" ? otherReferralSource || "" : referralSource,
+  orbitersInfo:
+    refType === "Others"
+      ? {
+          name: otherName || "",
+          phone: otherPhone || "",
+          email: otherEmail || "",
+        }
+      : null,
+  dealStatus: dealStatus || "Pending",
+  lastUpdated,
+  timestamp: new Date(),
+};
+
 
     await addDoc(collection(db, "Referral"), data);
     alert("Referral submitted successfully!");

@@ -272,12 +272,14 @@ const UserReferrals = () => {
                         referrals.map((ref) => (
                             <div key={ref.id} className="referralBox">
                                 <div className="boxHeader">
-                                    <div>{ref.referralId ? ref.referralId : null}
-                                        Date:{" "}
-                                        {ref.timestamp?.toDate
-                                            ? ref.timestamp.toDate().toLocaleString()
-                                            : "N/A"}
-                                    </div>
+                                  <div>
+  {ref.referralId ? ref.referralId : null}
+  Date:{" "}
+  {ref.timestamp?.toDate
+    ? ref.timestamp.toDate().toLocaleDateString("en-GB") // <-- dd/mm/yyyy
+    : "N/A"}
+</div>
+
                                     <div> <span class="meetingLable"> {ref.dealStatus}</span></div>
 
                                 </div>

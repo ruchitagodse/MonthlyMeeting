@@ -5,7 +5,6 @@ import { db } from "../../firebaseConfig";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import "../../src/app/styles/main.scss";
 import Layout from "../../component/Layout";
-
 const AdminLoginLogs = () => {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,7 +12,7 @@ const AdminLoginLogs = () => {
   useEffect(() => {
     const fetchLogs = async () => {
       try {
-        const q = query(collection(db, "PageVisits"), orderBy("startTime", "desc")); // Sort by startTime
+        const q = query(collection(db,"PageVisits"), orderBy("startTime", "desc")); // Sort by startTime
         const snapshot = await getDocs(q);
         const data = snapshot.docs.map((doc) => {
           const logData = doc.data();

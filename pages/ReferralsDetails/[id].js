@@ -108,7 +108,7 @@ const ReferralDetails = () => {
           <p><span>Referral ID:</span> {referral.referralId || "N/A"}</p>
           <p><span>Deal Status:</span> {referral.dealStatus || "N/A"}</p>
           <p><span>Type:</span> {referral.referralType || "N/A"}</p>
-          <p><span>Source:</span> {referral.referralSource || "N/A"}</p>
+         
           {/* <p><span>Last Updated:</span> {referral.lastUpdated?.toDate
             ? referral.lastUpdated.toDate().toLocaleString()
             : "N/A"}

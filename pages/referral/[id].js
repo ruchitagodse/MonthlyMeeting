@@ -570,7 +570,7 @@ const { orbiter: referralOrbiter, cosmoOrbiter: referralCosmoOrbiter, service, p
                 </label>
 
                 <label>
-                  Date:
+                 Next Followup Date:
                   <input
                     type="date"
                     name="date"
@@ -631,24 +631,26 @@ const { orbiter: referralOrbiter, cosmoOrbiter: referralCosmoOrbiter, service, p
           </div>
         {/* Collapsed Payment Container */}
         {/* Collapsed Payment Container */}
-        <div className="PaymentContainer">
-          <h4>Last Payment</h4>
-          {payments.length > 0 ? (
-            <p>
-              {mapPaymentLabel(payments[payments.length - 1].paymentFrom)} →{" "}
-              {mapPaymentLabel(payments[payments.length - 1].paymentTo)} : ₹
-              {payments[payments.length - 1].amountReceived}
-            </p>
-          ) : (
-            <p>No payments yet</p>
-          )}
-          <button
-            className="viewMoreBtn"
-            onClick={() => setShowPaymentSheet(true)}  // <-- Use correct state here
-          >
-       Payment Details
-          </button>
-        </div>
+      {formState.dealStatus?.toLowerCase().replace(/\s/g, "") === "dealwon" && (
+  <div className="PaymentContainer">
+    <h4>Last Payment</h4>
+    {payments.length > 0 ? (
+      <p>
+        {mapPaymentLabel(payments[payments.length - 1].paymentFrom)} →{" "}
+        {mapPaymentLabel(payments[payments.length - 1].paymentTo)} : ₹
+        {payments[payments.length - 1].amountReceived}
+      </p>
+    ) : (
+      <p>No payments yet</p>
+    )}
+    <button
+      className="viewMoreBtn"
+      onClick={() => setShowPaymentSheet(true)}
+    >
+      Payment Details
+    </button>
+  </div>
+)}
 
 
         {/* Sliding Sheet */}

@@ -17,6 +17,7 @@ const ReferralDetails = () => {
   const [showDealCard, setShowDealCard] = useState(false);
 const [orbiter, setOrbiter] = useState(null);
 const [cosmoOrbiter, setCosmoOrbiter] = useState(null);
+const [dealEverWon, setDealEverWon] = useState(false);
 
   const [showPaymentSheet, setShowPaymentSheet] = useState(false);
   const [open, setOpen] = useState(false);
@@ -225,6 +226,11 @@ if (data.cosmoOrbiter?.phone) {
     }
   };
 
+useEffect(() => {
+  if (formState.dealStatus?.toLowerCase().replace(/\s/g, "") === "dealwon") {
+    setDealEverWon(true);
+  }
+}, [formState.dealStatus]);
 
   const handleUpdate = async (e) => {
     e.preventDefault();
@@ -631,12 +637,12 @@ const { orbiter: referralOrbiter, cosmoOrbiter: referralCosmoOrbiter, service, p
           </div>
         {/* Collapsed Payment Container */}
         {/* Collapsed Payment Container */}
-      {formState.dealStatus?.toLowerCase().replace(/\s/g, "") === "dealwon" && (
+{dealEverWon && (
   <div className="PaymentContainer">
     <h4>Last Payment</h4>
     {payments.length > 0 ? (
       <p>
-        {mapPaymentLabel(payments[payments.length - 1].paymentFrom)} →{" "}
+        {mapPaymentLabel(payments[payments.length - 1].paymentFrom)} →
         {mapPaymentLabel(payments[payments.length - 1].paymentTo)} : ₹
         {payments[payments.length - 1].amountReceived}
       </p>

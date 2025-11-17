@@ -203,7 +203,7 @@ useEffect(() => {
   };
 const uploadProfilePhoto = async () => {
   if (!profilePic || !docId) return '';
-  const fileRef = ref(storage, `profilePhotos/${docId}/${profilePic.name}`);
+  const fileRef = ref(storage, `UserAsset/${docId}/${profilePic.name}`);
   await uploadBytes(fileRef, profilePic);
   Swal.fire({
     icon: 'success',
@@ -262,7 +262,7 @@ const handleSubmit = async () => {
 
     let businessLogoURL = '';
     if (businessLogo && docId) {
-      const logoRef = ref(storage, `businessLogos/${docId}/${businessLogo.name}`);
+      const logoRef = ref(storage, `UserAsset/${docId}/${businessLogo.name}`);
       await uploadBytes(logoRef, businessLogo);
       businessLogoURL = await getDownloadURL(logoRef);
       Swal.fire({
@@ -282,7 +282,7 @@ const handleSubmit = async () => {
     const serviceData = await Promise.all(
       filteredServices.map(async (srv, i) => {
         const imgURL = srv.image
-          ? await uploadImage(srv.image, `serviceImages/${docId}/service_${i}`)
+          ? await uploadImage(srv.image, `UserAsset/${docId}/service_${i}`)
           : '';
         return {
           name: srv.name,
@@ -298,7 +298,7 @@ const handleSubmit = async () => {
     const productData = await Promise.all(
       filteredProducts.map(async (prd, i) => {
         const imgURL = prd.image
-          ? await uploadImage(prd.image, `productImages/${docId}/product_${i}`)
+          ? await uploadImage(prd.image, `UserAsset/${docId}/product_${i}`)
           : '';
         return {
           name: prd.name,

@@ -38,27 +38,29 @@ const [otherReferralSource, setOtherReferralSource] = useState("");
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const snapshot = await getDocs(collection(db, "userdetail"));
+      const snapshot = await getDocs(collection(db, "usersdetail"));
       const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
       setUsers(data);
     };
     fetchUsers();
   }, []);
 
-  const handleOrbiterSelect = (user) => {
-    setSelectedOrbiter(user);
-    setOrbiterSearch(user[" Name"]);
-  };
+const handleOrbiterSelect = (user) => {
+  setSelectedOrbiter(user);
+  setOrbiterSearch(user.Name);
+};
+
 
   const handleCosmoSelect = async (user) => {
     setSelectedCosmo(user);
-    setCosmoSearch(user[" Name"]);
+  setCosmoSearch(user.Name);
+
     setSelectedService(null);
     setSelectedProduct(null);
     setServices([]);
     setProducts([]);
 
-    const docRef = doc(db, "userdetail", user.id);
+    const docRef = doc(db, "usersdetail", user.id);
     const userDoc = await getDoc(docRef);
     if (userDoc.exists()) {
       const userData = userDoc.data();
@@ -122,21 +124,22 @@ const [otherReferralSource, setOtherReferralSource] = useState("");
 
    const data = {
   referralId,
-  orbiter: {
-    name: selectedOrbiter[" Name"] || "",
-    email: selectedOrbiter["Email"] || "",
-    phone: selectedOrbiter["Mobile no"] || "",
-    ujbCode: selectedOrbiter["UJB Code"] || "",
-    mentorName: selectedOrbiter["Mentor Name"] || "",
-    mentorPhone: selectedOrbiter["Mentor Phone"] || "", // <– FIX
-  },
-  cosmoOrbiter: {
-    name: selectedCosmo[" Name"] || "",
-    email: selectedCosmo["Email"] || "",
-    phone: selectedCosmo["Mobile no"] || "",
-    mentorName: selectedCosmo["Mentor Name"] || "",
-    mentorPhone: selectedCosmo["Mentor Phone"] || "", // <– FIX
-  },
+ orbiter: {
+  name: selectedOrbiter.Name || "",
+  email: selectedOrbiter.Email || "",
+  phone: selectedOrbiter.MobileNo || "",
+  ujbCode: selectedOrbiter.UJBCode || "",
+  mentorName: selectedOrbiter.MentorName || "",
+  mentorPhone: selectedOrbiter.MentorPhone || "",
+},
+ cosmoOrbiter: {
+  name: selectedCosmo.Name || "",
+  email: selectedCosmo.Email || "",
+  phone: selectedCosmo.MobileNo || "",
+  mentorName: selectedCosmo.MentorName || "",
+  mentorPhone: selectedCosmo.MentorPhone || "",
+}
+,
   service: selectedService || null,
   product: selectedProduct || null,
   referralType: refType || "",
@@ -165,14 +168,14 @@ const [otherReferralSource, setOtherReferralSource] = useState("");
 
     await Promise.all([
       sendWhatsAppTemplate(
-        selectedOrbiter["Mobile no"],
-        selectedOrbiter[" Name"],
-        `🚀 You’ve just passed a referral for *${serviceOrProduct}* to *${selectedCosmo[" Name"]}*. It’s now in motion and will be actioned within 24 hours. Great start toward contribution! 🌱`
+        selectedOrbiter.MobileNo,
+        selectedOrbiter.Name,
+        `🚀 You’ve just passed a referral for *${serviceOrProduct}* to *${selectedCosmo.Name}*. It’s now in motion and will be actioned within 24 hours. Great start toward contribution! 🌱`
       ),
       sendWhatsAppTemplate(
-        selectedCosmo["Mobile no"],
-        selectedCosmo[" Name"],
-        `✨ You’ve received a referral from *${selectedOrbiter[" Name"]}* for *${serviceOrProduct}*. Let’s honor their trust — please act within the next 24 hours!`
+        selectedCosmo.MobileNo,
+        selectedCosmo.Name,
+        `✨ You’ve received a referral from *${selectedOrbiter.Name}* for *${serviceOrProduct}*. Let’s honor their trust — please act within the next 24 hours!`
       ),
       // sendWhatsAppTemplate(
       //   selectedOrbiter["Mentor Phone"],
@@ -233,12 +236,13 @@ const [otherReferralSource, setOtherReferralSource] = useState("");
           <ul className="search-results">
            {users
   .filter((u) => {
-    const name = u[" Name"] || ""; // fallback to empty string
-    return name.toLowerCase().includes(orbiterSearch.toLowerCase());
-  })
+  const name = u.Name || "";
+  return name.toLowerCase().includes(orbiterSearch.toLowerCase());
+})
+
   .map((user) => (
     <li key={user.id} onClick={() => handleOrbiterSelect(user)}>
-      {user[" Name"]}
+      {user.Name}
     </li>
   ))}
 
@@ -258,18 +262,19 @@ const [otherReferralSource, setOtherReferralSource] = useState("");
   {cosmoSearch && (
     <ul className="search-results">
      {users
-  .filter((u) => {
-    const name = u[" Name"] || "";
-    return (
-      u.Category === "CosmOrbiter" &&
-      ((Array.isArray(u.products) && u.products.length > 0) ||
-        (Array.isArray(u.services) && u.services.length > 0)) &&
-      name.toLowerCase().includes(cosmoSearch.toLowerCase())
-    );
-  })
+ .filter((u) => {
+  const name = u.Name || "";
+  return (
+    u.Category === "CosmOrbiter" &&
+    ((Array.isArray(u.products) && u.products.length > 0) ||
+    (Array.isArray(u.services) && u.services.length > 0)) &&
+    name.toLowerCase().includes(cosmoSearch.toLowerCase())
+  );
+})
+
   .map((user) => (
     <li key={user.id} onClick={() => handleCosmoSelect(user)}>
-      {user[" Name"]}
+      {user.Name}
     </li>
   ))}
 
@@ -312,7 +317,7 @@ const [otherReferralSource, setOtherReferralSource] = useState("");
             <option value="">-- Select Product --</option>
             {products.map((product, idx) => (
               <option key={idx} value={product.name}>
-                {product.name} - {product.description}
+                {product.name}
               </option>
             ))}
           </select>

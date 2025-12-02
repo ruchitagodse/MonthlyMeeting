@@ -55,33 +55,41 @@ const Profiling = () => {
     setOrbiterSearch(user.Name);
   };
 
-  const handleCosmoSelect = async (user) => {
-    setSelectedCosmo(user);
-    setCosmoSearch(user.Name);
 
-    setSelectedService(null);
-    setSelectedProduct(null);
-    setServices([]);
-    setProducts([]);
+const convertToArray = (input) => {
+  if (!input) return [];
 
-    const docRef = doc(db, "usersdetail", user.id);
-    const userDoc = await getDoc(docRef);
+  // Already array → return as-is
+  if (Array.isArray(input)) return input;
 
-    if (userDoc.exists()) {
-      const data = userDoc.data();
+  // Map (object with numeric keys)
+  if (typeof input === "object") return Object.values(input);
 
-      // FIX: Convert Firestore map → array
-      const servicesArray = data.services
-        ? Object.values(data.services)
-        : [];
-      const productsArray = data.products
-        ? Object.values(data.products)
-        : [];
+  return [];
+};
 
-      setServices(servicesArray);
-      setProducts(productsArray);
-    }
-  };
+
+const handleCosmoSelect = async (user) => {
+  setSelectedCosmo(user);
+  setCosmoSearch(user.Name);
+
+  setSelectedService(null);
+  setSelectedProduct(null);
+
+  const docRef = doc(db, "usersdetail", user.id);
+  const userDoc = await getDoc(docRef);
+
+  if (userDoc.exists()) {
+    const data = userDoc.data();
+
+    // Convert all possible structures → array
+    const servicesArray = convertToArray(data.services);
+    const productsArray = convertToArray(data.products);
+
+    setServices(servicesArray);
+    setProducts(productsArray);
+  }
+};
 
   const generateReferralId = async () => {
     const now = new Date();
@@ -326,50 +334,63 @@ const Profiling = () => {
           </li>
 
           {/* SERVICES */}
-          {services.length > 0 && (
-            <li className="form-group">
-              <label>Select Service</label>
-              <select
-                onChange={(e) =>
-                  setSelectedService(
-                    services.find(
-                      (s) => s.serviceName === e.target.value
-                    )
-                  )
-                }
-              >
-                <option value="">-- Select Service --</option>
-                {services.map((service, i) => (
-                  <option key={i} value={service.serviceName}>
-                    {service.serviceName}
-                  </option>
-                ))}
-              </select>
-            </li>
-          )}
+        {services.length > 0 && (
+  <li className="form-group">
+    <label>Select Service</label>
+    <select
+      onChange={(e) =>
+        setSelectedService(
+          services.find(
+            (s) =>
+              s.serviceName === e.target.value ||
+              s.name === e.target.value
+          )
+        )
+      }
+    >
+      <option value="">-- Select Service --</option>
+
+      {services.map((service, i) => (
+        <option
+          key={i}
+          value={service.serviceName || service.name || ""}
+        >
+          {service.serviceName || service.name}
+        </option>
+      ))}
+    </select>
+  </li>
+)}
 
           {/* PRODUCTS */}
-          {products.length > 0 && (
-            <li className="form-group">
-              <label>Select Product</label>
-              <select
-                onChange={(e) =>
-                  setSelectedProduct(
-                    products.find(
-                      (p) => p.productName === e.target.value
-                    )
-                  )
-                }
-              >
-                <option value="">-- Select Product --</option>
-                {products.map((product, i) => (
-                  <option key={i} value={product.productName}>
-                    {product.productName}
-                  </option>
-                ))}
-              </select>
-            </li>
-          )}
+        {/* PRODUCTS */}
+{products.length > 0 && (
+  <li className="form-group">
+    <label>Select Product</label>
+    <select
+      onChange={(e) =>
+        setSelectedProduct(
+          products.find(
+            (p) =>
+              p.productName === e.target.value ||
+              p.name === e.target.value
+          )
+        )
+      }
+    >
+      <option value="">-- Select Product --</option>
+
+      {products.map((product, i) => (
+        <option
+          key={i}
+          value={product.productName || product.name || ""}
+        >
+          {product.productName || product.name}
+        </option>
+      ))}
+    </select>
+  </li>
+)}
 
           {/* LEAD DESCRIPTION */}
           {(selectedService || selectedProduct) && (

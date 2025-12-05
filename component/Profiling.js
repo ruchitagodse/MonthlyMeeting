@@ -872,35 +872,46 @@ setProducts(
                   </div>
                 </li>
 
-                <li className="form-row">
-                  <h4>Category</h4>
-                  <div className="multipleitem">
-                    <select
-                      name="Category"
-                      value={formData.Category || ''}
-                      onChange={handleChange}
-                      required
-                    >
-                      <option value="">Select Category</option>
-                      <option value="Orbiter">Orbiter</option>
-                      <option value="CosmOrbiter">CosmOrbiter</option>
-                    </select>
-                  </div>
-                </li>
+              <li className="form-row">
+  <h4>Category</h4>
+  <div className="multipleitem">
+    <select
+      name="Category"
+      value={formData.Category || ''}
+      onChange={handleChange}
+      required
+    >
+      <option value="">Select Category</option>
+      <option value="Orbiter">Orbiter</option>
+      <option value="CosmOrbiter">CosmOrbiter</option>
+    </select>
+  </div>
+</li>
 
-                <li className="form-row">
-                  <h4>Email</h4>
-                  <div className="multipleitem">
-                    <input type="text" value={formData.Email || ''} readOnly />
-                  </div>
-                </li>
+<li className="form-row">
+  <h4>Email</h4>
+  <div className="multipleitem">
+    <input
+      type="text"
+      name="Email"
+      value={formData.Email || ''}
+      onChange={handleChange}
+    />
+  </div>
+</li>
 
-                <li className="form-row">
-                  <h4>Mobile</h4>
-                  <div className="multipleitem">
-                    <input type="text" value={formData['MobileNo'] || formData.Mobile || ''} readOnly />
-                  </div>
-                </li>
+<li className="form-row">
+  <h4>Mobile</h4>
+  <div className="multipleitem">
+    <input
+      type="text"
+      name="Mobile"
+      value={formData.Mobile || formData.MobileNo || ''}
+      onChange={handleChange}
+    />
+  </div>
+</li>
+
               </>
             )}
 
